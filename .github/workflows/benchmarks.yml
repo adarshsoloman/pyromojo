@@ -1,0 +1,39 @@
+# Benchmark workflow — placeholder.
+#
+# Benchmarks are manual-only until the harness and methodology are implemented.
+# Mojo toolchain installation and native benchmark execution are intentionally
+# NOT configured: add them only after the local toolchain setup is verified and
+# documented in docs/roadmap.md.
+#
+# TODO(phase-2): add verified Mojo installation, environment capture, and
+# benchmark execution steps matching docs/benchmarks/README.md.
+
+name: benchmarks
+
+on:
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install development dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Report placeholder status
+        run: |
+          echo "Benchmark execution is not configured yet."
+          echo "See docs/benchmarks/README.md and docs/roadmap.md (Phase 2)."
+
+  # TODO(phase-2): cold-compilation and warm-execution benchmark jobs.
+  # Results must record commit, toolchain version, CPU, OS, and configuration.

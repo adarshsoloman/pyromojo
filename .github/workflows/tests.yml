@@ -1,0 +1,48 @@
+# Test workflow — placeholder.
+#
+# Runs Python-side linting and tests. Mojo toolchain installation and native
+# test execution are intentionally NOT configured here: they must be added only
+# after the local toolchain setup is verified and documented in docs/roadmap.md.
+#
+# TODO(phase-1): add verified Mojo installation and native test steps.
+
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  python-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install development dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Lint with ruff
+        run: ruff check .
+
+      - name: Check formatting with ruff
+        run: ruff format --check .
+
+      # pytest exits 5 when no tests are collected, which is expected while the
+      # repository contains scaffolding only. Drop continue-on-error once the
+      # first test suite lands.
+      - name: Run Python tests
+        continue-on-error: true
+        run: python -m pytest
+
+  # TODO(phase-1): native Mojo tests.
+  # Requires a verified, documented toolchain installation step and a stable
+  # way to invoke tests under libraries/*/tests/mojo/. Do not guess.

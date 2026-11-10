@@ -1,0 +1,66 @@
+# Python virtual environments
+.venv/
+venv/
+env/
+.python-version
+
+# Python bytecode and build output
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+*.whl
+
+# Test and lint caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Mojo build artifacts and compiled binaries
+.mojo/
+.mojoc
+*.mojopkg
+*.mojoc
+*.so
+*.dylib
+*.dll
+*.o
+*.a
+.magic/
+magic-cache/
+
+# Benchmark temporary data (tracked configurations are NOT ignored)
+.benchmarks/
+benchmark_results/
+benchmark_tmp/
+*.bench.json
+*.bench.tmp
+
+# Generated reports (curated, checked-in release reports are NOT ignored)
+reports/generated/
+docs/benchmarks/generated/
+*.report.tmp
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Generated artifacts
+__mojocache__/
+*.so
+*.pyc
+__pycache__/
+*.egg-info/
+hello

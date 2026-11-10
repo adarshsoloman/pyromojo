@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyromojo"
+version = "0.1.0"
+description = "Native Mojo implementations of Python libraries with compatibility verification and reproducible benchmarks."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+authors = [{ name = "PyroMojo contributors" }]
+keywords = ["mojo", "python", "scientific-computing", "benchmarking"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2",
+    "pytest-benchmark>=4.0",
+    "ruff>=0.6",
+]
+
+# Project URLs are added when the public repository location is confirmed.
+
+# No Python packages are distributed yet. Library code lives in `libraries/`
+# and is not installed as part of this project; Mojo builds are handled by the
+# Mojo toolchain, not by setuptools.
+[tool.setuptools]
+packages = []
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["libraries", "shared", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["libraries", "shared"]
+norecursedirs = [
+    "mojo",
+    "vectors",
+    "python_reference",
+    ".venv",
+    "build",
+    "dist",
+]
+addopts = "-ra --strict-markers"
+
+[dependency-groups]
+dev = [
+    "mojo>=1.2.0",
+]
