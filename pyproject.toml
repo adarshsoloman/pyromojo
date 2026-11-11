@@ -63,4 +63,5 @@ addopts = "-ra --strict-markers"
 [dependency-groups]
 dev = [
     "mojo>=1.2.0",
+    "msgpack==1.2.4",
 ]

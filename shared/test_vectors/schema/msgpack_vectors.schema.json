@@ -1,0 +1,535 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pyromojo.dev/schema/msgpack_vectors-1.0.0.json",
+  "title": "PyroMojo MessagePack golden vector bundle",
+  "description": "Language-neutral golden vectors for the MessagePack v0.1 implementation. Values use an explicit tagged model so integers, float bit patterns, binary data, extension payloads, map pair order, and duplicate keys survive JSON exactly.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generator",
+    "reference",
+    "decode_options",
+    "cases"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version"
+      ],
+      "properties": {
+        "name": {
+          "const": "msgpack_vectors"
+        },
+        "version": {
+          "const": "1.0.0"
+        }
+      }
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "package",
+        "version"
+      ],
+      "properties": {
+        "package": {
+          "const": "msgpack"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        }
+      }
+    },
+    "decode_options": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "strict_map_key",
+        "duplicate_keys"
+      ],
+      "properties": {
+        "strict_map_key": {
+          "const": false
+        },
+        "duplicate_keys": {
+          "const": "preserved_in_order"
+        }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/case"
+      }
+    }
+  },
+  "$defs": {
+    "hex": {
+      "type": "string",
+      "pattern": "^([0-9a-f]{2})*$"
+    },
+    "decimal": {
+      "type": "string",
+      "pattern": "^-?(0|[1-9][0-9]*)$"
+    },
+    "marker": {
+      "type": "string",
+      "enum": [
+        "nil",
+        "bool",
+        "positive_fixint",
+        "negative_fixint",
+        "uint8",
+        "uint16",
+        "uint32",
+        "uint64",
+        "int8",
+        "int16",
+        "int32",
+        "int64",
+        "float32",
+        "float64",
+        "fixstr",
+        "str8",
+        "str16",
+        "str32",
+        "bin8",
+        "bin16",
+        "bin32",
+        "fixarray",
+        "array16",
+        "array32",
+        "fixmap",
+        "map16",
+        "map32",
+        "fixext1",
+        "fixext2",
+        "fixext4",
+        "fixext8",
+        "fixext16",
+        "ext8",
+        "ext16",
+        "ext32",
+        "timestamp32",
+        "timestamp64",
+        "timestamp96"
+      ]
+    },
+    "value": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "nil"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "const": "bool"
+            },
+            "value": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "const": "int"
+            },
+            "value": {
+              "$ref": "#/$defs/decimal"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "bits"
+          ],
+          "properties": {
+            "type": {
+              "const": "float32"
+            },
+            "bits": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "bits"
+          ],
+          "properties": {
+            "type": {
+              "const": "float64"
+            },
+            "bits": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{16}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "text"
+          ],
+          "properties": {
+            "type": {
+              "const": "str"
+            },
+            "text": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "hex"
+          ],
+          "properties": {
+            "type": {
+              "const": "bin"
+            },
+            "hex": {
+              "$ref": "#/$defs/hex"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "items"
+          ],
+          "properties": {
+            "type": {
+              "const": "array"
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/value"
+              }
+            },
+            "repeat": {
+              "$ref": "#/$defs/array_repeat"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "repeat"
+          ],
+          "properties": {
+            "type": {
+              "const": "array"
+            },
+            "repeat": {
+              "$ref": "#/$defs/array_repeat"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "pairs"
+          ],
+          "properties": {
+            "type": {
+              "const": "map"
+            },
+            "pairs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "key",
+                  "value"
+                ],
+                "properties": {
+                  "key": {
+                    "$ref": "#/$defs/value"
+                  },
+                  "value": {
+                    "$ref": "#/$defs/value"
+                  }
+                }
+              }
+            },
+            "repeat": {
+              "$ref": "#/$defs/map_repeat"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "repeat"
+          ],
+          "properties": {
+            "type": {
+              "const": "map"
+            },
+            "repeat": {
+              "$ref": "#/$defs/map_repeat"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "code",
+            "hex"
+          ],
+          "properties": {
+            "type": {
+              "const": "ext"
+            },
+            "code": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 127
+            },
+            "hex": {
+              "$ref": "#/$defs/hex"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "seconds",
+            "nanoseconds"
+          ],
+          "properties": {
+            "type": {
+              "const": "timestamp"
+            },
+            "seconds": {
+              "$ref": "#/$defs/decimal"
+            },
+            "nanoseconds": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 999999999
+            }
+          }
+        }
+      ]
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "category",
+        "mode",
+        "markers"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "nil",
+            "bool",
+            "int",
+            "float",
+            "str",
+            "bin",
+            "array",
+            "map",
+            "ext",
+            "timestamp",
+            "error"
+          ]
+        },
+        "mode": {
+          "enum": [
+            "roundtrip",
+            "decode",
+            "error"
+          ]
+        },
+        "markers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/marker"
+          }
+        },
+        "value": {
+          "$ref": "#/$defs/value"
+        },
+        "encoded": {
+          "$ref": "#/$defs/hex"
+        },
+        "error": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "contains"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "minLength": 1
+            },
+            "contains": {
+              "type": "string"
+            }
+          }
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "mode"
+            ],
+            "properties": {
+              "mode": {
+                "enum": [
+                  "roundtrip",
+                  "decode"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "value",
+              "encoded"
+            ]
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "mode"
+            ],
+            "properties": {
+              "mode": {
+                "const": "error"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "encoded",
+              "error"
+            ],
+            "not": {
+              "required": [
+                "value"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "repeat_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000000
+    },
+    "array_repeat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "item",
+        "count"
+      ],
+      "properties": {
+        "item": {
+          "$ref": "#/$defs/value"
+        },
+        "count": {
+          "$ref": "#/$defs/repeat_count"
+        }
+      }
+    },
+    "map_repeat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "value",
+        "count"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/value"
+        },
+        "value": {
+          "$ref": "#/$defs/value"
+        },
+        "count": {
+          "$ref": "#/$defs/repeat_count"
+        }
+      }
+    }
+  }
+}

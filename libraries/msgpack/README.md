@@ -1,40 +1,42 @@
 # Msgpack (Mojo Port)
 
-## Status: NOT STARTED
+## Status: PHASE 1 FOUNDATIONS COMPLETE
 
-No implementation exists yet. This README defines the intended scope of the
-first port.
+The value model, depth guard, batch CLI framing, and generated golden-vector
+pipeline exist. The encoder and decoder are Phase 2 work; see
+[PHASE1_RESULTS.md](PHASE1_RESULTS.md).
 
 ## Library description
 
 MessagePack is a compact binary serialization format. It encodes integers,
-floats, strings, binary blobs, arrays, and maps into a self-describing byte
-stream that is smaller than JSON and cheaper to parse, while remaining
-cross-language.
+floats, strings, binary blobs, arrays, maps, extension values, and timestamps
+into a self-describing byte stream that is smaller than JSON and cheaper to
+parse, while remaining cross-language.
 
 ## Original Python package
 
 - Package: `msgpack` (msgpack-python)
 - Reference role: produces authoritative encoded bytes and decodes reference
   inputs for compatibility comparison.
-- Pin policy: the exact reference version is recorded in
-  `python_reference/requirements.txt` when implementation begins, per
+- Pin policy: `msgpack==1.2.4`, recorded in
+  `python_reference/requirements.txt` and the project dev dependencies, per
   [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md).
 - Upstream source is not vendored.
 
 ## Planned Mojo implementation
 
-A native encoder and decoder operating on byte buffers, exposed through a thin,
-tested boundary that lets Python compare results. The native path must not
-delegate encoding or decoding work to the Python package.
+A native encoder and decoder operating on byte buffers, exposed through a
+length-prefixed batch CLI so Python can compare results. The native path must
+not delegate encoding or decoding work to the Python package.
 
 Layout:
 
-- `mojo/` — native sources (empty, pending Phase 2)
-- `python_reference/` — reference driver and pinned requirements
+- `mojo/` — `Value`, framing protocol, and the batch CLI
+- `python_reference/` — vector generator, reference driver, depth probe, pins
 - `tests/` — Mojo unit tests, Python compatibility tests, golden vectors
 - `benchmarks/` — cold-compile and warm-execution benchmarks
 - `examples/` — minimal encode/decode usage
+- `docs/batch_protocol.md` — CLI wire protocol
 
 ## Compatibility objectives
 
@@ -44,8 +46,10 @@ Layout:
 - Match reference error behaviour for malformed input: fail, do not silently
   accept.
 - Preserve integer width and signedness where the format distinguishes them.
-- Preserve map ordering as the reference does for the supported types.
-- Handle nesting without unbounded recursion or silent truncation.
+- Preserve map ordering and duplicate keys as ordered pairs.
+- Handle nesting without unbounded recursion or silent truncation; the default
+  depth limit is 128, below the reference C extension's 1024.
+- Cover extension types and timestamps, including negative timestamp seconds.
 
 ## v0.1 scope
 
@@ -64,12 +68,15 @@ The initial version targets the following, in this order:
 7. **Decoding** — the full v0.1 type set, with exact consumption of input and
    rejection of trailing or truncated data as the reference does.
 8. **Nested structures** — combinations of arrays and maps to a tested depth.
-9. **Invalid-input handling** — truncated headers, invalid type bytes,
-   out-of-range lengths, and malformed UTF-8 where the reference rejects it.
+9. **Extension types** — fixext1/2/4/8/16 and ext8/16/32.
+10. **Timestamps** — timestamp32, timestamp64, and timestamp96, including
+    negative seconds.
+11. **Invalid-input handling** — truncated headers, invalid type bytes,
+    out-of-range lengths, reserved markers, and malformed UTF-8 where the
+    reference rejects it.
 
-Out of scope for v0.1: extension types, timestamps, streaming unpackers,
-canonical/deterministic mode, and Python-specific object hooks. These may be
-added after v0.1 is verified.
+Out of scope for v0.1: streaming unpackers, canonical/deterministic mode, and
+Python-specific object hooks. These may be added after v0.1 is verified.
 
 ## Testing requirements
 
@@ -79,6 +86,15 @@ added after v0.1 is verified.
 - Golden vectors committed under `tests/vectors/`, validated against the shared
   schema, covering every item in the v0.1 scope.
 - Invalid-input vectors that assert failure rather than corruption.
+- `python_reference/generate_vectors.py --check` must pass; hand-edited vectors
+  are rejected by the drift test.
+
+Install test dependencies and run the suite:
+
+```bash
+uv sync --extra dev
+.venv/bin/pytest -q
+```
 
 ## Benchmarking requirements
 
@@ -90,4 +106,6 @@ added after v0.1 is verified.
 
 ## Current status
 
-NOT STARTED — directory scaffold only.
+Phase 1 complete: pinned reference, 76 generated golden cases, depth guard,
+batch CLI (`PING`/`ECHO`; `DECODE`/`ENCODE` return `UNIMPLEMENTED`), and
+pytest/Mojo coverage. Phase 2 is the encoder and decoder.

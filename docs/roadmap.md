@@ -11,8 +11,8 @@ completed when their exit criteria are met.
 - [x] Root documentation, license, third-party policy, and editor/CI ignores.
 - [x] Python project configuration (test and lint tooling).
 - [x] Placeholder CI workflows with toolchain steps marked for later setup.
-- [ ] Verify the locally installed Mojo toolchain and record its version.
-- [ ] Add test vector JSON schema and the first shared generator interface.
+- [x] Verify the locally installed Mojo toolchain and record its version.
+- [x] Add test vector JSON schema and the first shared generator interface.
 
 **Exit criteria:** Clean scaffold reviewed, configuration validated, and the
 toolchain documented.
@@ -21,12 +21,12 @@ toolchain documented.
 
 **Goal:** The first complete port, exercising the entire workflow.
 
-Scope: integer, float, string, binary, array, and map encoding; decoding;
-nested structures; invalid-input handling.
+Scope: integer, float, string, binary, array, map, extension, and timestamp
+encoding; decoding; nested structures; invalid-input handling.
 
-- [ ] Pin the reference `msgpack` version and document its license.
-- [ ] Define the v0.1 compatibility surface and known deviations.
-- [ ] Add golden vectors covering all supported types and nesting.
+- [x] Pin the reference `msgpack` version and document its license.
+- [x] Define the v0.1 compatibility surface and known deviations.
+- [x] Add golden vectors covering all supported types and nesting.
 - [ ] Implement native Mojo encoding and decoding.
 - [ ] Add Mojo unit tests and Python compatibility tests.
 - [ ] Add cold-compilation and warm-execution benchmarks.
