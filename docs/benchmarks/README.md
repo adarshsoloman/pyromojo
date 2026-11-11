@@ -45,6 +45,9 @@ These are distinct measurements and must never be combined:
 
 Reports present both. A faster warm path does not imply a faster developer loop.
 
+Curated, review-ready release summaries live in `releases/` (for example,
+`releases/msgpack-v0.1.md`). Raw per-run reports stay git-ignored.
+
 ## Reproducibility requirements
 
 Every benchmark report records:

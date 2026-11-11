@@ -1,0 +1,6 @@
+{
+  "seed": 20261111,
+  "warmup": 5,
+  "samples": 25,
+  "workloads": "all"
+}

@@ -1,14 +1,14 @@
 # Msgpack (Mojo Port)
 
-## Status: PHASE 6 INTEGRATION COMPLETE
+## Status: PHASE 7 BENCHMARKS COMPLETE (v0.1 DONE)
 
 The full v0.1 type set — integers, Float32/Float64, strings, binary values,
 nil and bool (top level and nested), recursively nested arrays and maps, all
 eight extension families, and the standard timestamp extension — encodes and
 decodes with exact-byte and cross-language tests. The batch CLI is audited
-end to end and the repository runners (`scripts/run_all_tests.py`,
-`scripts/check_compatibility.py`) execute the whole suite reproducibly.
-See [PHASE6_RESULTS.md](PHASE6_RESULTS.md).
+end to end, the repository runners execute the whole suite reproducibly, and
+the three-way benchmark suite reports honest numbers with no universal-speed
+claim. See [PHASE7_RESULTS.md](PHASE7_RESULTS.md).
 
 ## Library description
 
@@ -118,7 +118,23 @@ Float64 bit patterns, UTF-8 strings, arbitrary binary payloads, recursively
 nested arrays and maps, all extension markers (including empty payloads and
 length boundaries), and all three timestamp representations (including
 negative seconds and nanosecond boundaries), with native exact-byte tests,
-bidirectional CLI compatibility, and repository-level runners. Top-level
-nil and bool are supported; the remaining deviations (negative extension
-codes, 128 vs 1024 depth limit, textual errors) are documented and pinned by
-tests.
+bidirectional CLI compatibility, repository-level runners, and a three-way
+benchmark suite. Top-level nil and bool are supported; the remaining
+deviations (negative extension codes, 128 vs 1024 depth limit, textual
+errors) are documented and pinned by tests.
+
+## Benchmarks
+
+Run the three-way suite (fallback vs C vs native Mojo) from the repository
+root:
+
+```bash
+.venv/bin/python libraries/msgpack/benchmarks/run_benchmarks.py
+```
+
+Headline: Mojo encodes ints/maps/telemetry faster than C (up to ~4x on
+small maps) but loses bulk byte copies (binary encode 7.4x slower);
+decode is mixed with C ahead on scalar-dense payloads. No universal-speed
+claim is made. Full tables, methodology, and limitations:
+[PHASE7_RESULTS.md](PHASE7_RESULTS.md) and
+[the curated release summary](../../docs/benchmarks/releases/msgpack-v0.1.md).

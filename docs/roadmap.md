@@ -1,7 +1,7 @@
 # Roadmap
 
-Status: Msgpack v0.1 integrated (full type set, CLI, and test runners
-complete); benchmarks are future work. Dates are intentionally omitted;
+Status: Msgpack v0.1 complete (full type set, CLI, test runners, and
+benchmarks with a curated release report). Dates are intentionally omitted;
 phases are completed when their exit criteria are met.
 
 ## Phase 1: Repository foundation
@@ -38,7 +38,8 @@ future work.
 - [x] Add Mojo unit tests and Python compatibility tests.
 - [x] Add repository test and compatibility runners (`run_all_tests.py`,
   `check_compatibility.py`).
-- [ ] Add cold-compilation and warm-execution benchmarks.
+- [x] Add cold-compilation and warm-execution benchmarks with a curated
+  release report (`docs/benchmarks/releases/msgpack-v0.1.md`).
 
 **Exit criteria:** All vector and compatibility tests pass; benchmark report is
 reproducible from a clean checkout.
