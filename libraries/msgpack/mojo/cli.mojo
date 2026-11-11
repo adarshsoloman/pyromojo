@@ -1,17 +1,18 @@
 """Batch CLI for the native MessagePack implementation.
 
-Phase 2 implements integer DECODE and ENCODE. Non-integer MessagePack values
-still report UNIMPLEMENTED; malformed integer models report ERROR.
+Phase 3 implements integer, float, string, and binary DECODE and ENCODE.
+Arrays, maps, extensions, timestamps, nil, and bool still report UNIMPLEMENTED;
+malformed scalar models report ERROR.
 """
 
 from std.collections import List
 from std.io import RawFileDescriptor
 
-from mojo_msgpack.integer import (
-    append_integer_model,
-    decode_exact,
-    decode_integer_model,
-    encode_value,
+from mojo_msgpack.scalar import (
+    append_scalar_model,
+    decode_scalar_exact,
+    decode_scalar_model,
+    encode_scalar_value,
 )
 from mojo_msgpack.protocol import (
     OP_DECODE,
@@ -66,9 +67,9 @@ def main() raises:
             write_frame(stdout, STATUS_OK, payload)
         elif opcode == OP_DECODE:
             try:
-                var value = decode_exact(payload)
-                var model = List[UInt8](capacity=9)
-                append_integer_model(model, value)
+                var value = decode_scalar_exact(payload)
+                var model = List[UInt8](capacity=1 + len(value.data))
+                append_scalar_model(model, value)
                 write_frame(stdout, STATUS_OK, Span(model))
             except error:
                 var message = String(error)
@@ -78,14 +79,14 @@ def main() raises:
                     _reply_error(stdout, message)
         elif opcode == OP_ENCODE:
             # Preserve the Phase 1 stub behaviour for the nil sentinel while
-            # reporting malformed integer models as errors.
+            # reporting malformed scalar models as errors.
             if len(payload) == 1 and payload[0] == 0xC0:
                 _reply_unimplemented(stdout, opcode)
                 continue
             try:
-                var value = decode_integer_model(payload)
-                var encoded = List[UInt8](capacity=9)
-                encode_value(encoded, value)
+                var value = decode_scalar_model(payload)
+                var encoded = List[UInt8](capacity=1 + len(value.data))
+                encode_scalar_value(encoded, value)
                 write_frame(stdout, STATUS_OK, Span(encoded))
             except error:
                 _reply_error(stdout, String(error))

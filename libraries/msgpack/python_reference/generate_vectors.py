@@ -29,9 +29,9 @@ from typing import Any
 
 import msgpack
 
-SCHEMA_VERSION = "1.1.0"
+SCHEMA_VERSION = "1.2.0"
 GENERATOR_NAME = "msgpack_vectors"
-GENERATOR_VERSION = "1.1.0"
+GENERATOR_VERSION = "1.2.0"
 REFERENCE_VERSION = "1.2.4"
 REPEAT_MAX = 1_000_000
 
@@ -182,6 +182,17 @@ def model_to_python(model: dict[str, Any]) -> Any:
     raise AssertionError(f"unknown model tag {tag!r}")
 
 
+def pack_model(model: dict[str, Any]) -> bytes:
+    """Encode a model with the reference's canonical settings.
+
+    Float32 is not a Python default: it requires ``use_single_float=True``.
+    """
+    if model["type"] == "float32":
+        value = struct.unpack(">f", bytes.fromhex(model["bits"]))[0]
+        return msgpack.packb(value, use_single_float=True, use_bin_type=True)
+    return msgpack.packb(model_to_python(model), use_bin_type=True)
+
+
 def model_matches(model: dict[str, Any], actual: Any, path: str = "$") -> None:
     """Raise AssertionError unless ``actual`` decodes to ``model``."""
     tag = model["type"]
@@ -303,7 +314,7 @@ def roundtrip_case(
     value: dict[str, Any],
     note: str | None = None,
 ) -> dict[str, Any]:
-    encoded = msgpack.packb(model_to_python(value), use_bin_type=True)
+    encoded = pack_model(value)
     model_matches(value, decode_bytes(encoded))
     return _case(
         case_id=case_id,
@@ -311,6 +322,35 @@ def roundtrip_case(
         mode="roundtrip",
         markers=markers,
         value=value,
+        encoded=encoded,
+        note=note,
+    )
+
+
+def float32_roundtrip_case(
+    case_id: str,
+    bits: str,
+    note: str | None = None,
+) -> dict[str, Any]:
+    """Roundtrip a float32 through ``Packer(use_single_float=True)``.
+
+    Default Python packing always emits float64, so this explicit reference
+    path keeps Float32 compatibility separate from the default behavior.
+    """
+    model = v_float32(bits)
+    value = struct.unpack(">f", bytes.fromhex(bits))[0]
+    encoded = msgpack.packb(value, use_single_float=True, use_bin_type=True)
+    if encoded.hex() != "ca" + bits:
+        raise AssertionError(
+            f"{case_id}: Python use_single_float encoded {encoded.hex()}, expected ca{bits}"
+        )
+    model_matches(model, decode_bytes(encoded))
+    return _case(
+        case_id=case_id,
+        category="float",
+        mode="roundtrip",
+        markers=["float32"],
+        value=model,
         encoded=encoded,
         note=note,
     )
@@ -442,38 +482,45 @@ def build_cases() -> list[dict[str, Any]]:
         cases.append(roundtrip_case(case_id, "int", [integer_marker(value)], model))
 
     # floats ---------------------------------------------------------------
-    cases.append(roundtrip_case("float64_one_and_half", "float", ["float64"], v_float64(1.5)))
-    cases.append(roundtrip_case("float64_negative_zero", "float", ["float64"], v_float64(-0.0)))
-    cases.append(
-        roundtrip_case(
-            "float64_positive_infinity",
-            "float",
-            ["float64"],
-            v_float64_bits("7ff0000000000000"),
-        )
-    )
-    cases.append(
-        roundtrip_case(
-            "float64_nan_payload",
-            "float",
-            ["float64"],
-            v_float64_bits("7ff8000000000001"),
-            note="NaN payload bits must survive the reference codec.",
-        )
-    )
-    for case_id, bits in [
-        ("float32_one_and_half", "3fc00000"),
+    float64_cases = [
+        ("float64_positive_zero", "0000000000000000"),
+        ("float64_negative_zero", "8000000000000000"),
+        ("float64_one_and_half", "3ff8000000000000"),
+        ("float64_negative_normal", "c004000000000000"),
+        ("float64_max_finite", "7fefffffffffffff"),
+        ("float64_min_normal", "0010000000000000"),
+        ("float64_min_subnormal", "0000000000000001"),
+        ("float64_negative_subnormal", "8000000000000001"),
+        ("float64_positive_infinity", "7ff0000000000000"),
+        ("float64_negative_infinity", "fff0000000000000"),
+        ("float64_nan_payload", "7ff8000000000001"),
+        ("float64_nan_signaling", "7ff0000000000001"),
+        ("float64_nan_negative_payload", "fff8000000000001"),
+    ]
+    for case_id, bits in float64_cases:
+        cases.append(roundtrip_case(case_id, "float", ["float64"], v_float64_bits(bits)))
+
+    float32_cases = [
+        ("float32_positive_zero", "00000000"),
         ("float32_negative_zero", "80000000"),
+        ("float32_one", "3f800000"),
+        ("float32_one_and_half", "3fc00000"),
+        ("float32_negative_one_and_half", "bfc00000"),
+        ("float32_max_finite", "7f7fffff"),
+        ("float32_min_normal", "00800000"),
+        ("float32_min_subnormal", "00000001"),
+        ("float32_negative_subnormal", "80000001"),
         ("float32_positive_infinity", "7f800000"),
-    ]:
+        ("float32_negative_infinity", "ff800000"),
+        ("float32_nan_payload", "7fc00001"),
+        ("float32_negative_nan_payload", "ffc00001"),
+    ]
+    for case_id, bits in float32_cases:
         cases.append(
-            decode_case(
+            float32_roundtrip_case(
                 case_id,
-                "float",
-                ["float32"],
-                v_float32(bits),
-                bytes.fromhex("ca" + bits),
-                note="The Python reference packs only float64, so float32 is decode-only.",
+                bits,
+                note="Python emits float32 only through use_single_float=True.",
             )
         )
 
@@ -494,7 +541,26 @@ def build_cases() -> list[dict[str, Any]]:
     cases.append(roundtrip_case("str_str8_min", "str", ["str8"], v_str("x" * 32)))
     cases.append(roundtrip_case("str_str8_max", "str", ["str8"], v_str("x" * 255)))
     cases.append(roundtrip_case("str_str16", "str", ["str16"], v_str("x" * 256)))
+    cases.append(roundtrip_case("str_str16_max", "str", ["str16"], v_str("x" * 65535)))
     cases.append(roundtrip_case("str_str32", "str", ["str32"], v_str("x" * 65536)))
+    cases.append(
+        roundtrip_case(
+            "str_unicode_fixstr_max_bytes",
+            "str",
+            ["fixstr"],
+            v_str("€" * 10 + "x"),
+            note="31 UTF-8 bytes, 11 characters, so marker selection uses bytes.",
+        )
+    )
+    cases.append(
+        roundtrip_case(
+            "str_unicode_str8_min_bytes",
+            "str",
+            ["str8"],
+            v_str("é" * 16),
+            note="32 UTF-8 bytes, 16 characters, so marker selection uses bytes.",
+        )
+    )
 
     # binary ---------------------------------------------------------------
     cases.append(roundtrip_case("bin_empty", "bin", ["bin8"], v_bin(b"")))
@@ -503,8 +569,18 @@ def build_cases() -> list[dict[str, Any]]:
             "bin_non_utf8", "bin", ["bin8"], v_bin(b"\x00\xff\x80"), note="Binary is not text."
         )
     )
+    cases.append(
+        roundtrip_case(
+            "bin_all_byte_values",
+            "bin",
+            ["bin16"],
+            v_bin(bytes(range(256))),
+            note="Every byte value, including NUL, is preserved.",
+        )
+    )
     cases.append(roundtrip_case("bin_bin8_max", "bin", ["bin8"], v_bin(b"x" * 255)))
     cases.append(roundtrip_case("bin_bin16", "bin", ["bin16"], v_bin(b"x" * 256)))
+    cases.append(roundtrip_case("bin_bin16_max", "bin", ["bin16"], v_bin(b"x" * 65535)))
     cases.append(roundtrip_case("bin_bin32", "bin", ["bin32"], v_bin(b"x" * 65536)))
 
     # arrays ---------------------------------------------------------------
@@ -693,6 +769,104 @@ def build_cases() -> list[dict[str, Any]]:
             "StackError",
             "",
             note="msgpack 1.2.4 caps nesting at 1024; PyroMojo's default is 128.",
+        )
+    )
+
+    # scalar errors --------------------------------------------------------
+    cases.append(
+        error_case(
+            "error_truncated_fixstr",
+            bytes.fromhex("a56162"),
+            "ValueError",
+            "incomplete input",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_truncated_str16",
+            bytes.fromhex("da00056162"),
+            "ValueError",
+            "incomplete input",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_truncated_str32",
+            bytes.fromhex("db000000056162"),
+            "ValueError",
+            "incomplete input",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_declared_str32_too_large",
+            bytes.fromhex("dbffffffff"),
+            "ValueError",
+            "incomplete input",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_truncated_utf8_sequence",
+            bytes.fromhex("a2e282"),
+            "UnicodeDecodeError",
+            "unexpected end of data",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_invalid_utf8_overlong",
+            bytes.fromhex("a2c080"),
+            "UnicodeDecodeError",
+            "invalid start byte",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_invalid_utf8_surrogate",
+            bytes.fromhex("a3eda080"),
+            "UnicodeDecodeError",
+            "invalid continuation byte",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_invalid_utf8_too_large",
+            bytes.fromhex("a4f4908080"),
+            "UnicodeDecodeError",
+            "invalid continuation byte",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_truncated_bin8",
+            bytes.fromhex("c4050102"),
+            "ValueError",
+            "incomplete input",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_truncated_bin16",
+            bytes.fromhex("c500050102"),
+            "ValueError",
+            "incomplete input",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_truncated_bin32",
+            bytes.fromhex("c6000000050102"),
+            "ValueError",
+            "incomplete input",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_declared_bin32_too_large",
+            bytes.fromhex("c6ffffffff"),
+            "ValueError",
+            "incomplete input",
         )
     )
 

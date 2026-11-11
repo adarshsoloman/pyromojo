@@ -1,10 +1,10 @@
 # Msgpack (Mojo Port)
 
-## Status: PHASE 2 INTEGER CODEC COMPLETE
+## Status: PHASE 3 SCALAR CODEC COMPLETE
 
-All ten integer format families encode and decode with exact-byte and
-cross-language tests. Floats, strings, binary, arrays, maps, extensions, and
-timestamps remain future work. See [PHASE2_RESULTS.md](PHASE2_RESULTS.md).
+Integers, Float32/Float64, strings, and binary values encode and decode with
+exact-byte and cross-language tests. Arrays, maps, extensions, timestamps, nil,
+and bool remain future work. See [PHASE3_RESULTS.md](PHASE3_RESULTS.md).
 
 ## Library description
 
@@ -31,7 +31,7 @@ not delegate encoding or decoding work to the Python package.
 
 Layout:
 
-- `mojo/` — `Value`, integer codec, framing protocol, and the batch CLI
+- `mojo/` — `Value`, integer/scalar codecs, framing protocol, and the batch CLI
 - `python_reference/` — vector generator, reference driver, depth probe, pins
 - `tests/` — Mojo unit tests, Python compatibility tests, golden vectors
 - `benchmarks/` — cold-compile and warm-execution benchmarks
@@ -46,6 +46,9 @@ Layout:
 - Match reference error behaviour for malformed input: fail, do not silently
   accept.
 - Preserve integer width and signedness where the format distinguishes them.
+  MessagePack has no independent signedness bit for non-negative wire values:
+  positive fixint and uint8/16/32/64 decode with an unsigned tag even when the
+  encoder started from a signed value.
 - Preserve map ordering and duplicate keys as ordered pairs.
 - Handle nesting without unbounded recursion or silent truncation; the default
   depth limit is 128, below the reference C extension's 1024.
@@ -106,6 +109,7 @@ uv sync --extra dev
 
 ## Current status
 
-Phase 2 integer scope complete: 35 integer golden cases, native exact-byte
-tests, and bidirectional CLI compatibility with the pinned Python reference.
-Non-integer values still return `UNIMPLEMENTED`.
+Phase 3 scalar scope complete: 127 golden cases covering integers, Float32 and
+Float64 bit patterns, UTF-8 strings, and arbitrary binary payloads, with native
+exact-byte tests and bidirectional CLI compatibility. Arrays, maps, extensions,
+timestamps, nil, and bool still return `UNIMPLEMENTED`.

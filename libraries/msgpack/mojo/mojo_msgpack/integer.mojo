@@ -2,8 +2,9 @@
 
 Only the ten integer format families are handled here. Decoded positive
 fixints and uint8/16/32/64 become ``Value.unsigned``; negative fixints and
-int8/16/32/64 become ``Value.integer``. A failed decode leaves the decoder
-position unchanged.
+int8/16/32/64 become ``Value.integer``. MessagePack has no independent
+signedness bit for non-negative wire values, so signed-positive inputs decode
+as unsigned. A failed decode leaves the decoder position unchanged.
 """
 
 from std.collections import List

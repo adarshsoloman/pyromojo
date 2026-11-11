@@ -5,9 +5,10 @@ request/response protocol over stdin/stdout. It exists so the Python reference
 can drive the same process model the final encoder/decoder will use without
 `ctypes`, `PythonModuleBuilder`, or Python-specific object hooks.
 
-Phase 2 implements framing, `PING`, `ECHO`, and integer `DECODE`/`ENCODE`.
-Non-integer MessagePack values still return `UNIMPLEMENTED`; malformed integer
-models return `ERROR`.
+Phase 3 implements framing, `PING`, `ECHO`, and `DECODE`/`ENCODE` for integers,
+Float32/Float64, strings, and binary. Arrays, maps, extensions, timestamps,
+nil, and bool still return `UNIMPLEMENTED`; malformed scalar models return
+`ERROR`.
 
 ## Framing
 
@@ -36,24 +37,38 @@ body     := uint8 status | payload
 |--------|-----------|-------------------|-----------------|--------------------------|
 | `0x01` | `PING`    | Implemented       | Ignored         | Empty                    |
 | `0x02` | `ECHO`    | Implemented       | Arbitrary bytes | Exact request payload    |
-| `0x10` | `DECODE`  | Integers          | MessagePack bytes | 9-byte integer model |
-| `0x11` | `ENCODE`  | Integers          | 9-byte integer model | MessagePack bytes |
+| `0x10` | `DECODE`  | Scalar types      | MessagePack bytes | Scalar model |
+| `0x11` | `ENCODE`  | Scalar types      | Scalar model | MessagePack bytes |
 
 An empty body has no opcode and returns an `ERROR` frame.
 
-### Integer transfer model
+### Scalar transfer models
 
-`DECODE` returns and `ENCODE` accepts exactly 9 bytes:
+`DECODE` returns and `ENCODE` accepts one of these models. Integer models are
+unchanged from Phase 2 and are exactly 9 bytes:
 
 ```
-model := uint8 tag | uint64_be bits
-tag   := 0x00 signed | 0x01 unsigned
+integer := uint8 tag | uint64_be bits
+tag     := 0x00 signed | 0x01 unsigned
+
+float32 := 0x10 | 4 float bytes
+float64 := 0x11 | 8 float bytes
+string  := 0x12 | UTF-8 payload bytes
+binary  := 0x13 | arbitrary payload bytes
 ```
 
-`bits` is the two's-complement bit pattern for signed values and the plain
-64-bit value for unsigned values. `ENCODE` accepts only this model; other
-lengths or tags are rejected. Positive fixints and uint8/16/32/64 decode to
-tag `0x01`; negative fixints and int8/16/32/64 decode to tag `0x00`.
+`bits` is the two's-complement bit pattern for signed integers and the plain
+64-bit value for unsigned integers. Float models carry the IEEE 754 bit
+pattern, preserving NaN payloads and signed zero. String and binary lengths
+come from the frame length; the string model must contain valid UTF-8.
+
+Positive fixints and uint8/16/32/64 decode to tag `0x01`; negative fixints and
+int8/16/32/64 decode to tag `0x00`. MessagePack has no independent signedness
+bit for non-negative wire values, so a positive integer encoded from a signed
+`Value` decodes back with the unsigned tag.
+
+Unknown model tags are `ERROR`. Integer models must remain exactly 9 bytes;
+float32 and float64 models must be exactly 5 and 9 bytes respectively.
 
 ## Statuses
 
@@ -77,10 +92,11 @@ the status byte, not message text.
   are answered normally.
 - **Unknown opcode / empty body**: the process answers with `ERROR` and keeps
   reading.
-- **Valid but unimplemented input**: a non-integer value or model gets
-  `UNIMPLEMENTED` and the process keeps reading.
-- **Malformed or truncated integer input**: `ERROR` includes a category and
-  byte offset, for example `truncated: offset 1` or `trailing-data: offset 3`.
+- **Valid but unimplemented input**: nil, bool, array, map, extension, or
+  timestamp values get `UNIMPLEMENTED` and the process keeps reading.
+- **Malformed or truncated scalar input**: `ERROR` includes a category and
+  byte offset, for example `truncated: offset 1`, `invalid-utf8: offset 1`,
+  `invalid-marker: offset 0`, or `trailing-data: offset 3`.
 
 The framed stream is stdout only. Diagnostics never share stdout with frames;
 stderr is free-form text.
@@ -102,8 +118,10 @@ request:  00 00 00 03  02 68 69
 response: 00 00 00 03  00 68 69
 ```
 
-`DECODE` of `cc ff` (unsigned 255) returns the model `01 00 00 00 00 00 00 00 ff`;
-`ENCODE` of that model returns `cc ff`.
+`DECODE` of `cc ff` (unsigned 255) returns the model
+`01 00 00 00 00 00 00 00 ff`; `ENCODE` of that model returns `cc ff`.
+`DECODE` of `ca 3f c0 00 00` (Float32 1.5) returns `10 3f c0 00 00`;
+`DECODE` of `a5 68 65 6c 6c 6f` (`"hello"`) returns `12 68 65 6c 6c 6f`.
 
 ## Build and run
 

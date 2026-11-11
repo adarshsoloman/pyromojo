@@ -4,9 +4,9 @@ Native [Mojo](https://www.modular.com/mojo) implementations of widely used Pytho
 libraries, verified against the original Python behaviour and benchmarked with
 reproducible, shared test vectors.
 
-> **Status: initial scaffolding.** No library port is implemented yet. This
-> repository currently contains only the project structure, policy documents,
-> and configuration needed to begin work on Msgpack.
+> **Status: active development.** The Msgpack port implements the integer,
+> float, string, and binary scalar codecs; containers and extensions remain in
+> progress.
 
 ## Motivation
 
@@ -56,7 +56,7 @@ libraries must not depend on one another. See
 
 | Library       | Purpose                                   | Status      |
 |---------------|-------------------------------------------|-------------|
-| `msgpack`     | Binary serialization                      | PHASE 2 INTEGERS |
+| `msgpack`     | Binary serialization                      | PHASE 3 SCALARS |
 | `levenshtein` | Edit distance and string similarity       | NOT STARTED |
 | `audioop`     | Legacy audio sample manipulation          | NOT STARTED |
 | `bitarray`    | Compact bit array operations              | NOT STARTED |

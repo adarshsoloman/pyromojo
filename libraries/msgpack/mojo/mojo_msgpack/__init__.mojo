@@ -1,1 +1,1 @@
-"""Native Mojo MessagePack implementation (integer codec and CLI)."""
+"""Native Mojo MessagePack implementation (scalar codecs and CLI)."""

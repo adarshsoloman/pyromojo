@@ -8,10 +8,8 @@ import sys
 from pathlib import Path
 
 import pytest
-from generate_vectors import decode_bytes, model_matches, model_to_python
+from generate_vectors import decode_bytes, model_matches, pack_model
 from shared.validation.msgpack_vectors import MARKERS, validate_bundle
-
-import msgpack
 
 ROOT = Path(__file__).resolve().parents[4]
 GENERATOR = ROOT / "libraries/msgpack/python_reference/generate_vectors.py"
@@ -42,7 +40,7 @@ def test_reference_replays_every_case(vectors_bundle: dict) -> None:
         case_id = case["id"]
         raw = bytes.fromhex(case["encoded"])
         if case["mode"] == "roundtrip":
-            packed = msgpack.packb(model_to_python(case["value"]), use_bin_type=True)
+            packed = pack_model(case["value"])
             assert packed == raw, f"{case_id}: reference encoding drifted"
             model_matches(case["value"], decode_bytes(raw))
         elif case["mode"] == "decode":

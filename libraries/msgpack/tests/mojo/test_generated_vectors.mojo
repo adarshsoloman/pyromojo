@@ -4,6 +4,7 @@ from std.collections import List
 from std.testing import TestSuite, assert_equal, assert_raises
 
 from mojo_msgpack.integer import decode_exact, encode_value
+from mojo_msgpack.scalar import decode_scalar_exact, encode_scalar_value
 from mojo_msgpack.value import Value
 
 from generated_vectors import VECTOR_COUNT, load_vectors, value_for_case
@@ -105,6 +106,37 @@ def test_integer_vectors_decode_and_reencode() raises:
         for offset in range(len(raw)):
             assert_equal(encoded[offset], raw[offset])
     assert_equal(checked, 35)
+
+
+def test_scalar_vectors_decode_and_reencode() raises:
+    var cases = load_vectors()
+    var checked = 0
+    for index in range(len(cases)):
+        var entry = cases[index]
+        if (
+            entry.category != "int"
+            and entry.category != "float"
+            and entry.category != "str"
+            and entry.category != "bin"
+        ):
+            continue
+        checked += 1
+        var raw = decode_hex(entry.encoded_hex)
+        var decoded = decode_scalar_exact(Span(raw))
+        var expected = value_for_case(entry.id)
+        assert_equal(decoded.kind, expected.kind)
+        if entry.category == "int" or entry.category == "float":
+            assert_equal(decoded.int_bits, expected.int_bits)
+        else:
+            assert_equal(len(decoded.data), len(expected.data))
+            for offset in range(len(expected.data)):
+                assert_equal(decoded.data[offset], expected.data[offset])
+        var encoded = List[UInt8]()
+        encode_scalar_value(encoded, decoded)
+        assert_equal(len(encoded), len(raw))
+        for offset in range(len(raw)):
+            assert_equal(encoded[offset], raw[offset])
+    assert_equal(checked, 80)
 
 
 def test_error_metadata() raises:
