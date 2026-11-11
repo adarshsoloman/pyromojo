@@ -27,9 +27,9 @@ encoding; decoding; nested structures; invalid-input handling.
 
 Progress: the full v0.1 type set — integers, floats, strings, binary, arrays,
 maps, extensions, and timestamps — plus top-level nil/bool, the audited
-batch CLI, and repository test runners are complete
-([results](../libraries/msgpack/PHASE6_RESULTS.md)). Benchmarks remain
-future work.
+batch CLI, repository test runners, and the three-way benchmark suite with
+a curated release report are complete
+([results](../libraries/msgpack/PHASE7_RESULTS.md)).
 
 - [x] Pin the reference `msgpack` version and document its license.
 - [x] Define the v0.1 compatibility surface and known deviations.

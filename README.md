@@ -84,9 +84,15 @@ A port is not considered verified until all layers agree.
 
 Benchmarks compare three paths under the same workload:
 
-1. The reference Python implementation.
+1. The reference Python implementation (pure-Python and C-backed variants
+   where both exist).
 2. The native Mojo implementation.
-3. The Mojo implementation called from Python (interop overhead included).
+3. The Mojo implementation called from Python (interop overhead included),
+   where the project supports it.
+
+The MessagePack v0.1 suite measures paths 1 and 2; path 3 is out of scope
+(`ctypes`/`PythonModuleBuilder` are not used) and its reports state that
+gap explicitly instead of implying coverage.
 
 Cold compilation and warm execution are reported separately. Benchmark inputs,
 toolchain versions, hardware, and methodology must be recorded so results can be

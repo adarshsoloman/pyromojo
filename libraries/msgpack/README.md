@@ -106,14 +106,17 @@ uv sync --extra dev
 ## Benchmarking requirements
 
 - Encode and decode benchmarks for small, medium, and large payloads.
-- Three-way comparison: Python reference, native Mojo, Mojo via Python interop.
+- Three-way comparison: pure-Python fallback, C-backed reference, native
+  Mojo. Mojo-from-Python interop is out of project scope (no
+  `ctypes`/`PythonModuleBuilder`) and is reported as not measured, not
+  implied.
 - Cold compilation and warm execution reported separately.
 - Environment metadata and configuration recorded per
   [docs/benchmarks/README.md](../../docs/benchmarks/README.md).
 
 ## Current status
 
-Phase 6 scope complete: 162 golden cases covering integers, Float32 and
+Phase 7 scope complete: 162 golden cases covering integers, Float32 and
 Float64 bit patterns, UTF-8 strings, arbitrary binary payloads, recursively
 nested arrays and maps, all extension markers (including empty payloads and
 length boundaries), and all three timestamp representations (including

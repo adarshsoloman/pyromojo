@@ -20,9 +20,8 @@ produced by the driver, and the full methodology is in
   payloads (1.6x–3.4x) and binary (8.5x, zero-copy slice vs copy). Mojo wins
   maps (0.6x–0.9x), telemetry (0.78x), and extensions (0.33x, where the C
   path allocates `ExtType`/`Timestamp` objects per value).
-- **Fallback is far behind both** (Mojo is 6x–36x faster; C is 5x–53x
-  faster) — except binary encode/decode, where fallback is within 12% of C
-  and beats Mojo (7.4x/2.3x). The binary result is unfavorable to Mojo and
+- **Fallback is far behind both** (Mojo is 6x–37x faster; C is 6x–53x faster) — except binary, where C leads by only 1.1x/3.8x, fallback sits within 12% of C,
+  and fallback beats Mojo outright (encode 6.6x, decode 2.3x). The binary result is unfavorable to Mojo and
   is reported unchanged.
 - **The important comparison is Mojo vs C, and it is a draw with shape.**
   Neither implementation is universally faster; per-byte rates converge on
@@ -55,7 +54,12 @@ correctness (byte equality plus FNV-1a value fingerprints) is verified
 outside every timed region. Native timing is in-process (`bench.mojo`);
 framing I/O, process startup, and IPC are excluded.
 
-## Encode results (median, min/max ns; ratios on medians, lower is faster)
+## Encode results
+
+Speedup convention: each ratio is `Mojo time / C time` (or `/ fallback
+time`) computed on medians. Below 1.0 means Mojo is faster; above 1.0 means
+the other implementation is faster. Medians with min/max ns, plus ops/s and
+MB/s throughput derived from the medians:
 
 | workload | bytes | C med ns (min/max) | C ops/s | C MB/s | fb med ns | Mojo med ns (min/max) | Mojo ops/s | Mojo MB/s | Mojo/C | Mojo/fb | C/fb |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -72,7 +76,9 @@ framing I/O, process startup, and IPC are excluded.
 | payload_large | 1016848 | 1161997 (1146918/1231687) | 861 | 875.1 | 18095752 | 891788 (821516/1566528) | 1.1K | 1140.2 | 0.77x | 0.049x | 0.064x |
 | extensions | 396 | 921 (872/1072) | 1.09M | 430.0 | 7333 | 911 (891/1212) | 1.10M | 434.7 | 0.99x | 0.124x | 0.126x |
 
-## Decode results (median, min/max ns; ratios on medians, lower is faster)
+## Decode results
+
+Same `Mojo time / other time` convention as above (below 1.0 = Mojo faster):
 
 | workload | bytes | C med ns (min/max) | C ops/s | C MB/s | fb med ns | Mojo med ns (min/max) | Mojo ops/s | Mojo MB/s | Mojo/C | Mojo/fb | C/fb |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -114,7 +120,7 @@ RSS includes process startup and the Mojo runtime; it is not allocator-only.
   Container-heavy decode favors Mojo (maps 0.6x–0.9x, telemetry 0.78x):
   appending to a typed list beats dict hashing, and flat `Value`s beat
   per-value `ExtType`/`Timestamp` allocation (extensions 0.33x).
-- The fallback comparison is reported for completeness only: Mojo is 6x–36x
+- The fallback comparison is reported for completeness only: Mojo is 6x–37x
   faster except binary, where fallback wins. This says nothing about Mojo
   vs optimized code; the C column is the real baseline.
 
