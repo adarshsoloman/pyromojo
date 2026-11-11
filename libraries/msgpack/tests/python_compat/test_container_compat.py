@@ -346,12 +346,12 @@ def test_malformed_container_wire_values_are_errors(
     assert message.startswith(prefix)
 
 
-def test_bare_nil_and_bool_stay_unimplemented(msgpack_cli: Path) -> None:
+def test_top_level_nil_and_bool_roundtrip(msgpack_cli: Path) -> None:
     for marker in (b"\xc0", b"\xc2", b"\xc3"):
-        status, message = call(msgpack_cli, b"\x10" + marker)
-        assert status == STATUS_UNIMPLEMENTED
-        assert b"Phase 1" in message
+        status, model = call(msgpack_cli, b"\x10" + marker)
+        assert status == STATUS_OK
+        assert model == marker
 
-        status, message = call(msgpack_cli, b"\x11" + marker)
-        assert status == STATUS_UNIMPLEMENTED
-        assert b"Phase 1" in message
+        status, encoded = call(msgpack_cli, b"\x11" + marker)
+        assert status == STATUS_OK
+        assert encoded == marker

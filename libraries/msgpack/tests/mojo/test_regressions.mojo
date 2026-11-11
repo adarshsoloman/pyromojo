@@ -104,6 +104,27 @@ def test_scalar_api_rejects_containers() raises:
         _ = decode_scalar_exact(decode_hex("80"))
 
 
+def test_huge_declared_counts_fail_before_allocation() raises:
+    with assert_raises(contains="truncated: offset 0"):
+        _ = decode_value_exact(decode_hex("c9000100002a010203"))
+    with assert_raises(contains="container-limit"):
+        _ = decode_value_exact(decode_hex("ddffffffff"), 128, 100000000)
+    with assert_raises(contains="container-limit"):
+        _ = decode_value_model_exact(decode_hex("14ffffffff"))
+    with assert_raises(contains="truncated: offset 0"):
+        _ = decode_value_model_exact(decode_hex("1500000001"))
+
+
+def test_exhausted_depth_names_the_container() raises:
+    var inner = List[Value](capacity=0)
+    var outer = List[Value](capacity=1)
+    outer.append(Value.array(inner^))
+    var value = Value.array(outer^)
+    var out = List[UInt8]()
+    with assert_raises(contains="depth-exceeded: array exceeds max_depth"):
+        encode_value(out, value, 1)
+
+
 def test_cli_model_tags_unchanged() raises:
     var signed = decode_value_model_exact(decode_hex("000000000000000001"))
     assert_equal(signed.as_int64(), 1)

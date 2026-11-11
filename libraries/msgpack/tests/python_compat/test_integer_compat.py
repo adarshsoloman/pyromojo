@@ -181,10 +181,10 @@ def test_trailing_integer_bytes_are_rejected(msgpack_cli: Path) -> None:
     assert message.startswith(b"trailing-data: offset 1")
 
 
-def test_non_integer_marker_is_unimplemented(msgpack_cli: Path) -> None:
-    status, message, _ = call(msgpack_cli, b"\x10\xc0")
-    assert status == STATUS_UNIMPLEMENTED
-    assert b"Phase 1" in message
+def test_nil_marker_decodes_at_top_level(msgpack_cli: Path) -> None:
+    status, model, _ = call(msgpack_cli, b"\x10\xc0")
+    assert status == STATUS_OK
+    assert model == b"\xc0"
 
 
 def test_invalid_integer_model_tag_is_an_error(msgpack_cli: Path) -> None:

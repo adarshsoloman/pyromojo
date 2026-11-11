@@ -4,10 +4,10 @@ Native [Mojo](https://www.modular.com/mojo) implementations of widely used Pytho
 libraries, verified against the original Python behaviour and benchmarked with
 reproducible, shared test vectors.
 
-> **Status: active development.** The Msgpack port implements the integer,
-> float, string, and binary scalar codecs, recursive arrays and maps with
-> depth and resource limits, all extension families, and the standard
-> timestamp extension.
+> **Status: active development.** The Msgpack port implements the full v0.1
+> type set — integers, floats, strings, binary, nil/bool, recursive arrays
+> and maps, all extension families, and timestamps — behind an audited batch
+> CLI with repository-level test runners.
 
 ## Motivation
 
@@ -57,7 +57,7 @@ libraries must not depend on one another. See
 
 | Library       | Purpose                                   | Status      |
 |---------------|-------------------------------------------|-------------|
-| `msgpack`     | Binary serialization                      | PHASE 5 EXT/TIMESTAMPS |
+| `msgpack`     | Binary serialization                      | PHASE 6 INTEGRATION |
 | `levenshtein` | Edit distance and string similarity       | NOT STARTED |
 | `audioop`     | Legacy audio sample manipulation          | NOT STARTED |
 | `bitarray`    | Compact bit array operations              | NOT STARTED |

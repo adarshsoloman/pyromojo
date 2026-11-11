@@ -1,7 +1,8 @@
 # Roadmap
 
-Status: Msgpack v0.1 in progress (scalar codecs complete). Dates are
-intentionally omitted; phases are completed when their exit criteria are met.
+Status: Msgpack v0.1 integrated (full type set, CLI, and test runners
+complete); benchmarks are future work. Dates are intentionally omitted;
+phases are completed when their exit criteria are met.
 
 ## Phase 1: Repository foundation
 
@@ -25,15 +26,18 @@ Scope: integer, float, string, binary, array, map, extension, and timestamp
 encoding; decoding; nested structures; invalid-input handling.
 
 Progress: the full v0.1 type set — integers, floats, strings, binary, arrays,
-maps, extensions, and timestamps — and their cross-language tests are
-complete ([results](../libraries/msgpack/PHASE5_RESULTS.md)). Integration
-and benchmarks remain future work.
+maps, extensions, and timestamps — plus top-level nil/bool, the audited
+batch CLI, and repository test runners are complete
+([results](../libraries/msgpack/PHASE6_RESULTS.md)). Benchmarks remain
+future work.
 
 - [x] Pin the reference `msgpack` version and document its license.
 - [x] Define the v0.1 compatibility surface and known deviations.
 - [x] Add golden vectors covering all supported types and nesting.
-- [ ] Implement native Mojo encoding and decoding.
-- [ ] Add Mojo unit tests and Python compatibility tests.
+- [x] Implement native Mojo encoding and decoding.
+- [x] Add Mojo unit tests and Python compatibility tests.
+- [x] Add repository test and compatibility runners (`run_all_tests.py`,
+  `check_compatibility.py`).
 - [ ] Add cold-compilation and warm-execution benchmarks.
 
 **Exit criteria:** All vector and compatibility tests pass; benchmark report is

@@ -1,8 +1,8 @@
 """Batch CLI for the native MessagePack implementation.
 
-Phase 5 implements extensions and timestamps in addition to the Phase 4
-recursive arrays and maps. Bare top-level nil and bool retain the Phase 1
-UNIMPLEMENTED response; they are supported as array and map children.
+Phase 6 supports the full v0.1 type set at the top level, including nil and
+bool: the Phase 1 stub responses are retired and every MessagePack marker
+decodes or reports a documented error.
 """
 
 from std.collections import List
@@ -34,14 +34,12 @@ def _reply_error(mut stdout: RawFileDescriptor, message: String) raises:
 
 
 def _reply_unimplemented(mut stdout: RawFileDescriptor, opcode: UInt8) raises:
+    # Retained as a safety net: no v0.1 marker reaches this path, since every
+    # valid marker decodes and every other byte reports a documented error.
     var message = ascii_bytes(
-        "opcode " + String(Int(opcode)) + " not implemented in Phase 1"
+        "opcode " + String(Int(opcode)) + " input is valid but not supported"
     )
     write_frame(stdout, STATUS_UNIMPLEMENTED, Span(message))
-
-
-def _is_top_level_nil_or_bool(marker: UInt8) -> Bool:
-    return marker == 0xC0 or marker == 0xC2 or marker == 0xC3
 
 
 def main() raises:
@@ -70,10 +68,6 @@ def main() raises:
         elif opcode == OP_ECHO:
             write_frame(stdout, STATUS_OK, payload)
         elif opcode == OP_DECODE:
-            # Keep the Phase 1 stub behavior for a bare top-level nil/bool.
-            if len(payload) > 0 and _is_top_level_nil_or_bool(payload[0]):
-                _reply_unimplemented(stdout, opcode)
-                continue
             try:
                 var value = decode_value_exact(payload)
                 var model = List[UInt8](capacity=1 + len(value.data))
@@ -86,10 +80,6 @@ def main() raises:
                 else:
                     _reply_error(stdout, message)
         elif opcode == OP_ENCODE:
-            # Preserve the Phase 1 stub behavior for bare top-level nil/bool.
-            if len(payload) == 1 and _is_top_level_nil_or_bool(payload[0]):
-                _reply_unimplemented(stdout, opcode)
-                continue
             try:
                 var value = decode_value_model_exact(payload)
                 var encoded = List[UInt8]()

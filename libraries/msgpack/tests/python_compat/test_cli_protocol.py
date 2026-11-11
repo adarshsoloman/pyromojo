@@ -82,12 +82,38 @@ def test_empty_request_body_is_an_error_frame(msgpack_cli: Path) -> None:
     assert frames == [(STATUS_ERROR, b"empty request frame")]
 
 
-def test_decode_and_encode_are_unimplemented(msgpack_cli: Path) -> None:
+def test_decode_and_encode_nil_bool_roundtrip(msgpack_cli: Path) -> None:
     returncode, stdout, _ = run_cli(msgpack_cli, request(b"\x10\xc0") + request(b"\x11\xc0"))
     assert returncode == 0
-    frames = parse_frames(stdout)
-    assert [status for status, _ in frames] == [STATUS_UNIMPLEMENTED, STATUS_UNIMPLEMENTED]
-    assert b"Phase 1" in frames[0][1]
+    assert parse_frames(stdout) == [(STATUS_OK, b"\xc0"), (STATUS_OK, b"\xc0")]
+
+
+def test_batch_mode_answers_mixed_requests_in_order(msgpack_cli: Path) -> None:
+    data = (
+        request(b"\x01")
+        + request(b"\x02hello")
+        + request(b"\x10\xc0")
+        + request(b"\x11\xc3")
+        + request(b"\x99")
+        + request(b"")
+        + request(b"\x10\x92\x01\xc3")
+    )
+    returncode, stdout, stderr = run_cli(msgpack_cli, data)
+    assert returncode == 0
+    assert stderr == b""
+    assert parse_frames(stdout) == [
+        (STATUS_OK, b""),
+        (STATUS_OK, b"hello"),
+        (STATUS_OK, b"\xc0"),
+        (STATUS_OK, b"\xc3"),
+        (STATUS_ERROR, b"unknown opcode 153"),
+        (STATUS_ERROR, b"empty request frame"),
+        (
+            STATUS_OK,
+            b"\x14\x00\x00\x00\x02\x00\x00\x00\x09\x01"
+            b"\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x01\xc3",
+        ),
+    ]
 
 
 def test_echo_is_binary_safe_and_handles_pipe_chunks(msgpack_cli: Path) -> None:

@@ -173,7 +173,7 @@ def _append_value_at(
     max_container_items: Int,
 ) raises:
     if depth_remaining < 1:
-        raise Error("depth-exceeded: max_depth must be at least 1")
+        raise Error("depth-exceeded: value is nested deeper than max_depth")
     if value.kind == VALUE_NIL:
         out.append(MARKER_NIL)
         return
@@ -413,7 +413,7 @@ def _append_value_model_at(
     max_container_items: Int,
 ) raises:
     if depth_remaining < 1:
-        raise Error("depth-exceeded: max_depth must be at least 1")
+        raise Error("depth-exceeded: value is nested deeper than max_depth")
     if value.kind == VALUE_NIL:
         out.append(MODEL_NIL)
         return

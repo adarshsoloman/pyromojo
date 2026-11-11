@@ -1,11 +1,14 @@
 # Msgpack (Mojo Port)
 
-## Status: PHASE 5 EXTENSIONS AND TIMESTAMPS COMPLETE
+## Status: PHASE 6 INTEGRATION COMPLETE
 
-Integers, Float32/Float64, strings, binary values, recursively nested arrays
-and maps (with nil and bool children), all eight extension families, and the
-standard timestamp extension encode and decode with exact-byte and
-cross-language tests. See [PHASE5_RESULTS.md](PHASE5_RESULTS.md).
+The full v0.1 type set — integers, Float32/Float64, strings, binary values,
+nil and bool (top level and nested), recursively nested arrays and maps, all
+eight extension families, and the standard timestamp extension — encodes and
+decodes with exact-byte and cross-language tests. The batch CLI is audited
+end to end and the repository runners (`scripts/run_all_tests.py`,
+`scripts/check_compatibility.py`) execute the whole suite reproducibly.
+See [PHASE6_RESULTS.md](PHASE6_RESULTS.md).
 
 ## Library description
 
@@ -110,10 +113,12 @@ uv sync --extra dev
 
 ## Current status
 
-Phase 5 scope complete: 162 golden cases covering integers, Float32 and
+Phase 6 scope complete: 162 golden cases covering integers, Float32 and
 Float64 bit patterns, UTF-8 strings, arbitrary binary payloads, recursively
 nested arrays and maps, all extension markers (including empty payloads and
 length boundaries), and all three timestamp representations (including
-negative seconds and nanosecond boundaries), with native exact-byte tests and
-bidirectional CLI compatibility. Bare top-level nil/bool models keep their
-Phase 1 `UNIMPLEMENTED` response.
+negative seconds and nanosecond boundaries), with native exact-byte tests,
+bidirectional CLI compatibility, and repository-level runners. Top-level
+nil and bool are supported; the remaining deviations (negative extension
+codes, 128 vs 1024 depth limit, textual errors) are documented and pinned by
+tests.

@@ -5,12 +5,12 @@ request/response protocol over stdin/stdout. It exists so the Python reference
 can drive the same process model the final encoder/decoder will use without
 `ctypes`, `PythonModuleBuilder`, or Python-specific object hooks.
 
-Phase 5 implements framing, `PING`, `ECHO`, and `DECODE`/`ENCODE` for integers,
-Float32/Float64, strings, binary, recursively nested arrays and maps, all
-eight extension families, and the standard timestamp extension. Malformed
-wire data and models return `ERROR`. Bare top-level nil and bool keep the
-Phase 1 `UNIMPLEMENTED` response; they are fully supported as array and map
-children.
+Phase 6 supports the full v0.1 type set over framing, `PING`, `ECHO`, and
+`DECODE`/`ENCODE`: integers, Float32/Float64, strings, binary, nil and bool
+(top level and nested), recursively nested arrays and maps, all eight
+extension families, and the standard timestamp extension. Malformed wire
+data and models return `ERROR`. No valid v0.1 input reports
+`UNIMPLEMENTED`; the status is retained only as a safety net.
 
 ## Framing
 
@@ -98,9 +98,9 @@ bit for non-negative wire values, so a positive integer encoded from a signed
 `Value` decodes back with the unsigned tag.
 
 Unknown model tags are `ERROR`. Integer models must remain exactly 9 bytes;
-float32 and float64 models must be exactly 5 and 9 bytes respectively. Bare
-top-level `0xc0`/`0xc2`/`0xc3` models return `UNIMPLEMENTED` to preserve the
-Phase 1 stub behaviour; the same bytes are valid as child models.
+float32 and float64 models must be exactly 5 and 9 bytes respectively. Nil
+and bool use the single bytes `0xc0`/`0xc2`/`0xc3` both at the top level and
+as child models.
 
 ## Statuses
 
@@ -124,8 +124,9 @@ the status byte, not message text.
   are answered normally.
 - **Unknown opcode / empty body**: the process answers with `ERROR` and keeps
   reading.
-- **Valid but unimplemented input**: none remain; every v0.1 marker decodes.
-  Bare top-level nil and bool keep their Phase 1 `UNIMPLEMENTED` response.
+- **Valid but unimplemented input**: none. Every v0.1 marker decodes,
+  including top-level nil and bool. The `UNIMPLEMENTED` status is retained
+  in the protocol as a safety net but no documented input produces it.
 - **Malformed or truncated input**: `ERROR` includes a category and
   byte offset, for example `truncated: offset 1`, `invalid-utf8: offset 1`,
   `invalid-marker: offset 0`, `trailing-data: offset 3`, or
