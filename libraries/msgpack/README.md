@@ -1,10 +1,11 @@
 # Msgpack (Mojo Port)
 
-## Status: PHASE 3 SCALAR CODEC COMPLETE
+## Status: PHASE 4 CONTAINERS COMPLETE
 
-Integers, Float32/Float64, strings, and binary values encode and decode with
-exact-byte and cross-language tests. Arrays, maps, extensions, timestamps, nil,
-and bool remain future work. See [PHASE3_RESULTS.md](PHASE3_RESULTS.md).
+Integers, Float32/Float64, strings, binary values, and recursively nested
+arrays and maps (with nil and bool children) encode and decode with
+exact-byte and cross-language tests. Extensions and timestamps remain future
+work. See [PHASE4_RESULTS.md](PHASE4_RESULTS.md).
 
 ## Library description
 
@@ -109,7 +110,10 @@ uv sync --extra dev
 
 ## Current status
 
-Phase 3 scalar scope complete: 127 golden cases covering integers, Float32 and
-Float64 bit patterns, UTF-8 strings, and arbitrary binary payloads, with native
-exact-byte tests and bidirectional CLI compatibility. Arrays, maps, extensions,
-timestamps, nil, and bool still return `UNIMPLEMENTED`.
+Phase 4 scope complete: 141 golden cases covering integers, Float32 and
+Float64 bit patterns, UTF-8 strings, arbitrary binary payloads, and recursively
+nested arrays and maps (including duplicate/non-string keys, nil/bool
+children, marker boundaries, and depth/limit errors), with native exact-byte
+tests and bidirectional CLI compatibility. Extensions and timestamps still
+return `UNIMPLEMENTED`; bare top-level nil/bool models keep their Phase 1
+`UNIMPLEMENTED` response.

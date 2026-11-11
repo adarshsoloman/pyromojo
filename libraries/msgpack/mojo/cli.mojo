@@ -1,18 +1,19 @@
 """Batch CLI for the native MessagePack implementation.
 
-Phase 3 implements integer, float, string, and binary DECODE and ENCODE.
-Arrays, maps, extensions, timestamps, nil, and bool still report UNIMPLEMENTED;
-malformed scalar models report ERROR.
+Phase 4 implements recursive arrays and maps in addition to the Phase 3 scalar
+codecs. Extensions and timestamps still report UNIMPLEMENTED. Bare top-level
+nil and bool retain the Phase 1 UNIMPLEMENTED response; they are supported as
+array and map children.
 """
 
 from std.collections import List
 from std.io import RawFileDescriptor
 
-from mojo_msgpack.scalar import (
-    append_scalar_model,
-    decode_scalar_exact,
-    decode_scalar_model,
-    encode_scalar_value,
+from mojo_msgpack.container import (
+    append_value_model,
+    decode_value_exact,
+    decode_value_model_exact,
+    encode_value,
 )
 from mojo_msgpack.protocol import (
     OP_DECODE,
@@ -38,6 +39,10 @@ def _reply_unimplemented(mut stdout: RawFileDescriptor, opcode: UInt8) raises:
         "opcode " + String(Int(opcode)) + " not implemented in Phase 1"
     )
     write_frame(stdout, STATUS_UNIMPLEMENTED, Span(message))
+
+
+def _is_top_level_nil_or_bool(marker: UInt8) -> Bool:
+    return marker == 0xC0 or marker == 0xC2 or marker == 0xC3
 
 
 def main() raises:
@@ -66,10 +71,14 @@ def main() raises:
         elif opcode == OP_ECHO:
             write_frame(stdout, STATUS_OK, payload)
         elif opcode == OP_DECODE:
+            # Keep the Phase 1 stub behavior for a bare top-level nil/bool.
+            if len(payload) > 0 and _is_top_level_nil_or_bool(payload[0]):
+                _reply_unimplemented(stdout, opcode)
+                continue
             try:
-                var value = decode_scalar_exact(payload)
+                var value = decode_value_exact(payload)
                 var model = List[UInt8](capacity=1 + len(value.data))
-                append_scalar_model(model, value)
+                append_value_model(model, value)
                 write_frame(stdout, STATUS_OK, Span(model))
             except error:
                 var message = String(error)
@@ -78,15 +87,14 @@ def main() raises:
                 else:
                     _reply_error(stdout, message)
         elif opcode == OP_ENCODE:
-            # Preserve the Phase 1 stub behaviour for the nil sentinel while
-            # reporting malformed scalar models as errors.
-            if len(payload) == 1 and payload[0] == 0xC0:
+            # Preserve the Phase 1 stub behavior for bare top-level nil/bool.
+            if len(payload) == 1 and _is_top_level_nil_or_bool(payload[0]):
                 _reply_unimplemented(stdout, opcode)
                 continue
             try:
-                var value = decode_scalar_model(payload)
-                var encoded = List[UInt8](capacity=1 + len(value.data))
-                encode_scalar_value(encoded, value)
+                var value = decode_value_model_exact(payload)
+                var encoded = List[UInt8]()
+                encode_value(encoded, value)
                 write_frame(stdout, STATUS_OK, Span(encoded))
             except error:
                 _reply_error(stdout, String(error))

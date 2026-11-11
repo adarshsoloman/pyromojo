@@ -161,7 +161,6 @@ def _decode_str(data: Span[UInt8, _], marker_offset: Int, length: Int, header: I
     var start = marker_offset + header
     _require(data, marker_offset, start, length, data[marker_offset], "payload")
     var end = start + length
-    _finish(data, end)
     var text: String
     try:
         text = String(from_utf8=Span(data)[start:end])
@@ -174,7 +173,6 @@ def _decode_bin(data: Span[UInt8, _], marker_offset: Int, length: Int, header: I
     var start = marker_offset + header
     _require(data, marker_offset, start, length, data[marker_offset], "payload")
     var end = start + length
-    _finish(data, end)
     var payload = List[UInt8](capacity=length)
     for byte in data[start:end]:
         payload.append(byte)
@@ -196,47 +194,99 @@ def _is_integer_marker(marker: UInt8) -> Bool:
     )
 
 
-def decode_scalar_exact(data: Span[UInt8, _]) raises -> Value:
-    """Decode exactly one integer, float, string, or binary value."""
-    if len(data) == 0:
-        raise _failure("truncated", 0, "need 1 marker byte")
-    var marker = data[0]
+def _integer_marker_width(marker: UInt8) -> Int:
+    if marker <= 0x7F or marker >= 0xE0:
+        return 1
+    if marker == 0xCC or marker == 0xD0:
+        return 2
+    if marker == 0xCD or marker == 0xD1:
+        return 3
+    if marker == 0xCE or marker == 0xD2:
+        return 5
+    return 9
+
+
+def decode_scalar_at(data: Span[UInt8, _], mut pos: Int) raises -> Value:
+    """Decode one scalar at ``pos`` and advance past it on success.
+
+    Containers are deliberately not handled here; the recursive container
+    decoder dispatches those before calling this function.
+    """
+    if pos >= len(data):
+        raise _failure("truncated", pos, "need 1 marker byte")
+    var marker = data[pos]
 
     if _is_integer_marker(marker):
-        return decode_integer_exact(data)
+        var width = _integer_marker_width(marker)
+        _require(data, pos, pos + 1, width - 1, marker, "payload")
+        var end = pos + width
+        var value = decode_integer_exact(Span(data)[pos:end])
+        pos = end
+        return value^
 
     if marker == MARKER_FLOAT32:
-        _require(data, 0, 1, 4, marker, "payload")
-        _finish(data, 5)
-        return Value.float32(UInt32(_read_be(data, 1, 4)))
+        _require(data, pos, pos + 1, 4, marker, "payload")
+        var value = Value.float32(UInt32(_read_be(data, pos + 1, 4)))
+        pos += 5
+        return value^
     if marker == MARKER_FLOAT64:
-        _require(data, 0, 1, 8, marker, "payload")
-        _finish(data, 9)
-        return Value.float64_bits(_read_be(data, 1, 8))
+        _require(data, pos, pos + 1, 8, marker, "payload")
+        var value = Value.float64_bits(_read_be(data, pos + 1, 8))
+        pos += 9
+        return value^
 
     if marker >= 0xA0 and marker <= 0xBF:
-        return _decode_str(data, 0, Int(marker & 0x1F), 1)
+        var length = Int(marker & 0x1F)
+        var value = _decode_str(data, pos, length, 1)
+        pos += 1 + length
+        return value^
     if marker == MARKER_STR8:
-        return _decode_str(data, 0, _read_length(data, 0, marker, 1), 2)
+        var length = _read_length(data, pos, marker, 1)
+        var value = _decode_str(data, pos, length, 2)
+        pos += 2 + length
+        return value^
     if marker == MARKER_STR16:
-        return _decode_str(data, 0, _read_length(data, 0, marker, 2), 3)
+        var length = _read_length(data, pos, marker, 2)
+        var value = _decode_str(data, pos, length, 3)
+        pos += 3 + length
+        return value^
     if marker == MARKER_STR32:
-        return _decode_str(data, 0, _read_length(data, 0, marker, 4), 5)
+        var length = _read_length(data, pos, marker, 4)
+        var value = _decode_str(data, pos, length, 5)
+        pos += 5 + length
+        return value^
 
     if marker == MARKER_BIN8:
-        return _decode_bin(data, 0, _read_length(data, 0, marker, 1), 2)
+        var length = _read_length(data, pos, marker, 1)
+        var value = _decode_bin(data, pos, length, 2)
+        pos += 2 + length
+        return value^
     if marker == MARKER_BIN16:
-        return _decode_bin(data, 0, _read_length(data, 0, marker, 2), 3)
+        var length = _read_length(data, pos, marker, 2)
+        var value = _decode_bin(data, pos, length, 3)
+        pos += 3 + length
+        return value^
     if marker == MARKER_BIN32:
-        return _decode_bin(data, 0, _read_length(data, 0, marker, 4), 5)
+        var length = _read_length(data, pos, marker, 4)
+        var value = _decode_bin(data, pos, length, 5)
+        pos += 5 + length
+        return value^
 
     if marker == 0xC1:
-        raise _failure("invalid-marker", 0, "marker 193 is permanently reserved")
+        raise _failure("invalid-marker", pos, "marker 193 is permanently reserved")
     raise _failure(
         "unsupported-marker",
-        0,
+        pos,
         "marker " + String(Int(marker)) + " is not a supported scalar",
     )
+
+
+def decode_scalar_exact(data: Span[UInt8, _]) raises -> Value:
+    """Decode exactly one integer, float, string, or binary value."""
+    var pos = 0
+    var value = decode_scalar_at(data, pos)
+    _finish(data, pos)
+    return value^
 
 
 def append_scalar_model(mut out: List[UInt8], value: Value) raises:

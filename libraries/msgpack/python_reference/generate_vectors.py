@@ -29,9 +29,9 @@ from typing import Any
 
 import msgpack
 
-SCHEMA_VERSION = "1.2.0"
+SCHEMA_VERSION = "1.3.0"
 GENERATOR_NAME = "msgpack_vectors"
-GENERATOR_VERSION = "1.2.0"
+GENERATOR_VERSION = "1.3.0"
 REFERENCE_VERSION = "1.2.4"
 REPEAT_MAX = 1_000_000
 
@@ -615,6 +615,38 @@ def build_cases() -> list[dict[str, Any]]:
             note="Repeated model keeps the JSON compact; encoding covers array32.",
         )
     )
+    cases.append(
+        roundtrip_case(
+            "array_fixarray_max",
+            "array",
+            ["fixarray"],
+            v_array([v_int(index) for index in range(15)]),
+        )
+    )
+    cases.append(
+        roundtrip_case(
+            "array16_max",
+            "array",
+            ["array16"],
+            v_array_repeat(v_uint(0), 65535),
+            note="Repeated model keeps the JSON compact; encoding covers array16.",
+        )
+    )
+    cases.append(
+        roundtrip_case(
+            "array_nested_mixed",
+            "array",
+            ["fixarray", "fixmap"],
+            v_array(
+                [
+                    v_map([(v_str("a"), v_array([v_int(1), v_nil()]))]),
+                    v_bool(True),
+                    v_array([]),
+                ]
+            ),
+            note="nil and bool appear only as container children.",
+        )
+    )
 
     # maps -----------------------------------------------------------------
     cases.append(roundtrip_case("map_empty", "map", ["fixmap"], v_map([])))
@@ -668,6 +700,40 @@ def build_cases() -> list[dict[str, Any]]:
             v_map_repeat(v_int(0), v_nil(), 65536),
             bytes.fromhex("df00010000") + b"\x00\xc0" * 65536,
             note="map32 header with 65536 identical key/value pairs.",
+        )
+    )
+    cases.append(
+        roundtrip_case(
+            "map_fixmap_max",
+            "map",
+            ["fixmap"],
+            v_map([(v_str(f"k{index}"), v_int(index)) for index in range(15)]),
+        )
+    )
+    cases.append(
+        decode_case(
+            "map16_max",
+            "map",
+            ["map16"],
+            v_map_repeat(v_int(0), v_nil(), 65535),
+            bytes.fromhex("deffff") + b"\x00\xc0" * 65535,
+            note="map16 header with 65535 identical key/value pairs; decode-only.",
+        )
+    )
+    cases.append(
+        decode_case(
+            "map_nested_mixed",
+            "map",
+            ["fixmap", "fixarray"],
+            v_map(
+                [
+                    (v_array([v_int(1), v_int(2)]), v_map([])),
+                    (v_str("k"), v_bin(b"v")),
+                ]
+            ),
+            bytes.fromhex("8292010280a16bc40176"),
+            note="Array key and nested containers; decode-only because Python "
+            "dicts cannot hold unhashable keys.",
         )
     )
 
@@ -769,6 +835,76 @@ def build_cases() -> list[dict[str, Any]]:
             "StackError",
             "",
             note="msgpack 1.2.4 caps nesting at 1024; PyroMojo's default is 128.",
+        )
+    )
+
+    # container errors -----------------------------------------------------
+    cases.append(
+        error_case(
+            "error_truncated_fixarray",
+            bytes.fromhex("91"),
+            "ValueError",
+            "incomplete input",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_truncated_array16",
+            bytes.fromhex("dc0001"),
+            "ValueError",
+            "incomplete input",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_truncated_array32",
+            bytes.fromhex("dd00000001"),
+            "ValueError",
+            "incomplete input",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_truncated_map_value",
+            bytes.fromhex("81a161"),
+            "ValueError",
+            "incomplete input",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_truncated_map16",
+            bytes.fromhex("de0001"),
+            "ValueError",
+            "incomplete input",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_truncated_map32",
+            bytes.fromhex("df00000001"),
+            "ValueError",
+            "incomplete input",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_declared_array32_huge",
+            bytes.fromhex("ddffffffff"),
+            "ValueError",
+            "exceeds max_array_len",
+            note="The reference caps the declared count against the input size; "
+            "PyroMojo reports container-limit instead.",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_declared_map32_huge",
+            bytes.fromhex("dfffffffff"),
+            "ValueError",
+            "exceeds max_map_len",
+            note="The reference caps the declared count against the input size; "
+            "PyroMojo reports container-limit instead.",
         )
     )
 

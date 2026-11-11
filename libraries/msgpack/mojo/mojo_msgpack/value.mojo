@@ -23,6 +23,7 @@ comptime VALUE_TIMESTAMP: UInt8 = 10
 comptime VALUE_UINT: UInt8 = 11
 
 comptime DEFAULT_MAX_DEPTH: Int = 128
+comptime DEFAULT_MAX_CONTAINER_ITEMS: Int = 1_000_000
 
 
 struct Value(Deinitable, Copyable, Movable):
