@@ -29,9 +29,9 @@ from typing import Any
 
 import msgpack
 
-SCHEMA_VERSION = "1.0.0"
+SCHEMA_VERSION = "1.1.0"
 GENERATOR_NAME = "msgpack_vectors"
-GENERATOR_VERSION = "1.0.0"
+GENERATOR_VERSION = "1.1.0"
 REFERENCE_VERSION = "1.2.4"
 REPEAT_MAX = 1_000_000
 
@@ -70,8 +70,13 @@ def v_bool(value: bool) -> dict[str, Any]:
 
 
 def v_int(value: int) -> dict[str, Any]:
-    assert -(2**63) <= value <= 2**64 - 1, value
+    assert -(2**63) <= value <= 2**63 - 1, value
     return {"type": "int", "value": str(value)}
+
+
+def v_uint(value: int) -> dict[str, Any]:
+    assert 0 <= value <= 2**64 - 1, value
+    return {"type": "uint", "value": str(value)}
 
 
 def v_float32(bits: str) -> dict[str, Any]:
@@ -144,7 +149,7 @@ def model_to_python(model: dict[str, Any]) -> Any:
         return None
     if tag == "bool":
         return model["value"]
-    if tag == "int":
+    if tag in {"int", "uint"}:
         return int(model["value"])
     if tag == "float32":
         raise AssertionError("float32 values are decode-only for the Python reference")
@@ -188,9 +193,9 @@ def model_matches(model: dict[str, Any], actual: Any, path: str = "$") -> None:
         if type(actual) is not bool or actual != model["value"]:
             raise AssertionError(f"{path}: expected bool {model['value']}, got {actual!r}")
         return
-    if tag == "int":
+    if tag in {"int", "uint"}:
         if type(actual) is not int or actual != int(model["value"]):
-            raise AssertionError(f"{path}: expected int {model['value']}, got {actual!r}")
+            raise AssertionError(f"{path}: expected {tag} {model['value']}, got {actual!r}")
         return
     if tag == "float32":
         if not isinstance(actual, float) or struct.pack(">f", actual).hex() != model["bits"]:
@@ -374,29 +379,67 @@ def build_cases() -> list[dict[str, Any]]:
 
     # integers -------------------------------------------------------------
     integer_cases = [
-        ("int_positive_fixint_zero", 0, "positive_fixint"),
-        ("int_positive_fixint_max", 127, "positive_fixint"),
-        ("int_negative_fixint_minus_one", -1, "negative_fixint"),
-        ("int_negative_fixint_min", -32, "negative_fixint"),
-        ("int_uint8_min", 128, "uint8"),
-        ("int_uint8_max", 255, "uint8"),
-        ("int_uint16_min", 256, "uint16"),
-        ("int_uint16_max", 65535, "uint16"),
-        ("int_uint32_min", 65536, "uint32"),
-        ("int_uint32_max", 4294967295, "uint32"),
-        ("int_uint64_min", 4294967296, "uint64"),
-        ("int_uint64_max", 18446744073709551615, "uint64"),
-        ("int_int8_min", -33, "int8"),
-        ("int_int8_min_edge", -128, "int8"),
-        ("int_int16_min", -129, "int16"),
-        ("int_int16_min_edge", -32768, "int16"),
-        ("int_int32_min", -32769, "int32"),
-        ("int_int32_min_edge", -2147483648, "int32"),
-        ("int_int64_min", -2147483649, "int64"),
-        ("int_int64_min_edge", -9223372036854775808, "int64"),
+        ("int_positive_fixint_zero", 0),
+        ("int_one", 1),
+        ("int_positive_fixint_126", 126),
+        ("int_positive_fixint_max", 127),
+        ("int_uint8_min", 128),
+        ("int_uint8_129", 129),
+        ("int_uint8_254", 254),
+        ("int_uint8_max", 255),
+        ("int_uint16_min", 256),
+        ("int_uint16_257", 257),
+        ("int_uint16_max", 65535),
+        ("int_uint32_min", 65536),
+        ("int_uint32_signed_max", 2147483647),
+        ("int_uint32_signed_over", 2147483648),
+        ("int_uint32_4294967294", 4294967294),
+        ("int_uint32_max", 4294967295),
+        ("int_uint64_min", 4294967296),
+        ("int_int64_max", 9223372036854775807),
+        ("int_uint64_above_int64", 9223372036854775808),
+        ("int_uint64_max", 18446744073709551615),
+        ("int_negative_fixint_minus_one", -1),
+        ("int_negative_fixint_minus_31", -31),
+        ("int_negative_fixint_min", -32),
+        ("int_int8_min", -33),
+        ("int_int8_minus_127", -127),
+        ("int_int8_min_edge", -128),
+        ("int_int16_min", -129),
+        ("int_int16_minus_32767", -32767),
+        ("int_int16_min_edge", -32768),
+        ("int_int32_min", -32769),
+        ("int_int32_minus_2147483647", -2147483647),
+        ("int_int32_min_edge", -2147483648),
+        ("int_int64_min", -2147483649),
+        ("int_int64_above_min", -9223372036854775807),
+        ("int_int64_min_edge", -9223372036854775808),
     ]
-    for case_id, value, marker in integer_cases:
-        cases.append(roundtrip_case(case_id, "int", [marker], v_int(value)))
+
+    def integer_marker(value: int) -> str:
+        if value >= 0:
+            if value <= 127:
+                return "positive_fixint"
+            if value <= 255:
+                return "uint8"
+            if value <= 65535:
+                return "uint16"
+            if value <= 4294967295:
+                return "uint32"
+            return "uint64"
+        if value >= -32:
+            return "negative_fixint"
+        if value >= -128:
+            return "int8"
+        if value >= -32768:
+            return "int16"
+        if value >= -2147483648:
+            return "int32"
+        return "int64"
+
+    for case_id, value in integer_cases:
+        model = v_uint(value) if value >= 0 else v_int(value)
+        cases.append(roundtrip_case(case_id, "int", [integer_marker(value)], model))
 
     # floats ---------------------------------------------------------------
     cases.append(roundtrip_case("float64_one_and_half", "float", ["float64"], v_float64(1.5)))
@@ -702,6 +745,8 @@ class _MojoBuilder:
             return f"Value.bool({'True' if model['value'] else 'False'})"
         if tag == "int":
             return f"int_from_decimal({mojo_string(model['value'])})"
+        if tag == "uint":
+            return f"uint_from_decimal({mojo_string(model['value'])})"
         if tag == "float32":
             return f"Value.float32(UInt32(0x{model['bits']}))"
         if tag == "float64":
@@ -760,6 +805,7 @@ def build_mojo(cases: list[dict[str, Any]]) -> str:
         "    ext_from_hex,",
         "    int_from_decimal,",
         "    string_from_hex,",
+        "    uint_from_decimal,",
         ")",
         "",
         f"comptime VECTOR_COUNT: Int = {len(cases)}",

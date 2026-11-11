@@ -24,6 +24,10 @@ toolchain documented.
 Scope: integer, float, string, binary, array, map, extension, and timestamp
 encoding; decoding; nested structures; invalid-input handling.
 
+Progress: the integer codec and its cross-language tests are complete
+([results](../libraries/msgpack/PHASE2_RESULTS.md)). The remaining type families
+are still in progress.
+
 - [x] Pin the reference `msgpack` version and document its license.
 - [x] Define the v0.1 compatibility surface and known deviations.
 - [x] Add golden vectors covering all supported types and nesting.

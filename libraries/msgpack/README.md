@@ -1,10 +1,10 @@
 # Msgpack (Mojo Port)
 
-## Status: PHASE 1 FOUNDATIONS COMPLETE
+## Status: PHASE 2 INTEGER CODEC COMPLETE
 
-The value model, depth guard, batch CLI framing, and generated golden-vector
-pipeline exist. The encoder and decoder are Phase 2 work; see
-[PHASE1_RESULTS.md](PHASE1_RESULTS.md).
+All ten integer format families encode and decode with exact-byte and
+cross-language tests. Floats, strings, binary, arrays, maps, extensions, and
+timestamps remain future work. See [PHASE2_RESULTS.md](PHASE2_RESULTS.md).
 
 ## Library description
 
@@ -31,7 +31,7 @@ not delegate encoding or decoding work to the Python package.
 
 Layout:
 
-- `mojo/` — `Value`, framing protocol, and the batch CLI
+- `mojo/` — `Value`, integer codec, framing protocol, and the batch CLI
 - `python_reference/` — vector generator, reference driver, depth probe, pins
 - `tests/` — Mojo unit tests, Python compatibility tests, golden vectors
 - `benchmarks/` — cold-compile and warm-execution benchmarks
@@ -106,6 +106,6 @@ uv sync --extra dev
 
 ## Current status
 
-Phase 1 complete: pinned reference, 76 generated golden cases, depth guard,
-batch CLI (`PING`/`ECHO`; `DECODE`/`ENCODE` return `UNIMPLEMENTED`), and
-pytest/Mojo coverage. Phase 2 is the encoder and decoder.
+Phase 2 integer scope complete: 35 integer golden cases, native exact-byte
+tests, and bidirectional CLI compatibility with the pinned Python reference.
+Non-integer values still return `UNIMPLEMENTED`.

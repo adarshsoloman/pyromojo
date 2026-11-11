@@ -3,6 +3,7 @@
 from std.collections import List
 from std.testing import TestSuite, assert_equal, assert_raises
 
+from mojo_msgpack.integer import decode_exact, encode_value
 from mojo_msgpack.value import Value
 
 from generated_vectors import VECTOR_COUNT, load_vectors, value_for_case
@@ -83,6 +84,27 @@ def test_duplicate_map_preserves_pairs() raises:
     assert_equal(len(value.kids), 4)
     assert_equal(value.kids[0].data[0], UInt8(ord("k")))
     assert_equal(value.kids[2].data[0], UInt8(ord("k")))
+
+
+def test_integer_vectors_decode_and_reencode() raises:
+    var cases = load_vectors()
+    var checked = 0
+    for index in range(len(cases)):
+        var entry = cases[index]
+        if entry.category != "int":
+            continue
+        checked += 1
+        var raw = decode_hex(entry.encoded_hex)
+        var decoded = decode_exact(Span(raw))
+        var expected = value_for_case(entry.id)
+        assert_equal(decoded.kind, expected.kind)
+        assert_equal(decoded.int_bits, expected.int_bits)
+        var encoded = List[UInt8]()
+        encode_value(encoded, decoded)
+        assert_equal(len(encoded), len(raw))
+        for offset in range(len(raw)):
+            assert_equal(encoded[offset], raw[offset])
+    assert_equal(checked, 35)
 
 
 def test_error_metadata() raises:

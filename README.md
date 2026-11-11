@@ -56,7 +56,7 @@ libraries must not depend on one another. See
 
 | Library       | Purpose                                   | Status      |
 |---------------|-------------------------------------------|-------------|
-| `msgpack`     | Binary serialization                      | PHASE 1 FOUNDATIONS |
+| `msgpack`     | Binary serialization                      | PHASE 2 INTEGERS |
 | `levenshtein` | Edit distance and string similarity       | NOT STARTED |
 | `audioop`     | Legacy audio sample manipulation          | NOT STARTED |
 | `bitarray`    | Compact bit array operations              | NOT STARTED |

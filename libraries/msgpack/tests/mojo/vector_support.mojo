@@ -63,6 +63,19 @@ def ext_from_hex(code: Int8, hex: StaticString) raises -> Value:
     return Value.ext(code, decode_hex(hex))
 
 
+def uint_from_decimal(decimal: StaticString) raises -> Value:
+    var text = String(decimal)
+    var magnitude: UInt64 = 0
+    for byte in text.as_bytes():
+        if byte < UInt8(ord("0")) or byte > UInt8(ord("9")):
+            raise Error("invalid unsigned decimal integer")
+        var digit = UInt64(byte - UInt8(ord("0")))
+        if magnitude > (UInt64.MAX - digit) // 10:
+            raise Error("unsigned decimal integer overflows UInt64")
+        magnitude = magnitude * 10 + digit
+    return Value.unsigned(magnitude)
+
+
 def int_from_decimal(decimal: StaticString) raises -> Value:
     var text = String(decimal)
     var negative = text.byte_length() > 0 and text.as_bytes()[0] == UInt8(ord("-"))

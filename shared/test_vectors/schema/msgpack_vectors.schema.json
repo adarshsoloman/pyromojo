@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pyromojo.dev/schema/msgpack_vectors-1.0.0.json",
+  "$id": "https://pyromojo.dev/schema/msgpack_vectors-1.1.0.json",
   "title": "PyroMojo MessagePack golden vector bundle",
   "description": "Language-neutral golden vectors for the MessagePack v0.1 implementation. Values use an explicit tagged model so integers, float bit patterns, binary data, extension payloads, map pair order, and duplicate keys survive JSON exactly.",
   "type": "object",
@@ -14,7 +14,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "1.0.0"
+      "const": "1.1.0"
     },
     "generator": {
       "type": "object",
@@ -28,7 +28,7 @@
           "const": "msgpack_vectors"
         },
         "version": {
-          "const": "1.0.0"
+          "const": "1.1.0"
         }
       }
     },
@@ -168,6 +168,22 @@
             },
             "value": {
               "$ref": "#/$defs/decimal"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "const": "uint"
+            },
+            "value": {
+              "$ref": "#/$defs/uint_decimal"
             }
           }
         },
@@ -530,6 +546,10 @@
           "$ref": "#/$defs/repeat_count"
         }
       }
+    },
+    "uint_decimal": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$"
     }
   }
 }

@@ -1,8 +1,8 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "generator": {
     "name": "msgpack_vectors",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "reference": {
     "package": "msgpack",
@@ -59,10 +59,36 @@
         "positive_fixint"
       ],
       "value": {
-        "type": "int",
+        "type": "uint",
         "value": "0"
       },
       "encoded": "00"
+    },
+    {
+      "id": "int_one",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "positive_fixint"
+      ],
+      "value": {
+        "type": "uint",
+        "value": "1"
+      },
+      "encoded": "01"
+    },
+    {
+      "id": "int_positive_fixint_126",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "positive_fixint"
+      ],
+      "value": {
+        "type": "uint",
+        "value": "126"
+      },
+      "encoded": "7e"
     },
     {
       "id": "int_positive_fixint_max",
@@ -72,10 +98,218 @@
         "positive_fixint"
       ],
       "value": {
-        "type": "int",
+        "type": "uint",
         "value": "127"
       },
       "encoded": "7f"
+    },
+    {
+      "id": "int_uint8_min",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "uint8"
+      ],
+      "value": {
+        "type": "uint",
+        "value": "128"
+      },
+      "encoded": "cc80"
+    },
+    {
+      "id": "int_uint8_129",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "uint8"
+      ],
+      "value": {
+        "type": "uint",
+        "value": "129"
+      },
+      "encoded": "cc81"
+    },
+    {
+      "id": "int_uint8_254",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "uint8"
+      ],
+      "value": {
+        "type": "uint",
+        "value": "254"
+      },
+      "encoded": "ccfe"
+    },
+    {
+      "id": "int_uint8_max",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "uint8"
+      ],
+      "value": {
+        "type": "uint",
+        "value": "255"
+      },
+      "encoded": "ccff"
+    },
+    {
+      "id": "int_uint16_min",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "uint16"
+      ],
+      "value": {
+        "type": "uint",
+        "value": "256"
+      },
+      "encoded": "cd0100"
+    },
+    {
+      "id": "int_uint16_257",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "uint16"
+      ],
+      "value": {
+        "type": "uint",
+        "value": "257"
+      },
+      "encoded": "cd0101"
+    },
+    {
+      "id": "int_uint16_max",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "uint16"
+      ],
+      "value": {
+        "type": "uint",
+        "value": "65535"
+      },
+      "encoded": "cdffff"
+    },
+    {
+      "id": "int_uint32_min",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "uint32"
+      ],
+      "value": {
+        "type": "uint",
+        "value": "65536"
+      },
+      "encoded": "ce00010000"
+    },
+    {
+      "id": "int_uint32_signed_max",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "uint32"
+      ],
+      "value": {
+        "type": "uint",
+        "value": "2147483647"
+      },
+      "encoded": "ce7fffffff"
+    },
+    {
+      "id": "int_uint32_signed_over",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "uint32"
+      ],
+      "value": {
+        "type": "uint",
+        "value": "2147483648"
+      },
+      "encoded": "ce80000000"
+    },
+    {
+      "id": "int_uint32_4294967294",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "uint32"
+      ],
+      "value": {
+        "type": "uint",
+        "value": "4294967294"
+      },
+      "encoded": "cefffffffe"
+    },
+    {
+      "id": "int_uint32_max",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "uint32"
+      ],
+      "value": {
+        "type": "uint",
+        "value": "4294967295"
+      },
+      "encoded": "ceffffffff"
+    },
+    {
+      "id": "int_uint64_min",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "uint64"
+      ],
+      "value": {
+        "type": "uint",
+        "value": "4294967296"
+      },
+      "encoded": "cf0000000100000000"
+    },
+    {
+      "id": "int_int64_max",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "uint64"
+      ],
+      "value": {
+        "type": "uint",
+        "value": "9223372036854775807"
+      },
+      "encoded": "cf7fffffffffffffff"
+    },
+    {
+      "id": "int_uint64_above_int64",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "uint64"
+      ],
+      "value": {
+        "type": "uint",
+        "value": "9223372036854775808"
+      },
+      "encoded": "cf8000000000000000"
+    },
+    {
+      "id": "int_uint64_max",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "uint64"
+      ],
+      "value": {
+        "type": "uint",
+        "value": "18446744073709551615"
+      },
+      "encoded": "cfffffffffffffffff"
     },
     {
       "id": "int_negative_fixint_minus_one",
@@ -91,6 +325,19 @@
       "encoded": "ff"
     },
     {
+      "id": "int_negative_fixint_minus_31",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "negative_fixint"
+      ],
+      "value": {
+        "type": "int",
+        "value": "-31"
+      },
+      "encoded": "e1"
+    },
+    {
       "id": "int_negative_fixint_min",
       "category": "int",
       "mode": "roundtrip",
@@ -104,110 +351,6 @@
       "encoded": "e0"
     },
     {
-      "id": "int_uint8_min",
-      "category": "int",
-      "mode": "roundtrip",
-      "markers": [
-        "uint8"
-      ],
-      "value": {
-        "type": "int",
-        "value": "128"
-      },
-      "encoded": "cc80"
-    },
-    {
-      "id": "int_uint8_max",
-      "category": "int",
-      "mode": "roundtrip",
-      "markers": [
-        "uint8"
-      ],
-      "value": {
-        "type": "int",
-        "value": "255"
-      },
-      "encoded": "ccff"
-    },
-    {
-      "id": "int_uint16_min",
-      "category": "int",
-      "mode": "roundtrip",
-      "markers": [
-        "uint16"
-      ],
-      "value": {
-        "type": "int",
-        "value": "256"
-      },
-      "encoded": "cd0100"
-    },
-    {
-      "id": "int_uint16_max",
-      "category": "int",
-      "mode": "roundtrip",
-      "markers": [
-        "uint16"
-      ],
-      "value": {
-        "type": "int",
-        "value": "65535"
-      },
-      "encoded": "cdffff"
-    },
-    {
-      "id": "int_uint32_min",
-      "category": "int",
-      "mode": "roundtrip",
-      "markers": [
-        "uint32"
-      ],
-      "value": {
-        "type": "int",
-        "value": "65536"
-      },
-      "encoded": "ce00010000"
-    },
-    {
-      "id": "int_uint32_max",
-      "category": "int",
-      "mode": "roundtrip",
-      "markers": [
-        "uint32"
-      ],
-      "value": {
-        "type": "int",
-        "value": "4294967295"
-      },
-      "encoded": "ceffffffff"
-    },
-    {
-      "id": "int_uint64_min",
-      "category": "int",
-      "mode": "roundtrip",
-      "markers": [
-        "uint64"
-      ],
-      "value": {
-        "type": "int",
-        "value": "4294967296"
-      },
-      "encoded": "cf0000000100000000"
-    },
-    {
-      "id": "int_uint64_max",
-      "category": "int",
-      "mode": "roundtrip",
-      "markers": [
-        "uint64"
-      ],
-      "value": {
-        "type": "int",
-        "value": "18446744073709551615"
-      },
-      "encoded": "cfffffffffffffffff"
-    },
-    {
       "id": "int_int8_min",
       "category": "int",
       "mode": "roundtrip",
@@ -219,6 +362,19 @@
         "value": "-33"
       },
       "encoded": "d0df"
+    },
+    {
+      "id": "int_int8_minus_127",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "int8"
+      ],
+      "value": {
+        "type": "int",
+        "value": "-127"
+      },
+      "encoded": "d081"
     },
     {
       "id": "int_int8_min_edge",
@@ -247,6 +403,19 @@
       "encoded": "d1ff7f"
     },
     {
+      "id": "int_int16_minus_32767",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "int16"
+      ],
+      "value": {
+        "type": "int",
+        "value": "-32767"
+      },
+      "encoded": "d18001"
+    },
+    {
       "id": "int_int16_min_edge",
       "category": "int",
       "mode": "roundtrip",
@@ -273,6 +442,19 @@
       "encoded": "d2ffff7fff"
     },
     {
+      "id": "int_int32_minus_2147483647",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "int32"
+      ],
+      "value": {
+        "type": "int",
+        "value": "-2147483647"
+      },
+      "encoded": "d280000001"
+    },
+    {
       "id": "int_int32_min_edge",
       "category": "int",
       "mode": "roundtrip",
@@ -297,6 +479,19 @@
         "value": "-2147483649"
       },
       "encoded": "d3ffffffff7fffffff"
+    },
+    {
+      "id": "int_int64_above_min",
+      "category": "int",
+      "mode": "roundtrip",
+      "markers": [
+        "int64"
+      ],
+      "value": {
+        "type": "int",
+        "value": "-9223372036854775807"
+      },
+      "encoded": "d38000000000000001"
     },
     {
       "id": "int_int64_min_edge",

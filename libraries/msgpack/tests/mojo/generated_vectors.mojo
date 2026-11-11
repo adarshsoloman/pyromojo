@@ -13,9 +13,10 @@ from vector_support import (
     ext_from_hex,
     int_from_decimal,
     string_from_hex,
+    uint_from_decimal,
 )
 
-comptime VECTOR_COUNT: Int = 76
+comptime VECTOR_COUNT: Int = 91
 
 def _build_nil() raises -> Value:
     return Value.nil()
@@ -27,43 +28,79 @@ def _build_bool_false() raises -> Value:
     return Value.bool(False)
 
 def _build_int_positive_fixint_zero() raises -> Value:
-    return int_from_decimal("0")
+    return uint_from_decimal("0")
+
+def _build_int_one() raises -> Value:
+    return uint_from_decimal("1")
+
+def _build_int_positive_fixint_126() raises -> Value:
+    return uint_from_decimal("126")
 
 def _build_int_positive_fixint_max() raises -> Value:
-    return int_from_decimal("127")
+    return uint_from_decimal("127")
+
+def _build_int_uint8_min() raises -> Value:
+    return uint_from_decimal("128")
+
+def _build_int_uint8_129() raises -> Value:
+    return uint_from_decimal("129")
+
+def _build_int_uint8_254() raises -> Value:
+    return uint_from_decimal("254")
+
+def _build_int_uint8_max() raises -> Value:
+    return uint_from_decimal("255")
+
+def _build_int_uint16_min() raises -> Value:
+    return uint_from_decimal("256")
+
+def _build_int_uint16_257() raises -> Value:
+    return uint_from_decimal("257")
+
+def _build_int_uint16_max() raises -> Value:
+    return uint_from_decimal("65535")
+
+def _build_int_uint32_min() raises -> Value:
+    return uint_from_decimal("65536")
+
+def _build_int_uint32_signed_max() raises -> Value:
+    return uint_from_decimal("2147483647")
+
+def _build_int_uint32_signed_over() raises -> Value:
+    return uint_from_decimal("2147483648")
+
+def _build_int_uint32_4294967294() raises -> Value:
+    return uint_from_decimal("4294967294")
+
+def _build_int_uint32_max() raises -> Value:
+    return uint_from_decimal("4294967295")
+
+def _build_int_uint64_min() raises -> Value:
+    return uint_from_decimal("4294967296")
+
+def _build_int_int64_max() raises -> Value:
+    return uint_from_decimal("9223372036854775807")
+
+def _build_int_uint64_above_int64() raises -> Value:
+    return uint_from_decimal("9223372036854775808")
+
+def _build_int_uint64_max() raises -> Value:
+    return uint_from_decimal("18446744073709551615")
 
 def _build_int_negative_fixint_minus_one() raises -> Value:
     return int_from_decimal("-1")
 
+def _build_int_negative_fixint_minus_31() raises -> Value:
+    return int_from_decimal("-31")
+
 def _build_int_negative_fixint_min() raises -> Value:
     return int_from_decimal("-32")
 
-def _build_int_uint8_min() raises -> Value:
-    return int_from_decimal("128")
-
-def _build_int_uint8_max() raises -> Value:
-    return int_from_decimal("255")
-
-def _build_int_uint16_min() raises -> Value:
-    return int_from_decimal("256")
-
-def _build_int_uint16_max() raises -> Value:
-    return int_from_decimal("65535")
-
-def _build_int_uint32_min() raises -> Value:
-    return int_from_decimal("65536")
-
-def _build_int_uint32_max() raises -> Value:
-    return int_from_decimal("4294967295")
-
-def _build_int_uint64_min() raises -> Value:
-    return int_from_decimal("4294967296")
-
-def _build_int_uint64_max() raises -> Value:
-    return int_from_decimal("18446744073709551615")
-
 def _build_int_int8_min() raises -> Value:
     return int_from_decimal("-33")
+
+def _build_int_int8_minus_127() raises -> Value:
+    return int_from_decimal("-127")
 
 def _build_int_int8_min_edge() raises -> Value:
     return int_from_decimal("-128")
@@ -71,17 +108,26 @@ def _build_int_int8_min_edge() raises -> Value:
 def _build_int_int16_min() raises -> Value:
     return int_from_decimal("-129")
 
+def _build_int_int16_minus_32767() raises -> Value:
+    return int_from_decimal("-32767")
+
 def _build_int_int16_min_edge() raises -> Value:
     return int_from_decimal("-32768")
 
 def _build_int_int32_min() raises -> Value:
     return int_from_decimal("-32769")
 
+def _build_int_int32_minus_2147483647() raises -> Value:
+    return int_from_decimal("-2147483647")
+
 def _build_int_int32_min_edge() raises -> Value:
     return int_from_decimal("-2147483648")
 
 def _build_int_int64_min() raises -> Value:
     return int_from_decimal("-2147483649")
+
+def _build_int_int64_above_min() raises -> Value:
+    return int_from_decimal("-9223372036854775807")
 
 def _build_int_int64_min_edge() raises -> Value:
     return int_from_decimal("-9223372036854775808")
@@ -310,42 +356,72 @@ def value_for_case(case_id: StaticString) raises -> Value:
         return _build_bool_false()
     if case_id == "int_positive_fixint_zero":
         return _build_int_positive_fixint_zero()
+    if case_id == "int_one":
+        return _build_int_one()
+    if case_id == "int_positive_fixint_126":
+        return _build_int_positive_fixint_126()
     if case_id == "int_positive_fixint_max":
         return _build_int_positive_fixint_max()
-    if case_id == "int_negative_fixint_minus_one":
-        return _build_int_negative_fixint_minus_one()
-    if case_id == "int_negative_fixint_min":
-        return _build_int_negative_fixint_min()
     if case_id == "int_uint8_min":
         return _build_int_uint8_min()
+    if case_id == "int_uint8_129":
+        return _build_int_uint8_129()
+    if case_id == "int_uint8_254":
+        return _build_int_uint8_254()
     if case_id == "int_uint8_max":
         return _build_int_uint8_max()
     if case_id == "int_uint16_min":
         return _build_int_uint16_min()
+    if case_id == "int_uint16_257":
+        return _build_int_uint16_257()
     if case_id == "int_uint16_max":
         return _build_int_uint16_max()
     if case_id == "int_uint32_min":
         return _build_int_uint32_min()
+    if case_id == "int_uint32_signed_max":
+        return _build_int_uint32_signed_max()
+    if case_id == "int_uint32_signed_over":
+        return _build_int_uint32_signed_over()
+    if case_id == "int_uint32_4294967294":
+        return _build_int_uint32_4294967294()
     if case_id == "int_uint32_max":
         return _build_int_uint32_max()
     if case_id == "int_uint64_min":
         return _build_int_uint64_min()
+    if case_id == "int_int64_max":
+        return _build_int_int64_max()
+    if case_id == "int_uint64_above_int64":
+        return _build_int_uint64_above_int64()
     if case_id == "int_uint64_max":
         return _build_int_uint64_max()
+    if case_id == "int_negative_fixint_minus_one":
+        return _build_int_negative_fixint_minus_one()
+    if case_id == "int_negative_fixint_minus_31":
+        return _build_int_negative_fixint_minus_31()
+    if case_id == "int_negative_fixint_min":
+        return _build_int_negative_fixint_min()
     if case_id == "int_int8_min":
         return _build_int_int8_min()
+    if case_id == "int_int8_minus_127":
+        return _build_int_int8_minus_127()
     if case_id == "int_int8_min_edge":
         return _build_int_int8_min_edge()
     if case_id == "int_int16_min":
         return _build_int_int16_min()
+    if case_id == "int_int16_minus_32767":
+        return _build_int_int16_minus_32767()
     if case_id == "int_int16_min_edge":
         return _build_int_int16_min_edge()
     if case_id == "int_int32_min":
         return _build_int_int32_min()
+    if case_id == "int_int32_minus_2147483647":
+        return _build_int_int32_minus_2147483647()
     if case_id == "int_int32_min_edge":
         return _build_int_int32_min_edge()
     if case_id == "int_int64_min":
         return _build_int_int64_min()
+    if case_id == "int_int64_above_min":
+        return _build_int_int64_above_min()
     if case_id == "int_int64_min_edge":
         return _build_int_int64_min_edge()
     if case_id == "float64_one_and_half":
@@ -448,24 +524,39 @@ def load_vectors() -> List[VectorCase]:
         VectorCase("bool_true", "bool", "roundtrip", "c3", True, "", ""),
         VectorCase("bool_false", "bool", "roundtrip", "c2", True, "", ""),
         VectorCase("int_positive_fixint_zero", "int", "roundtrip", "00", True, "", ""),
+        VectorCase("int_one", "int", "roundtrip", "01", True, "", ""),
+        VectorCase("int_positive_fixint_126", "int", "roundtrip", "7e", True, "", ""),
         VectorCase("int_positive_fixint_max", "int", "roundtrip", "7f", True, "", ""),
-        VectorCase("int_negative_fixint_minus_one", "int", "roundtrip", "ff", True, "", ""),
-        VectorCase("int_negative_fixint_min", "int", "roundtrip", "e0", True, "", ""),
         VectorCase("int_uint8_min", "int", "roundtrip", "cc80", True, "", ""),
+        VectorCase("int_uint8_129", "int", "roundtrip", "cc81", True, "", ""),
+        VectorCase("int_uint8_254", "int", "roundtrip", "ccfe", True, "", ""),
         VectorCase("int_uint8_max", "int", "roundtrip", "ccff", True, "", ""),
         VectorCase("int_uint16_min", "int", "roundtrip", "cd0100", True, "", ""),
+        VectorCase("int_uint16_257", "int", "roundtrip", "cd0101", True, "", ""),
         VectorCase("int_uint16_max", "int", "roundtrip", "cdffff", True, "", ""),
         VectorCase("int_uint32_min", "int", "roundtrip", "ce00010000", True, "", ""),
+        VectorCase("int_uint32_signed_max", "int", "roundtrip", "ce7fffffff", True, "", ""),
+        VectorCase("int_uint32_signed_over", "int", "roundtrip", "ce80000000", True, "", ""),
+        VectorCase("int_uint32_4294967294", "int", "roundtrip", "cefffffffe", True, "", ""),
         VectorCase("int_uint32_max", "int", "roundtrip", "ceffffffff", True, "", ""),
         VectorCase("int_uint64_min", "int", "roundtrip", "cf0000000100000000", True, "", ""),
+        VectorCase("int_int64_max", "int", "roundtrip", "cf7fffffffffffffff", True, "", ""),
+        VectorCase("int_uint64_above_int64", "int", "roundtrip", "cf8000000000000000", True, "", ""),
         VectorCase("int_uint64_max", "int", "roundtrip", "cfffffffffffffffff", True, "", ""),
+        VectorCase("int_negative_fixint_minus_one", "int", "roundtrip", "ff", True, "", ""),
+        VectorCase("int_negative_fixint_minus_31", "int", "roundtrip", "e1", True, "", ""),
+        VectorCase("int_negative_fixint_min", "int", "roundtrip", "e0", True, "", ""),
         VectorCase("int_int8_min", "int", "roundtrip", "d0df", True, "", ""),
+        VectorCase("int_int8_minus_127", "int", "roundtrip", "d081", True, "", ""),
         VectorCase("int_int8_min_edge", "int", "roundtrip", "d080", True, "", ""),
         VectorCase("int_int16_min", "int", "roundtrip", "d1ff7f", True, "", ""),
+        VectorCase("int_int16_minus_32767", "int", "roundtrip", "d18001", True, "", ""),
         VectorCase("int_int16_min_edge", "int", "roundtrip", "d18000", True, "", ""),
         VectorCase("int_int32_min", "int", "roundtrip", "d2ffff7fff", True, "", ""),
+        VectorCase("int_int32_minus_2147483647", "int", "roundtrip", "d280000001", True, "", ""),
         VectorCase("int_int32_min_edge", "int", "roundtrip", "d280000000", True, "", ""),
         VectorCase("int_int64_min", "int", "roundtrip", "d3ffffffff7fffffff", True, "", ""),
+        VectorCase("int_int64_above_min", "int", "roundtrip", "d38000000000000001", True, "", ""),
         VectorCase("int_int64_min_edge", "int", "roundtrip", "d38000000000000000", True, "", ""),
         VectorCase("float64_one_and_half", "float", "roundtrip", "cb3ff8000000000000", True, "", ""),
         VectorCase("float64_negative_zero", "float", "roundtrip", "cb8000000000000000", True, "", ""),

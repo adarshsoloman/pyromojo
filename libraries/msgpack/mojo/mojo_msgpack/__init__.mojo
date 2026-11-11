@@ -1,1 +1,1 @@
-"""Native Mojo MessagePack implementation (Phase 1: value model, CLI framing)."""
+"""Native Mojo MessagePack implementation (integer codec and CLI)."""

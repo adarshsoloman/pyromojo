@@ -18,8 +18,8 @@ import re
 from pathlib import Path
 from typing import Any
 
-SCHEMA_VERSION = "1.0.0"
-GENERATOR = {"name": "msgpack_vectors", "version": "1.0.0"}
+SCHEMA_VERSION = "1.1.0"
+GENERATOR = {"name": "msgpack_vectors", "version": "1.1.0"}
 REFERENCE_PACKAGE = "msgpack"
 REFERENCE_VERSION = "1.2.4"
 
@@ -126,13 +126,15 @@ def _validate_value(value: Any, where: str, errors: list[str]) -> None:
         _check_keys(value, {"type", "value"}, {"type", "value"}, where, errors)
         if not isinstance(value.get("value"), bool):
             errors.append(f"{where}: bool value must be true or false")
-    elif tag == "int":
+    elif tag in {"int", "uint"}:
         _check_keys(value, {"type", "value"}, {"type", "value"}, where, errors)
         raw = value.get("value")
         if not isinstance(raw, str) or not DECIMAL_RE.fullmatch(raw):
-            errors.append(f"{where}: int value must be a canonical decimal string")
-        elif not INT_MIN <= int(raw) <= INT_MAX:
-            errors.append(f"{where}: integer {raw} is outside the MessagePack int range")
+            errors.append(f"{where}: {tag} value must be a canonical decimal string")
+        elif tag == "int" and not INT_MIN <= int(raw) <= 2**63 - 1:
+            errors.append(f"{where}: signed integer {raw} is outside the signed 64-bit range")
+        elif tag == "uint" and not 0 <= int(raw) <= INT_MAX:
+            errors.append(f"{where}: unsigned integer {raw} is outside the 64-bit range")
     elif tag in {"float32", "float64"}:
         _check_keys(value, {"type", "bits"}, {"type", "bits"}, where, errors)
         bits = value.get("bits")

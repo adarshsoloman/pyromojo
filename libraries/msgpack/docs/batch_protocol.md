@@ -5,8 +5,9 @@ request/response protocol over stdin/stdout. It exists so the Python reference
 can drive the same process model the final encoder/decoder will use without
 `ctypes`, `PythonModuleBuilder`, or Python-specific object hooks.
 
-Phase 1 implements framing, `PING`, and `ECHO`; `DECODE` and `ENCODE` return
-`UNIMPLEMENTED` until the codec lands.
+Phase 2 implements framing, `PING`, `ECHO`, and integer `DECODE`/`ENCODE`.
+Non-integer MessagePack values still return `UNIMPLEMENTED`; malformed integer
+models return `ERROR`.
 
 ## Framing
 
@@ -35,10 +36,24 @@ body     := uint8 status | payload
 |--------|-----------|-------------------|-----------------|--------------------------|
 | `0x01` | `PING`    | Implemented       | Ignored         | Empty                    |
 | `0x02` | `ECHO`    | Implemented       | Arbitrary bytes | Exact request payload    |
-| `0x10` | `DECODE`  | Unimplemented     | MessagePack bytes | Decoded value model (Phase 2) |
-| `0x11` | `ENCODE`  | Unimplemented     | Value model (Phase 2) | MessagePack bytes |
+| `0x10` | `DECODE`  | Integers          | MessagePack bytes | 9-byte integer model |
+| `0x11` | `ENCODE`  | Integers          | 9-byte integer model | MessagePack bytes |
 
 An empty body has no opcode and returns an `ERROR` frame.
+
+### Integer transfer model
+
+`DECODE` returns and `ENCODE` accepts exactly 9 bytes:
+
+```
+model := uint8 tag | uint64_be bits
+tag   := 0x00 signed | 0x01 unsigned
+```
+
+`bits` is the two's-complement bit pattern for signed values and the plain
+64-bit value for unsigned values. `ENCODE` accepts only this model; other
+lengths or tags are rejected. Positive fixints and uint8/16/32/64 decode to
+tag `0x01`; negative fixints and int8/16/32/64 decode to tag `0x00`.
 
 ## Statuses
 
@@ -62,8 +77,10 @@ the status byte, not message text.
   are answered normally.
 - **Unknown opcode / empty body**: the process answers with `ERROR` and keeps
   reading.
-- **Valid but unimplemented opcode**: the process answers with `UNIMPLEMENTED`
-  and keeps reading.
+- **Valid but unimplemented input**: a non-integer value or model gets
+  `UNIMPLEMENTED` and the process keeps reading.
+- **Malformed or truncated integer input**: `ERROR` includes a category and
+  byte offset, for example `truncated: offset 1` or `trailing-data: offset 3`.
 
 The framed stream is stdout only. Diagnostics never share stdout with frames;
 stderr is free-form text.
@@ -84,6 +101,9 @@ and `ECHO "hi"` is:
 request:  00 00 00 03  02 68 69
 response: 00 00 00 03  00 68 69
 ```
+
+`DECODE` of `cc ff` (unsigned 255) returns the model `01 00 00 00 00 00 00 00 ff`;
+`ENCODE` of that model returns `cc ff`.
 
 ## Build and run
 

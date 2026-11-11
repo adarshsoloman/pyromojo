@@ -1,13 +1,18 @@
 """Batch CLI for the native MessagePack implementation.
 
-Phase 1 implements the framing and control opcodes so Python compatibility
-tests can drive the same process model the final decoder/encoder will use.
-DECODE and ENCODE report UNIMPLEMENTED until Phase 2.
+Phase 2 implements integer DECODE and ENCODE. Non-integer MessagePack values
+still report UNIMPLEMENTED; malformed integer models report ERROR.
 """
 
 from std.collections import List
 from std.io import RawFileDescriptor
 
+from mojo_msgpack.integer import (
+    append_integer_model,
+    decode_exact,
+    decode_integer_model,
+    encode_value,
+)
 from mojo_msgpack.protocol import (
     OP_DECODE,
     OP_ECHO,
@@ -25,6 +30,13 @@ from mojo_msgpack.protocol import (
 def _reply_error(mut stdout: RawFileDescriptor, message: String) raises:
     var payload = ascii_bytes(message)
     write_frame(stdout, STATUS_ERROR, Span(payload))
+
+
+def _reply_unimplemented(mut stdout: RawFileDescriptor, opcode: UInt8) raises:
+    var message = ascii_bytes(
+        "opcode " + String(Int(opcode)) + " not implemented in Phase 1"
+    )
+    write_frame(stdout, STATUS_UNIMPLEMENTED, Span(message))
 
 
 def main() raises:
@@ -52,8 +64,30 @@ def main() raises:
             write_frame(stdout, STATUS_OK, payload[0:0])
         elif opcode == OP_ECHO:
             write_frame(stdout, STATUS_OK, payload)
-        elif opcode == OP_DECODE or opcode == OP_ENCODE:
-            var message = ascii_bytes("opcode " + String(Int(opcode)) + " not implemented in Phase 1")
-            write_frame(stdout, STATUS_UNIMPLEMENTED, Span(message))
+        elif opcode == OP_DECODE:
+            try:
+                var value = decode_exact(payload)
+                var model = List[UInt8](capacity=9)
+                append_integer_model(model, value)
+                write_frame(stdout, STATUS_OK, Span(model))
+            except error:
+                var message = String(error)
+                if message.startswith("unsupported-marker"):
+                    _reply_unimplemented(stdout, opcode)
+                else:
+                    _reply_error(stdout, message)
+        elif opcode == OP_ENCODE:
+            # Preserve the Phase 1 stub behaviour for the nil sentinel while
+            # reporting malformed integer models as errors.
+            if len(payload) == 1 and payload[0] == 0xC0:
+                _reply_unimplemented(stdout, opcode)
+                continue
+            try:
+                var value = decode_integer_model(payload)
+                var encoded = List[UInt8](capacity=9)
+                encode_value(encoded, value)
+                write_frame(stdout, STATUS_OK, Span(encoded))
+            except error:
+                _reply_error(stdout, String(error))
         else:
             _reply_error(stdout, "unknown opcode " + String(Int(opcode)))

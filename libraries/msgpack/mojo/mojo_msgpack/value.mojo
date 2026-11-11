@@ -20,6 +20,7 @@ comptime VALUE_ARRAY: UInt8 = 7
 comptime VALUE_MAP: UInt8 = 8
 comptime VALUE_EXT: UInt8 = 9
 comptime VALUE_TIMESTAMP: UInt8 = 10
+comptime VALUE_UINT: UInt8 = 11
 
 comptime DEFAULT_MAX_DEPTH: Int = 128
 
@@ -27,8 +28,9 @@ comptime DEFAULT_MAX_DEPTH: Int = 128
 struct Value(Deinitable, Copyable, Movable):
     """A MessagePack value with an explicit recursion-depth guard.
 
-    ``VALUE_INT`` stores the two's-complement bit pattern in ``int_bits``.
-    ``VALUE_TIMESTAMP`` stores signed seconds in ``int_bits`` and nanoseconds in
+    ``VALUE_INT`` stores a signed two's-complement bit pattern in ``int_bits``;
+    ``VALUE_UINT`` stores an unsigned pattern. ``VALUE_TIMESTAMP`` stores signed
+    seconds in ``int_bits`` and nanoseconds in
     ``nsec``. ``VALUE_EXT`` stores the extension code in ``ext_code`` and its
     payload in ``data``. ``VALUE_ARRAY`` children are elements;
     ``VALUE_MAP`` children are ordered key/value pairs.
@@ -91,7 +93,7 @@ struct Value(Deinitable, Copyable, Movable):
     @staticmethod
     def unsigned(value: UInt64) -> Self:
         var result = Self()
-        result.kind = VALUE_INT
+        result.kind = VALUE_UINT
         result.int_bits = value
         return result^
 
@@ -179,6 +181,12 @@ struct Value(Deinitable, Copyable, Movable):
 
     def is_nil(self) -> Bool:
         return self.kind == VALUE_NIL
+
+    def is_integer(self) -> Bool:
+        return self.kind == VALUE_INT or self.kind == VALUE_UINT
+
+    def is_unsigned(self) -> Bool:
+        return self.kind == VALUE_UINT
 
     def as_int64(self) -> Int64:
         return Int64(from_bits=self.int_bits)
