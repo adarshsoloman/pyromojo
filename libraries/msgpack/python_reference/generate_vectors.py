@@ -29,9 +29,9 @@ from typing import Any
 
 import msgpack
 
-SCHEMA_VERSION = "1.3.0"
+SCHEMA_VERSION = "1.4.0"
 GENERATOR_NAME = "msgpack_vectors"
-GENERATOR_VERSION = "1.3.0"
+GENERATOR_VERSION = "1.4.0"
 REFERENCE_VERSION = "1.2.4"
 REPEAT_MAX = 1_000_000
 
@@ -749,12 +749,23 @@ def build_cases() -> list[dict[str, Any]]:
             127,
             b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01",
         ),
+        ("ext_empty", "ext8", 0, b""),
+        ("ext_len3", "ext8", 3, b"\x01\x02\x03"),
+        ("ext_len5", "ext8", 3, b"\x01\x02\x03\x04\x05"),
+        ("ext_len17", "ext8", 3, b"x" * 17),
         ("ext_ext8", "ext8", 42, b"\x00\x01\x02"),
+        ("ext_ext8_max", "ext8", 42, b"x" * 255),
         (
             "ext_ext16",
             "ext16",
             42,
             b"x" * 256,
+        ),
+        (
+            "ext_ext16_max",
+            "ext16",
+            42,
+            b"x" * 65535,
         ),
         (
             "ext_ext32",
@@ -771,8 +782,12 @@ def build_cases() -> list[dict[str, Any]]:
         ("timestamp32_zero", "timestamp32", 1, 0),
         ("timestamp32_max", "timestamp32", 2**32 - 1, 0),
         ("timestamp64_min", "timestamp64", 2**32, 1),
+        ("timestamp64_zero_seconds", "timestamp64", 2**32, 0),
+        ("timestamp64_nsec_max", "timestamp64", 0, 999_999_999),
+        ("timestamp64_nsec_boundary", "timestamp64", 2**32 - 1, 1),
         ("timestamp64_max", "timestamp64", 2**34 - 1, 999_999_999),
         ("timestamp96_negative_seconds", "timestamp96", -1, 0),
+        ("timestamp96_min_extended", "timestamp96", 2**34, 0),
         ("timestamp96_extended", "timestamp96", 2**34, 999_999_999),
     ]
     for case_id, marker, seconds, nanoseconds in timestamp_cases:
@@ -784,6 +799,37 @@ def build_cases() -> list[dict[str, Any]]:
                 v_timestamp(seconds, nanoseconds),
             )
         )
+
+    # extensions and timestamps nested in containers ----------------------
+    cases.append(
+        roundtrip_case(
+            "array_ext_timestamp",
+            "array",
+            ["fixarray", "ext8", "timestamp64"],
+            v_array(
+                [
+                    v_ext(3, b"\x01\x02\x03"),
+                    v_timestamp(2**32, 123456789),
+                    v_nil(),
+                ]
+            ),
+            note="Extension and timestamp values inside an array.",
+        )
+    )
+    cases.append(
+        roundtrip_case(
+            "map_timestamp_key",
+            "map",
+            ["fixmap", "timestamp32", "fixext1"],
+            v_map(
+                [
+                    (v_timestamp(5, 0), v_str("t")),
+                    (v_str("e"), v_ext(7, b"\x00")),
+                ]
+            ),
+            note="A timestamp key and an extension value in one map.",
+        )
+    )
 
     # errors ---------------------------------------------------------------
     cases.append(error_case("error_empty_input", b"", "ValueError", "incomplete input"))
@@ -905,6 +951,84 @@ def build_cases() -> list[dict[str, Any]]:
             "exceeds max_map_len",
             note="The reference caps the declared count against the input size; "
             "PyroMojo reports container-limit instead.",
+        )
+    )
+
+    # extension and timestamp errors -------------------------------------
+    cases.append(
+        error_case(
+            "error_negative_ext_code",
+            bytes.fromhex("d4fe2a"),
+            "ValueError",
+            "code must be 0~127",
+            note="Wire-negative extension codes are rejected by the reference; "
+            "PyroMojo accepts the full signed int8 range instead.",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_truncated_fixext1",
+            bytes.fromhex("d4"),
+            "ValueError",
+            "incomplete input",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_truncated_ext8",
+            bytes.fromhex("c7"),
+            "ValueError",
+            "incomplete input",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_truncated_ext16",
+            bytes.fromhex("c8"),
+            "ValueError",
+            "incomplete input",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_truncated_ext32",
+            bytes.fromhex("c900000001"),
+            "ValueError",
+            "incomplete input",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_timestamp_len0",
+            bytes.fromhex("c700ff"),
+            "ValueError",
+            "invalid timestamp data",
+            note="Type -1 with a length outside {4, 8, 12} is never a generic ext.",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_timestamp_len5",
+            bytes.fromhex("c705ff0102030405"),
+            "ValueError",
+            "invalid timestamp data",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_timestamp_len16",
+            bytes.fromhex("d8ff") + b"\x00" * 16,
+            "ValueError",
+            "invalid timestamp data",
+        )
+    )
+    cases.append(
+        error_case(
+            "error_timestamp_nsec_range",
+            bytes.fromhex("c70cff3b9aca000000000000000001"),
+            "ValueError",
+            "nanoseconds",
+            note="Nanoseconds above 999999999 are rejected, not wrapped.",
         )
     )
 

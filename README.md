@@ -5,8 +5,9 @@ libraries, verified against the original Python behaviour and benchmarked with
 reproducible, shared test vectors.
 
 > **Status: active development.** The Msgpack port implements the integer,
-> float, string, and binary scalar codecs plus recursive arrays and maps with
-> depth and resource limits; extensions and timestamps remain in progress.
+> float, string, and binary scalar codecs, recursive arrays and maps with
+> depth and resource limits, all extension families, and the standard
+> timestamp extension.
 
 ## Motivation
 
@@ -56,7 +57,7 @@ libraries must not depend on one another. See
 
 | Library       | Purpose                                   | Status      |
 |---------------|-------------------------------------------|-------------|
-| `msgpack`     | Binary serialization                      | PHASE 4 CONTAINERS |
+| `msgpack`     | Binary serialization                      | PHASE 5 EXT/TIMESTAMPS |
 | `levenshtein` | Edit distance and string similarity       | NOT STARTED |
 | `audioop`     | Legacy audio sample manipulation          | NOT STARTED |
 | `bitarray`    | Compact bit array operations              | NOT STARTED |

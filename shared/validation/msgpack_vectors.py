@@ -18,8 +18,8 @@ import re
 from pathlib import Path
 from typing import Any
 
-SCHEMA_VERSION = "1.3.0"
-GENERATOR = {"name": "msgpack_vectors", "version": "1.3.0"}
+SCHEMA_VERSION = "1.4.0"
+GENERATOR = {"name": "msgpack_vectors", "version": "1.4.0"}
 REFERENCE_PACKAGE = "msgpack"
 REFERENCE_VERSION = "1.2.4"
 
@@ -191,8 +191,8 @@ def _validate_value(value: Any, where: str, errors: list[str]) -> None:
     elif tag == "ext":
         _check_keys(value, {"type", "code", "hex"}, {"type", "code", "hex"}, where, errors)
         code = value.get("code")
-        if not isinstance(code, int) or isinstance(code, bool) or not 0 <= code <= 127:
-            errors.append(f"{where}: ext code must be an integer in 0..127")
+        if not isinstance(code, int) or isinstance(code, bool) or not -128 <= code <= 127:
+            errors.append(f"{where}: ext code must be an integer in -128..127")
         raw = value.get("hex")
         if not isinstance(raw, str) or not HEX_RE.fullmatch(raw):
             errors.append(f"{where}: ext hex must be lowercase even-length hex")

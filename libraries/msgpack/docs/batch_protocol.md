@@ -5,11 +5,12 @@ request/response protocol over stdin/stdout. It exists so the Python reference
 can drive the same process model the final encoder/decoder will use without
 `ctypes`, `PythonModuleBuilder`, or Python-specific object hooks.
 
-Phase 4 implements framing, `PING`, `ECHO`, and `DECODE`/`ENCODE` for integers,
-Float32/Float64, strings, binary, and recursively nested arrays and maps.
-Extensions and timestamps still return `UNIMPLEMENTED`; malformed wire data
-and models return `ERROR`. Bare top-level nil and bool keep the Phase 1
-`UNIMPLEMENTED` response; they are fully supported as array and map children.
+Phase 5 implements framing, `PING`, `ECHO`, and `DECODE`/`ENCODE` for integers,
+Float32/Float64, strings, binary, recursively nested arrays and maps, all
+eight extension families, and the standard timestamp extension. Malformed
+wire data and models return `ERROR`. Bare top-level nil and bool keep the
+Phase 1 `UNIMPLEMENTED` response; they are fully supported as array and map
+children.
 
 ## Framing
 
@@ -34,12 +35,12 @@ body     := uint8 status | payload
 
 ## Opcodes
 
-| Opcode | Name      | Status in Phase 4 | Request payload | Success response payload |
+| Opcode | Name      | Status in Phase 5 | Request payload | Success response payload |
 |--------|-----------|-------------------|-----------------|--------------------------|
 | `0x01` | `PING`    | Implemented       | Ignored         | Empty                    |
 | `0x02` | `ECHO`    | Implemented       | Arbitrary bytes | Exact request payload    |
-| `0x10` | `DECODE`  | Scalars, arrays, maps | MessagePack bytes | Value model |
-| `0x11` | `ENCODE`  | Scalars, arrays, maps | Value model | MessagePack bytes |
+| `0x10` | `DECODE`  | All v0.1 types    | MessagePack bytes | Value model |
+| `0x11` | `ENCODE`  | All v0.1 types    | Value model | MessagePack bytes |
 
 An empty body has no opcode and returns an `ERROR` frame.
 
@@ -70,6 +71,19 @@ nil   := 0xc0
 false := 0xc2
 true  := 0xc3
 ```
+
+Extensions and timestamps have their own model tags, disjoint from every
+Phase 1-4 tag:
+
+```
+ext       := 0x16 | int8 code | uint32_be length | payload bytes
+timestamp := 0x17 | int64_be seconds | uint32_be nanoseconds
+```
+
+An `ext` model with code `-1` must carry a valid 4-, 8-, or 12-byte timestamp
+payload with nanoseconds in `0..999999999`; anything else is `ERROR`, never a
+generic extension. Conversely, a timestamp model is always validated and can
+never smuggle an out-of-range value.
 
 `bits` is the two's-complement bit pattern for signed integers and the plain
 64-bit value for unsigned integers. Float models carry the IEEE 754 bit
@@ -110,18 +124,20 @@ the status byte, not message text.
   are answered normally.
 - **Unknown opcode / empty body**: the process answers with `ERROR` and keeps
   reading.
-- **Valid but unimplemented input**: extension or timestamp values get
-  `UNIMPLEMENTED` and the process keeps reading. Bare top-level nil and bool
-  keep their Phase 1 `UNIMPLEMENTED` response.
+- **Valid but unimplemented input**: none remain; every v0.1 marker decodes.
+  Bare top-level nil and bool keep their Phase 1 `UNIMPLEMENTED` response.
 - **Malformed or truncated input**: `ERROR` includes a category and
   byte offset, for example `truncated: offset 1`, `invalid-utf8: offset 1`,
-  `invalid-marker: offset 0`, or `trailing-data: offset 3`.
+  `invalid-marker: offset 0`, `trailing-data: offset 3`, or
+  `invalid-timestamp: offset 0`. A timestamp extension (type `-1`) with a
+  payload length outside {4, 8, 12} or nanoseconds above 999999999 is
+  `invalid-timestamp`, never a generic extension value.
 - **Depth and resource limits**: nesting deeper than `max_depth`
   (default 128) or a declared item count above `max_container_items`
   (default 1,000,000) fails with `depth-exceeded` or `container-limit`
   respectively. Counts are checked against the remaining input before any
-  allocation, so a declared 4-billion-item array costs one error, not a
-  4-billion-element allocation.
+  allocation, so a declared 4-billion-byte payload costs one error, not a
+  4-billion-byte allocation.
 
 The framed stream is stdout only. Diagnostics never share stdout with frames;
 stderr is free-form text.
@@ -160,6 +176,22 @@ re-encode to identical bytes; Python `dict` cannot represent them (or
 unhashable keys such as arrays), so Python-side reference code uses
 `object_pairs_hook` and `strict_map_key=False`. The reference C extension
 caps nesting at 1024, well above the native default of 128.
+
+Extension payload lengths select the shortest marker: 1, 2, 4, 8, and 16
+bytes use fixext1/2/4/8/16, everything else uses ext8/ext16/ext32 by length
+(empty payloads use ext8). Timestamp selection matches the reference: zero
+nanoseconds with seconds fitting in 32 bits uses timestamp32; seconds below
+2^34 use timestamp64; everything else (including negative seconds) uses
+timestamp96.
+
+Python reference differences: `ExtType` codes are restricted to 0..127, so a
+wire-negative extension code decodes natively but raises `ValueError` in the
+reference; the native codec preserves the full signed int8 range. A
+timestamp wire payload is decoded by the reference to a `Timestamp` by
+default, to float seconds with `timestamp=1`, to total nanoseconds with
+`timestamp=2`, and to an aware UTC datetime with `timestamp=3`. Datetimes
+pack only with `datetime=True`, must be timezone-aware, and are normalized to
+UTC with microsecond-to-nanosecond scaling.
 
 ## Build and run
 

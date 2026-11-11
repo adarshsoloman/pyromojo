@@ -199,7 +199,7 @@ def test_truncated_and_reserved_container_children() raises:
         _ = decode_value_exact(decode_hex("91c1"))
     with assert_raises(contains="trailing-data: offset 1"):
         _ = decode_value_exact(decode_hex("9000"))
-    with assert_raises(contains="unsupported-marker: offset 1"):
+    with assert_raises(contains="truncated: offset 5"):
         _ = decode_value_exact(decode_hex("92c7010203"))
 
 

@@ -24,10 +24,10 @@ toolchain documented.
 Scope: integer, float, string, binary, array, map, extension, and timestamp
 encoding; decoding; nested structures; invalid-input handling.
 
-Progress: integer, float, string, binary, array, and map codecs and their
-cross-language tests are complete
-([results](../libraries/msgpack/PHASE4_RESULTS.md)). Extensions and
-timestamps remain in progress.
+Progress: the full v0.1 type set — integers, floats, strings, binary, arrays,
+maps, extensions, and timestamps — and their cross-language tests are
+complete ([results](../libraries/msgpack/PHASE5_RESULTS.md)). Integration
+and benchmarks remain future work.
 
 - [x] Pin the reference `msgpack` version and document its license.
 - [x] Define the v0.1 compatibility surface and known deviations.

@@ -23,6 +23,15 @@ Scalars keep their Phase 3 model tags.
 
 from std.collections import List
 
+from mojo_msgpack.extension import (
+    MODEL_EXT,
+    MODEL_TIMESTAMP,
+    append_ext_model,
+    decode_ext_at,
+    decode_ext_model,
+    encode_ext_value,
+    is_ext_marker,
+)
 from mojo_msgpack.integer import encode_value as encode_integer_value
 from mojo_msgpack.scalar import (
     append_scalar_model,
@@ -39,12 +48,14 @@ from mojo_msgpack.value import (
     VALUE_ARRAY,
     VALUE_BIN,
     VALUE_BOOL,
+    VALUE_EXT,
     VALUE_FLOAT32,
     VALUE_FLOAT64,
     VALUE_INT,
     VALUE_MAP,
     VALUE_NIL,
     VALUE_STR,
+    VALUE_TIMESTAMP,
     VALUE_UINT,
     Value,
 )
@@ -201,6 +212,9 @@ def _append_value_at(
         for index in range(len(value.kids)):
             _append_value_at(out, value.kids[index], depth_remaining - 1, max_container_items)
         return
+    if value.kind == VALUE_EXT or value.kind == VALUE_TIMESTAMP:
+        encode_ext_value(out, value)
+        return
     if value.kind == VALUE_INT or value.kind == VALUE_UINT:
         encode_integer_value(out, value)
         return
@@ -217,9 +231,7 @@ def _append_value_at(
         encode_bin(out, Span(value.data))
         return
     raise Error(
-        "unsupported-value: kind "
-        + String(Int(value.kind))
-        + " is not supported by the array/map codec"
+        "unsupported-value: kind " + String(Int(value.kind)) + " is not a supported value"
     )
 
 
@@ -357,6 +369,9 @@ def _decode_value_at(
         pos += 1
         return Value.bool(True)
 
+    if is_ext_marker(marker):
+        return decode_ext_at(data, pos)
+
     return decode_scalar_at(data, pos)
 
 
@@ -404,6 +419,9 @@ def _append_value_model_at(
         return
     if value.kind == VALUE_BOOL:
         out.append(MODEL_TRUE if value.as_bool() else MODEL_FALSE)
+        return
+    if value.kind == VALUE_EXT or value.kind == VALUE_TIMESTAMP:
+        append_ext_model(out, value)
         return
     if value.kind == VALUE_ARRAY:
         var count = len(value.kids)
@@ -554,6 +572,8 @@ def _decode_value_model_at(
         return _decode_model_container(bytes, depth_remaining, max_container_items, False)
     if tag == MODEL_MAP:
         return _decode_model_container(bytes, depth_remaining, max_container_items, True)
+    if tag == MODEL_EXT or tag == MODEL_TIMESTAMP:
+        return decode_ext_model(bytes)
 
     return decode_scalar_model(bytes)
 

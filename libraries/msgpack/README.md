@@ -1,11 +1,11 @@
 # Msgpack (Mojo Port)
 
-## Status: PHASE 4 CONTAINERS COMPLETE
+## Status: PHASE 5 EXTENSIONS AND TIMESTAMPS COMPLETE
 
-Integers, Float32/Float64, strings, binary values, and recursively nested
-arrays and maps (with nil and bool children) encode and decode with
-exact-byte and cross-language tests. Extensions and timestamps remain future
-work. See [PHASE4_RESULTS.md](PHASE4_RESULTS.md).
+Integers, Float32/Float64, strings, binary values, recursively nested arrays
+and maps (with nil and bool children), all eight extension families, and the
+standard timestamp extension encode and decode with exact-byte and
+cross-language tests. See [PHASE5_RESULTS.md](PHASE5_RESULTS.md).
 
 ## Library description
 
@@ -110,10 +110,10 @@ uv sync --extra dev
 
 ## Current status
 
-Phase 4 scope complete: 141 golden cases covering integers, Float32 and
-Float64 bit patterns, UTF-8 strings, arbitrary binary payloads, and recursively
-nested arrays and maps (including duplicate/non-string keys, nil/bool
-children, marker boundaries, and depth/limit errors), with native exact-byte
-tests and bidirectional CLI compatibility. Extensions and timestamps still
-return `UNIMPLEMENTED`; bare top-level nil/bool models keep their Phase 1
-`UNIMPLEMENTED` response.
+Phase 5 scope complete: 162 golden cases covering integers, Float32 and
+Float64 bit patterns, UTF-8 strings, arbitrary binary payloads, recursively
+nested arrays and maps, all extension markers (including empty payloads and
+length boundaries), and all three timestamp representations (including
+negative seconds and nanosecond boundaries), with native exact-byte tests and
+bidirectional CLI compatibility. Bare top-level nil/bool models keep their
+Phase 1 `UNIMPLEMENTED` response.

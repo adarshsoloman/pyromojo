@@ -27,6 +27,8 @@ MODEL_MAP = 0x15
 MODEL_NIL = 0xC0
 MODEL_FALSE = 0xC2
 MODEL_TRUE = 0xC3
+MODEL_EXT = 0x16
+MODEL_TIMESTAMP = 0x17
 
 MASK64 = (1 << 64) - 1
 
@@ -84,6 +86,17 @@ def model_for(value: dict) -> bytes:
         return bytes([MODEL_NIL])
     if tag == "bool":
         return bytes([MODEL_TRUE if value["value"] else MODEL_FALSE])
+    if tag == "ext":
+        code = value["code"] & 0xFF
+        payload = bytes.fromhex(value["hex"])
+        return bytes([MODEL_EXT, code]) + struct.pack(">I", len(payload)) + payload
+    if tag == "timestamp":
+        seconds = int(value["seconds"])
+        return (
+            bytes([MODEL_TIMESTAMP])
+            + struct.pack(">q", seconds)
+            + struct.pack(">I", value["nanoseconds"])
+        )
     if tag == "array":
         if "repeat" in value:
             items = [value["repeat"]["item"]] * value["repeat"]["count"]
@@ -132,6 +145,17 @@ def unpack_model(payload: bytes):
     if tag == MODEL_TRUE:
         assert len(payload) == 1
         return True
+    if tag == MODEL_EXT:
+        assert len(payload) >= 6
+        code = payload[1]
+        length = struct.unpack(">I", payload[2:6])[0]
+        assert len(payload) == 6 + length
+        return msgpack.ExtType(int.from_bytes([code], "big", signed=True), payload[6:])
+    if tag == MODEL_TIMESTAMP:
+        assert len(payload) == 13
+        seconds = struct.unpack(">q", payload[1:9])[0]
+        nanoseconds = struct.unpack(">I", payload[9:13])[0]
+        return msgpack.Timestamp(seconds, nanoseconds)
     if tag == MODEL_ARRAY:
         count = struct.unpack(">I", payload[1:5])[0]
         offset = 5
@@ -185,7 +209,7 @@ def decode_both_implementations(encoded: bytes):
 
 def test_array_cross_language(msgpack_cli: Path, vectors_bundle: dict) -> None:
     cases = cases_by(vectors_bundle, "array", "roundtrip")
-    assert len(cases) == 8
+    assert len(cases) == 9
     for case in cases:
         golden = bytes.fromhex(case["encoded"])
         decode_both_implementations(golden)
@@ -203,7 +227,7 @@ def test_array_cross_language(msgpack_cli: Path, vectors_bundle: dict) -> None:
 
 def test_map_cross_language(msgpack_cli: Path, vectors_bundle: dict) -> None:
     cases = cases_by(vectors_bundle, "map", "roundtrip")
-    assert len(cases) == 4
+    assert len(cases) == 5
     for case in cases:
         golden = bytes.fromhex(case["encoded"])
         decode_both_implementations(golden)
@@ -320,13 +344,6 @@ def test_malformed_container_wire_values_are_errors(
     status, message = call(msgpack_cli, b"\x10" + payload)
     assert status == STATUS_ERROR
     assert message.startswith(prefix)
-
-
-def test_extensions_and_timestamps_stay_unimplemented(msgpack_cli: Path) -> None:
-    status, _ = call(msgpack_cli, b"\x10\x92\xc7\x01\x02\x03")
-    assert status == STATUS_UNIMPLEMENTED
-    status, _ = call(msgpack_cli, b"\x10\xd6\xff\x00\x00\x00\x01")
-    assert status == STATUS_UNIMPLEMENTED
 
 
 def test_bare_nil_and_bool_stay_unimplemented(msgpack_cli: Path) -> None:

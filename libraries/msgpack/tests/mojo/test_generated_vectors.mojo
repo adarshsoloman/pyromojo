@@ -158,7 +158,35 @@ def test_container_vectors_decode_and_reencode() raises:
         assert_equal(len(encoded), len(raw))
         for offset in range(len(raw)):
             assert_equal(encoded[offset], raw[offset])
-    assert_equal(checked, 17)
+    assert_equal(checked, 19)
+
+
+def test_ext_and_timestamp_vectors_decode_and_reencode() raises:
+    var cases = load_vectors()
+    var checked = 0
+    for index in range(len(cases)):
+        var entry = cases[index]
+        if entry.category != "ext" and entry.category != "timestamp":
+            continue
+        checked += 1
+        var raw = decode_hex(entry.encoded_hex)
+        var decoded = decode_value_exact(Span(raw))
+        var expected = value_for_case(entry.id)
+        assert_equal(decoded.kind, expected.kind)
+        if entry.category == "ext":
+            assert_equal(decoded.ext_code, expected.ext_code)
+            assert_equal(len(decoded.data), len(expected.data))
+            for offset in range(len(expected.data)):
+                assert_equal(decoded.data[offset], expected.data[offset])
+        else:
+            assert_equal(decoded.as_int64(), expected.as_int64())
+            assert_equal(decoded.nsec, expected.nsec)
+        var encoded = List[UInt8]()
+        encode_value(encoded, decoded)
+        assert_equal(len(encoded), len(raw))
+        for offset in range(len(raw)):
+            assert_equal(encoded[offset], raw[offset])
+    assert_equal(checked, 24)
 
 
 def test_error_metadata() raises:

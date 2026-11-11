@@ -1,9 +1,8 @@
 """Batch CLI for the native MessagePack implementation.
 
-Phase 4 implements recursive arrays and maps in addition to the Phase 3 scalar
-codecs. Extensions and timestamps still report UNIMPLEMENTED. Bare top-level
-nil and bool retain the Phase 1 UNIMPLEMENTED response; they are supported as
-array and map children.
+Phase 5 implements extensions and timestamps in addition to the Phase 4
+recursive arrays and maps. Bare top-level nil and bool retain the Phase 1
+UNIMPLEMENTED response; they are supported as array and map children.
 """
 
 from std.collections import List
