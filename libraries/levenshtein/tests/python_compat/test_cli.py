@@ -173,6 +173,20 @@ def test_u64_weights_beyond_int_range_are_rejected(
     assert b"Int range" in frames[0][1]
 
 
+def test_u64_cutoff_beyond_int_range_is_no_truncation(
+    levenshtein_cli: Path,
+) -> None:
+    # A cutoff above Int range can never truncate (every distance fits in
+    # Int), so it must behave exactly like no cutoff — not an error.
+    huge = struct.pack(">Q", 2**64 - 1)
+    body = b"\x20" + struct.pack(">Q", 1) * 3 + b"\x01" + huge + field("abc") + field("xyz")
+    returncode, stdout, stderr = run_cli(levenshtein_cli, request(body))
+    assert returncode == 0
+    assert stderr == b""
+    frames = parse_frames(stdout)
+    assert frames == [(STATUS_OK, struct.pack(">Q", 3))]
+
+
 def test_framing_errors_emit_one_error_frame_and_fail(
     levenshtein_cli: Path,
 ) -> None:

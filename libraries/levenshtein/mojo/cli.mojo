@@ -91,15 +91,22 @@ def _handle_distance(
     var substitution = reader.read_int_field("substitution weight")
     var has_cutoff = reader.read_u8()
     var cutoff = 0
+    var cutoff_active = False
     if has_cutoff == 1:
-        cutoff = reader.read_int_field("score_cutoff")
+        var raw_cutoff = reader.read_u64()
+        # A cutoff above Int range can never truncate: every distance
+        # fits in Int (guarded by _check_bounds), so min(d, cutoff + 1)
+        # is just d. Treat it as no cutoff rather than rejecting it.
+        if raw_cutoff <= UInt64(Int.MAX):
+            cutoff = Int(raw_cutoff)
+            cutoff_active = True
     elif has_cutoff != 0:
         raise Error("malformed request: cutoff flag must be 0 or 1")
     var left = reader.read_string()
     var right = reader.read_string()
     reader.check_end()
     var distance: Int
-    if has_cutoff == 1:
+    if cutoff_active:
         distance = levenshtein_distance_cutoff(
             left, right, cutoff, insertion, deletion, substitution
         )

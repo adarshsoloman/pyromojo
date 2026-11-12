@@ -1,9 +1,14 @@
 # Levenshtein (Mojo port)
 
-## Status: Phase 1 complete — core v0.1 implemented and verified
+## Status: v0.1.0 release candidate — implemented, optimized, and audited
 
-Phase 1 report: [`PHASE1_RESULTS.md`](PHASE1_RESULTS.md).
-Phase 0 report: [`PHASE0_RESULTS.md`](PHASE0_RESULTS.md).
+Phase reports: [`PHASE0_RESULTS.md`](PHASE0_RESULTS.md) (reference
+audit) · [`PHASE1_RESULTS.md`](PHASE1_RESULTS.md) (core
+implementation) · [`PHASE2_RESULTS.md`](PHASE2_RESULTS.md)
+(benchmarks) · [`PHASE3_RESULTS.md`](PHASE3_RESULTS.md)
+(optimizations). Curated release summary:
+[`docs/benchmarks/releases/levenshtein-v0.1.md`](../../docs/benchmarks/releases/levenshtein-v0.1.md).
+Reference audit: [`docs/reference-audit.md`](docs/reference-audit.md) ·
 Reference audit: [`docs/reference-audit.md`](docs/reference-audit.md) ·
 Unicode: [`docs/unicode-semantics.md`](docs/unicode-semantics.md) ·
 Mojo probes: [`docs/mojo-probes.md`](docs/mojo-probes.md) ·
@@ -42,13 +47,24 @@ cutoffs.
 
 - `mojo/mojo_levenshtein/` — `unicode`, `distance`, `ratio`,
   `hamming`, `protocol` (framing copied from the MessagePack CLI
-  pattern, decoupled from it), `algorithms/` (two-row DP oracle +
-  blocked Myers bit-parallel over `UInt64` words).
+  pattern, decoupled from it), `algorithms/` (two-row DP oracle,
+  blocked Myers bit-parallel, blocked bit-parallel LCS over `UInt64`
+  words).
 - `mojo/cli.mojo` — batch CLI: `PING 0x01`, `ECHO 0x02`,
   `DISTANCE 0x20`, `RATIO 0x21`, `HAMMING 0x22`; responses carry a
   status byte; malformed input yields error frames, never crashes.
+  u64 weights beyond `Int` range are rejected; an above-range cutoff
+  is exactly equivalent to no truncation and treated as such.
 - Unit weights dispatch to blocked Myers (shorter input as pattern);
   weighted costs use the DP oracle; both paths agree exactly.
+- Common affix trimming precedes both cores (exact for positive
+  costs; validated on untrimmed inputs so guards keep their meaning).
+- `ratio` uses blocked bit-parallel LCS (shorter input as pattern)
+  with affix trimming and a no-copy fast path — still bit-exact vs
+  the oracle; `levenshtein_ratio` is marked `raises` like
+  `myers_distance` (all callers already in `raises` contexts).
+- `hamming` compares code points in a single lockstep pass with no
+  materialized arrays.
 - Integer overflow and full-width shifts are guarded by construction
   (see `PHASE1_RESULTS.md` §4 and `tests/mojo/test_guards.mojo`).
 
@@ -97,6 +113,7 @@ Reproduce with
 
 ## Current status
 
-Phase 3 complete — three targeted optimizations implemented, measured,
-and documented; all correctness gates pass. Stopping for review; no
-other library port starts until this report is reviewed.
+Phase 4 complete — full scope, safety, and compatibility audit passed;
+benchmarks verified on the final tree; release summary published.
+Awaiting review and release decision; no other library port starts
+until this report is reviewed.
