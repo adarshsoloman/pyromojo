@@ -8,7 +8,7 @@ exactly (parity is tested, not assumed).
 
 from std.collections import List
 
-from mojo_levenshtein.algorithms.dynamic_programming import dp_distance
+from mojo_levenshtein.algorithms.dynamic_programming import _check_bounds, dp_distance
 from mojo_levenshtein.algorithms.myers import myers_distance
 from mojo_levenshtein.unicode import to_codepoints
 
@@ -56,6 +56,44 @@ def levenshtein_distance_cutoff(
 
 
 def _distance_codepoints(
+    a: List[Int],
+    b: List[Int],
+    insertion: Int,
+    deletion: Int,
+    substitution: Int,
+) raises -> Int:
+    """Dispatch code-point sequences to Myers (unit) or DP (weighted).
+
+    Common affixes are stripped first: for positive costs an optimal
+    alignment always matches a shared prefix/suffix at zero cost, so
+    trimming is exact (matches what the reference does internally).
+    When nothing trims, the original lists are used with no copy.
+
+    The overflow/weight contract is validated on the *untrimmed* inputs
+    before trimming, so the guard keeps its documented meaning (and its
+    tested behavior) regardless of how much the affix scan removes.
+    """
+    _check_bounds(a, b, insertion, deletion, substitution)
+    var lo = 0
+    var hi_a = len(a)
+    var hi_b = len(b)
+    while lo < hi_a and lo < hi_b and a[lo] == b[lo]:
+        lo += 1
+    while hi_a > lo and hi_b > lo and a[hi_a - 1] == b[hi_b - 1]:
+        hi_a -= 1
+        hi_b -= 1
+    if lo == 0 and hi_a == len(a) and hi_b == len(b):
+        return _dispatch(a, b, insertion, deletion, substitution)
+    var ta = List[Int](capacity=hi_a - lo)
+    for i in range(lo, hi_a):
+        ta.append(a[i])
+    var tb = List[Int](capacity=hi_b - lo)
+    for i in range(lo, hi_b):
+        tb.append(b[i])
+    return _dispatch(ta, tb, insertion, deletion, substitution)
+
+
+def _dispatch(
     a: List[Int],
     b: List[Int],
     insertion: Int,

@@ -54,6 +54,8 @@ MOJO_SUITES = [
             "test_ratio",
             "test_hamming",
             "test_myers_parity",
+            "test_lcs_parity",
+            "test_trimming",
             "test_guards",
             "test_generated_vectors",
         ],
