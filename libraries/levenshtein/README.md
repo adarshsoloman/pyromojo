@@ -73,14 +73,27 @@ cutoffs.
 - Repo-wide `run_all_tests.py` exits 0: 153 pytest + 13 native suites
   (79 msgpack + 25 levenshtein tests), both drift gates current.
 
-## Benchmarking (Phase 2, not started)
+## Benchmarking (Phase 2 complete)
 
-Per `docs/benchmark-design.md`: equal / one-sub / random / unrelated
-workloads, sizes 8–2048, four comparison paths, cold-compile and RSS
-reported separately. No performance claims are made in Phase 1.
+41 deterministic workloads (short/medium/long/xlong/huge ASCII, unequal
+lengths both orders, repeated-character stress, accents, CJK, astral
+emoji, combining sequences, empty edge cases, 1–2048 Myers boundary
+sweep), seven paths (naive Python DP, RapidFuzz `_py` fallback,
+RapidFuzz C++, native production, internal Mojo DP/Myers), in-process
+timing, cold-compile and RSS reported separately. Headline: Myers beats
+DP 8–60x from n≈31; Mojo beats `_py` 3–25x on distance but trails C++
+2–9x on random content (100–500x on equal inputs — RapidFuzz trims
+common affixes, Mojo does not); ratio is the honest loss (DP-LCS vs
+bit-parallel LCS, up to ~250x); hamming loses on per-element cost
+(1.1x→36x) while beating `_py`/naive 2–8x. Full tables and analysis:
+[`PHASE2_RESULTS.md`](PHASE2_RESULTS.md); curated summary:
+[`docs/benchmarks/releases/levenshtein-v0.1.md`](../../docs/benchmarks/releases/levenshtein-v0.1.md).
+Reproduce with
+`.venv/bin/python libraries/levenshtein/benchmarks/run_benchmarks.py`.
 
 ## Current status
 
-Phase 1 complete. Next: Phase 2 benchmarks (gates proposed in
-`docs/benchmark-design.md`), then separately scoped algorithm
-proposals if approved.
+Phase 2 complete. Next: separately scoped algorithm proposals
+(affix trimming, blocked bit-parallel LCS, materialization-free
+hamming) if approved — no other library port starts until this report
+is reviewed.

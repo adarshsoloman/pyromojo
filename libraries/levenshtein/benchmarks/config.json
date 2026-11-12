@@ -1,0 +1,7 @@
+{
+  "seed": 20260202,
+  "warmup": 5,
+  "samples": 25,
+  "naive_cell_budget": 65536,
+  "workloads": "all"
+}

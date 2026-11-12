@@ -1,7 +1,9 @@
 # Roadmap
 
 Status: Msgpack v0.1 complete (full type set, CLI, test runners, and
-benchmarks with a curated release report). Dates are intentionally omitted;
+benchmarks with a curated release report). Levenshtein v0.1 complete
+(distance/ratio/hamming, CLI, test runners, and benchmarks with a
+curated release report). Dates are intentionally omitted;
 phases are completed when their exit criteria are met.
 
 ## Phase 1: Repository foundation
