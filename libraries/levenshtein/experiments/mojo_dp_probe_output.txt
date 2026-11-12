@@ -1,0 +1,31 @@
+tests: ok
+== codepoint materialization ==
+byte_length 7
+codepoints 3 97 233 128512
+graphemes 3
+slice True
+nfd codepoints/graphemes 2 1
+family codepoints/graphemes 7 1
+== materialization timings (min of 3, ns) ==
+n 64 codepoints_ns 281
+n 128 codepoints_ns 511
+n 256 codepoints_ns 972
+n 512 codepoints_ns 1843
+n 1024 codepoints_ns 3657
+n 2048 codepoints_ns 7284
+== DP timings (min of 3, ns) ==
+n 8 distance_ns 491 ratio_ns 281
+n 16 distance_ns 1744 ratio_ns 901
+n 32 distance_ns 6703 ratio_ns 3316
+n 64 distance_ns 26521 ratio_ns 13065
+n 128 distance_ns 105793 ratio_ns 51459
+n 256 distance_ns 421581 ratio_ns 204454
+n 512 distance_ns 1715374 ratio_ns 832503
+n 1024 distance_ns 6980282 ratio_ns 3301749
+n 2048 distance_ns 27582076 ratio_ns 13452315
+== equal-input timings (min of 3, ns) ==
+n 64 distance_ns 26682 ratio_ns 10400
+n 256 distance_ns 428295 ratio_ns 161661
+n 1024 distance_ns 6895779 ratio_ns 2582934
+n 2048 distance_ns 27567076 ratio_ns 10514198
+probe: ok

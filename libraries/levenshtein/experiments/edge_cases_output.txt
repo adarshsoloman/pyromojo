@@ -1,0 +1,154 @@
+
+== pure-python fallback availability ==
+rapidfuzz.distance.Levenshtein_py: /media/sunny/New Volume1/ADARSH/7_Programming Files/4. my_projects/1_pyromojo/.venv/lib/python3.13/site-packages/rapidfuzz/distance/Levenshtein_py.py
+rapidfuzz.distance.Indel_py: /media/sunny/New Volume1/ADARSH/7_Programming Files/4. my_projects/1_pyromojo/.venv/lib/python3.13/site-packages/rapidfuzz/distance/Indel_py.py
+rapidfuzz.distance.Jaro_py: /media/sunny/New Volume1/ADARSH/7_Programming Files/4. my_projects/1_pyromojo/.venv/lib/python3.13/site-packages/rapidfuzz/distance/Jaro_py.py
+rapidfuzz.distance.JaroWinkler_py: /media/sunny/New Volume1/ADARSH/7_Programming Files/4. my_projects/1_pyromojo/.venv/lib/python3.13/site-packages/rapidfuzz/distance/JaroWinkler_py.py
+rapidfuzz.distance.Hamming_py: /media/sunny/New Volume1/ADARSH/7_Programming Files/4. my_projects/1_pyromojo/.venv/lib/python3.13/site-packages/rapidfuzz/distance/Hamming_py.py
+Levenshtein_py.distance is Python: rapidfuzz.distance.Levenshtein_py
+Levenshtein_py.distance weights negative: 0
+Levenshtein_py.distance weights float: 1
+
+== cxx vs pure-python agreement (deterministic corpus) ==
+corpus size: 403
+mismatches: {'distance': 0, 'ratio': 0, 'hamming_pad': 0, 'jaro': 0, 'jaro_winkler': 0}
+
+== cxx vs pure-python weighted distance ==
+weighted mismatches: 0
+
+== jaro_winkler prefix_weight bounds ==
+prefix_weight=0.0: 0.9444444444444445
+prefix_weight=0.25: 0.9861111111111112
+prefix_weight=0.2501: 0.9861277777777778
+prefix_weight=0.5: 1.0
+prefix_weight=0.9: 1.0
+prefix_weight=1.0: 1.0
+prefix_weight=1.0001: RAISED ValueError: prefix_weight has to be in the range 0.0 - 1.0
+prefix_weight=-0.0001: RAISED ValueError: prefix_weight has to be in the range 0.0 - 1.0
+prefix_weight='0.1': RAISED TypeError: must be real number, not str
+prefix_weight=None: RAISED TypeError: must be real number, not NoneType
+
+== mixed and exotic input types ==
+str vs bytes equal: 0
+str vs bytes differ: 1
+str vs bytes unicode: 2
+str vs list[str]: 0
+str vs list[int]: 0
+bytes vs list[int]: 0
+list[str] vs list[int]: 0
+memoryview: 1
+range: 2
+generator: RAISED TypeError: object of type 'generator' has no len()
+int: RAISED TypeError: object of type 'int' has no len()
+None: RAISED TypeError: object of type 'NoneType' has no len()
+dict: RAISED KeyError: 0
+
+== weights edge cases ==
+abc/adc weights=(0, 0, 0): 0
+abc/adc weights=(0, 0, 1): 0
+abc/adc weights=(0, 1, 0): 0
+abc/adc weights=(1, 0, 0): 0
+abc/adc weights=(2, 0, 0): 0
+abc/adc weights=(1.5, 1, 1): 1
+bad weights=(1, 1): RAISED ValueError: need more than 2 values to unpack
+bad weights=(1, 1, 1, 1): RAISED ValueError: too many values to unpack (expected 3)
+bad weights=(): RAISED ValueError: need more than 0 values to unpack
+
+== score_cutoff boundaries ==
+distance('abc','xyz',score_cutoff=0): 1
+distance('abc','xyz',score_cutoff=0.0): 1
+distance('abc','xyz',score_cutoff=1): 2
+distance('abc','xyz',score_cutoff=2): 3
+distance('abc','xyz',score_cutoff=3): 3
+distance('abc','xyz',score_cutoff=4): 3
+distance('abc','xyz',score_cutoff=-1): RAISED OverflowError: can't convert negative value to uint64_t
+distance('abc','xyz',score_cutoff=0.5): 1
+distance('abc','xyz',score_cutoff='1'): RAISED TypeError: an integer is required
+distance('abc','xyz',score_cutoff=None): 3
+ratio('abc','adc',score_cutoff=0.0): 0.6666666666666667
+ratio('abc','adc',score_cutoff=0.6666666666666666): 0.0
+ratio('abc','adc',score_cutoff=0.6666666666666667): 0.0
+ratio('abc','adc',score_cutoff=1.0): 0.0
+ratio('abc','adc',score_cutoff=1.5): RAISED TypeError: score_cutoff has to be in the range of 0.0 - 1.0
+ratio('abc','adc',score_cutoff=-0.1): RAISED TypeError: score_cutoff has to be in the range of 0.0 - 1.0
+
+== MatchingBlock shape ==
+type: rapidfuzz.distance._initialize_cpp.MatchingBlock
+is tuple: False
+len: 3 index0: 1 a/b/size: 1/0/2
+tuple equality: True
+matching_blocks of no edits: [MatchingBlock(a=0, b=0, size=3), MatchingBlock(a=3, b=3, size=0)]
+matching_blocks wrong args: [MatchingBlock(a=1, b=1, size=0)]
+
+== editops tie-breaking ==
+'kitten'->'sitting': editops=[('replace', 0, 0), ('replace', 4, 4), ('insert', 6, 6)] opcodes=[('replace', 0, 1, 0, 1), ('equal', 1, 4, 1, 4), ('replace', 4, 5, 4, 5), ('equal', 5, 6, 5, 6), ('insert', 6, 6, 6, 7)]
+'abc'->'acb': editops=[('insert', 1, 1), ('delete', 2, 3)] opcodes=[('equal', 0, 1, 0, 1), ('insert', 1, 1, 1, 2), ('equal', 1, 2, 2, 3), ('delete', 2, 3, 3, 3)]
+'ab'->'ba': editops=[('insert', 0, 0), ('delete', 1, 2)] opcodes=[('insert', 0, 0, 0, 1), ('equal', 0, 1, 1, 2), ('delete', 1, 2, 2, 2)]
+'aaaa'->'aa': editops=[('delete', 2, 2), ('delete', 3, 2)] opcodes=[('equal', 0, 2, 0, 2), ('delete', 2, 4, 2, 2)]
+'aa'->'aaaa': editops=[('insert', 2, 2), ('insert', 2, 3)] opcodes=[('equal', 0, 2, 0, 2), ('insert', 2, 2, 2, 4)]
+''->'abc': editops=[('insert', 0, 0), ('insert', 0, 1), ('insert', 0, 2)] opcodes=[('insert', 0, 0, 0, 3)]
+'abc'->'': editops=[('delete', 0, 0), ('delete', 1, 0), ('delete', 2, 0)] opcodes=[('delete', 0, 3, 0, 0)]
+editops(distance-only) vs rf: False
+
+== median family types ==
+median(['ab','ac']): 'ab'
+median([b'ab',b'ac']): 'ab'
+median(['ab',b'ac']): 'ab'
+median([1,2]): RAISED TypeError: Expected string or bytes
+median_improve('spam',[]) : ''
+quickmedian([]): ''
+setmedian([]): ''
+seqratio([],[]): 1.0
+setratio([],[]): 1.0
+
+== jaro zeros and repetitions ==
+'aaaa'/'aa': jaro=0.8333333333333334 py=0.8333333333333334 cxx=0.8333333333333334
+'abc'/'bca': jaro=0.0 py=0 cxx=0.0
+'ab'/'ba': jaro=0.0 py=0 cxx=0.0
+'aab'/'aba': jaro=0.5555555555555555 py=0.5555555555555555 cxx=0.5555555555555555
+'😀a'/'a😀': jaro=0.0 py=0 cxx=0.0
+'x'/'xxxxxxxx': jaro=0.7083333333333334 py=0.7083333333333334 cxx=0.7083333333333334
+
+== reference identity vs rapidfuzz ==
+Levenshtein.distance is RFLev.distance: False
+Levenshtein.ratio is Indel.normalized_similarity: False
+Levenshtein.hamming is Hamming.distance: False
+Levenshtein.jaro is Jaro.similarity: False
+Levenshtein.jaro_winkler is JaroWinkler.similarity: False
+
+== fallback divergence: weights ==
+cpp weights=(1, 1, 1): 2
+py  weights=(1, 1, 1): 2
+cpp weights=(1, 1, 2): 2
+py  weights=(1, 1, 2): 2
+cpp weights=(1, 1, 1.5): 2
+py  weights=(1, 1, 1.5): 2
+cpp weights=(1.5, 1, 1): 2
+py  weights=(1.5, 1, 1): 2
+cpp weights=(0, 0, 0): 0
+py  weights=(0, 0, 0): RAISED ValueError: range() arg 3 must not be zero
+cpp weights=(-1, 1, 1): RAISED OverflowError: can't convert negative value to size_t
+py  weights=(-1, 1, 1): 0
+cpp huge weights=(9223372036854775808, 1, 1): 2
+py  huge weights=(9223372036854775808, 1, 1): 2
+cpp huge weights=(1, 9223372036854775808, 1): 2
+py  huge weights=(1, 9223372036854775808, 1): 2
+cpp huge weights=(1, 1, 9223372036854775808): 2
+py  huge weights=(1, 1, 9223372036854775808): 2
+
+== score_cutoff strictness at equality ==
+ratio('abc','abc',cutoff=1.0): 1.0
+jaro('abc','abc',cutoff=1.0): 1.0
+jw('abc','abc',cutoff=1.0): 1.0
+hamming('abc','abc',cutoff=0): 0
+distance('abc','abc',cutoff=0): 0
+
+== lone surrogates and bytes ==
+distance('\ud800',''): 1
+ratio('\ud800',''): 0.0
+distance('\ud800','\ud800'): 0
+distance('\ud800','a'): 1
+distance('a','b') bytes: 1
+distance('a',b'a'): 0
+distance('\u00e9',b'\xc3\xa9'): 2
+median surrogate: 'a'

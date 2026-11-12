@@ -1,0 +1,89 @@
+Phase 0 feasibility timings; single process, min-of-repeats, ns/op
+python: 3.13.14
+Levenshtein: 0.27.5
+
+== distance: C++ vs pure Python ==
+mode           n     cpp_ns      py_ns   cpp/py
+equal          8        190       3076   0.0618
+equal         16        200       7314   0.0273
+equal         32        200      17734   0.0113
+equal         64        221      35887   0.0062
+equal        128        240      77646   0.0031
+equal        256        280     180579   0.0016
+equal        512        360     467088   0.0008
+equal       1024        541    1298432   0.0004
+equal       2048        881    4315743   0.0002
+one-sub        8        260       2986   0.0871
+one-sub       16        270       7584   0.0356
+one-sub       32        270      17272   0.0156
+one-sub       64        290      34735   0.0083
+one-sub      128        330      78979   0.0042
+one-sub      256        410     183856   0.0022
+one-sub      512        551     468551   0.0012
+one-sub     1024        812    1282160   0.0006
+one-sub     2048       1122    4307197   0.0003
+random         8        260       2775   0.0937
+random        16        280       5971   0.0469
+random        32        330      17413   0.0190
+random        64        430      35156   0.0122
+random       128       1462      81072   0.0180
+random       256       3887     191710   0.0203
+random       512      10780     506723   0.0213
+random      1024      33062    1244299   0.0266
+random      2048     111520    3828117   0.0291
+unrelated      8        260       2495   0.1042
+unrelated     16        290       5140   0.0564
+unrelated     32        360      14558   0.0247
+unrelated     64        450      29676   0.0152
+unrelated    128       1493      62207   0.0240
+unrelated    256       3917     140855   0.0278
+unrelated    512      10399     342704   0.0303
+unrelated   1024      29996     882058   0.0340
+unrelated   2048      99617    2636917   0.0378
+
+== ratio (Indel): C++ vs pure Python ==
+mode           n     cpp_ns      py_ns   cpp/py
+equal          8        240       2104   0.1141
+equal         16        250       3326   0.0752
+equal         32        250       6382   0.0392
+equal         64        270      11732   0.0230
+equal        128        290      24376   0.0119
+equal        256        340      52399   0.0065
+equal        512        421     118533   0.0036
+equal       1024        601     286759   0.0021
+equal       2048        941     818288   0.0011
+one-sub        8        270       2033   0.1328
+one-sub       16        280       3186   0.0879
+one-sub       32        280       6151   0.0455
+one-sub       64        290      11772   0.0246
+one-sub      128        320      24405   0.0131
+one-sub      256        390      52078   0.0075
+one-sub      512        490     115147   0.0043
+one-sub     1024        691     282732   0.0024
+one-sub     2048       1382     822136   0.0017
+random         8        270       2004   0.1347
+random        16        280       3236   0.0865
+random        32        300       6241   0.0481
+random        64        330      11652   0.0283
+random       128        541      23724   0.0228
+random       256       1142      49533   0.0231
+random       512       3416     106470   0.0321
+random      1024      16591     255941   0.0648
+random      2048      64892     705577   0.0920
+unrelated      8        270       1723   0.1567
+unrelated     16        290       2976   0.0974
+unrelated     32        320       5390   0.0594
+unrelated     64        360      10099   0.0356
+unrelated    128        591      19577   0.0302
+unrelated    256       1192      40015   0.0298
+unrelated    512       3546      90120   0.0393
+unrelated   1024      17333     208321   0.0832
+unrelated   2048      65333     527862   0.1238
+
+== fixed-workload sanity (n=64, random) ==
+C++ distance: 397.3 ns/op over 20000 calls
+pure-Python distance: 35672.5 ns/op over 200 calls
+
+== ASCII vs Unicode ==
+ascii: distance=6 cpp=341 ns
+unicode: distance=4 cpp=350 ns

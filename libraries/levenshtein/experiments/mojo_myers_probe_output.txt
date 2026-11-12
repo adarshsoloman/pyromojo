@@ -1,0 +1,6 @@
+myers checks: ok
+== Myers 64 vs DP timings (min of 5, ns) ==
+n 16 myers_ns 220 dp_ns 1704
+n 32 myers_ns 341 dp_ns 6231
+n 64 myers_ns 611 dp_ns 24666
+probe: ok

@@ -1,0 +1,14 @@
+Phase 0 baseline-path timings; min-of-repeats, ns/op
+    n   naive_dist    py_dist   cpp_dist  naive_ratio   py_ratio  cpp_ratio
+    8        13495       6302        602         8907       4919        661
+   16        30468      12464        330        21140       4208        551
+   32       129624      27612        371        71475       9909        601
+   64       588727      70102        631       358524      22452        662
+  128      2467239     147377       2925       889372      26650        661
+  256      5602141     233269       4469      3436481      64651       1453
+  512     29358963     515610      11511     15988708     127710       4107
+
+Notes:
+- naive_* is a local two-row DP; it is the pure-Python baseline.
+- py_* is rapidfuzz's bit-parallel pure-Python fallback.
+- cpp_* is the pinned Levenshtein C++ reference.

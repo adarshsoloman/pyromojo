@@ -7,9 +7,9 @@ From the repository root::
 
 Builds the native CLI once into ``build/`` and runs the Python
 compatibility suite (C-backed and fallback reference decoders) plus the
-golden-vector integrity tests. Only ``msgpack`` exists today; naming any
-other library fails instead of silently passing. Exits non-zero with the
-failing output on any incompatibility.
+golden-vector integrity tests. Naming any other library fails instead
+of silently passing. Exits non-zero with the failing output on any
+incompatibility.
 """
 
 from __future__ import annotations
@@ -22,7 +22,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 BUILD_DIR = ROOT / "build"
-KNOWN_LIBRARIES = ("msgpack",)
+KNOWN_LIBRARIES = ("msgpack", "levenshtein")
 
 
 def _resolve_tool(name: str) -> list[str]:
@@ -90,6 +90,23 @@ def main(argv: list[str] | None = None) -> int:
             _run(
                 "msgpack compatibility",
                 [*pytest, "-q", "libraries/msgpack/tests/python_compat"],
+            )
+        elif library == "levenshtein":
+            _run(
+                "build levenshtein_cli",
+                [
+                    *mojo,
+                    "build",
+                    "libraries/levenshtein/mojo/cli.mojo",
+                    "-I",
+                    "libraries/levenshtein/mojo",
+                    "-o",
+                    str(BUILD_DIR / "levenshtein_cli"),
+                ],
+            )
+            _run(
+                "levenshtein compatibility",
+                [*pytest, "-q", "libraries/levenshtein/tests/python_compat"],
             )
 
     print("check_compatibility: all compatibility suites passed")

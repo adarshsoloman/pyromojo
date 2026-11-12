@@ -1,0 +1,188 @@
+
+== environment ==
+python: 3.13.14 (cpython)
+platform: Linux-7.0.0-28-generic-x86_64-with-glibc2.39
+Levenshtein.__version__: 0.27.5
+Levenshtein.__license__: GPL
+Levenshtein.__author__: Max Bachmann
+distribution version: 0.27.5
+rapidfuzz.__version__: 3.14.6
+rapidfuzz distribution: 3.14.6
+Levenshtein module file: /media/sunny/New Volume1/ADARSH/7_Programming Files/4. my_projects/1_pyromojo/.venv/lib/python3.13/site-packages/Levenshtein/__init__.py
+
+== public API surface ==
+public names: ['StringMatcher', 'annotations', 'apply_edit', 'distance', 'editops', 'hamming', 'inverse', 'jaro', 'jaro_winkler', 'levenshtein_cpp', 'matching_blocks', 'median', 'median_improve', 'opcodes', 'quickmedian', 'ratio', 'seqratio', 'setmedian', 'setratio', 'subtract_edit']
+has distance: True
+has ratio: True
+has normalized_distance: False
+has normalized_similarity: False
+has hamming: True
+has jaro: True
+has jaro_winkler: True
+has editops: True
+has opcodes: True
+has matching_blocks: True
+has median: True
+has median_improve: True
+has quickmedian: True
+has setmedian: True
+has seqratio: True
+has setratio: True
+has inverse: True
+has apply_edit: True
+has subtract_edit: True
+has StringMatcher: True
+Levenshtein.StringMatcher module imports: True
+rapidfuzz.distance modules: ['DamerauLevenshtein', 'DamerauLevenshtein_py', 'Editop', 'Editops', 'Hamming', 'Hamming_py', 'Indel', 'Indel_py', 'Jaro', 'JaroWinkler', 'JaroWinkler_py', 'Jaro_py', 'LCSseq', 'LCSseq_py', 'Levenshtein', 'Levenshtein_py', 'MatchingBlock', 'OSA', 'OSA_py', 'Opcode', 'Opcodes', 'Postfix', 'Postfix_py', 'Prefix', 'Prefix_py', 'ScoreAlignment', 'annotations', 'metrics_cpp_avx2', 'metrics_py']
+
+== distance: baseline cases ==
+distance('', '') = 0 | rf=0 | indel=0 | ratio=1.0 | rf_norm_sim=1.0 | norm_dist=0.0
+distance('', 'abc') = 3 | rf=3 | indel=3 | ratio=0.0 | rf_norm_sim=0.0 | norm_dist=1.0
+distance('abc', '') = 3 | rf=3 | indel=3 | ratio=0.0 | rf_norm_sim=0.0 | norm_dist=1.0
+distance('abc', 'abc') = 0 | rf=0 | indel=0 | ratio=1.0 | rf_norm_sim=1.0 | norm_dist=0.0
+distance('kitten', 'sitting') = 3 | rf=3 | indel=5 | ratio=0.6153846153846154 | rf_norm_sim=0.6153846153846154 | norm_dist=0.38461538461538464
+distance('abc', 'adc') = 1 | rf=1 | indel=2 | ratio=0.6666666666666667 | rf_norm_sim=0.6666666666666667 | norm_dist=0.3333333333333333
+distance('abc', 'xyz') = 3 | rf=3 | indel=6 | ratio=0.0 | rf_norm_sim=0.0 | norm_dist=1.0
+distance('ab', 'ba') = 2 | rf=2 | indel=2 | ratio=0.5 | rf_norm_sim=0.5 | norm_dist=0.5
+distance('a', 'b') = 1 | rf=1 | indel=2 | ratio=0.0 | rf_norm_sim=0.0 | norm_dist=1.0
+distance('spam', 'park') = 3 | rf=3 | indel=4 | ratio=0.5 | rf_norm_sim=0.5 | norm_dist=0.5
+distance('lewenstein', 'levenshtein') = 2 | rf=2 | indel=3 | ratio=0.8571428571428572 | rf_norm_sim=0.8571428571428572 | norm_dist=0.14285714285714285
+
+== ratio formula: indel vs Levenshtein distance ==
+'abc' vs 'adc': lev=1 indel=2 total=6 lev_ratio=0.8333333333333334 indel_ratio=0.6666666666666667 actual=0.6666666666666667
+'kitten' vs 'sitting': lev=3 indel=5 total=13 lev_ratio=0.7692307692307692 indel_ratio=0.6153846153846154 actual=0.6153846153846154
+'a' vs 'bbbb': lev=4 indel=5 total=5 lev_ratio=0.19999999999999996 indel_ratio=0.0 actual=0.0
+
+== normalized_* availability ==
+Levenshtein.normalized_distance: RAISED AttributeError: module 'Levenshtein' has no attribute 'normalized_distance'
+Levenshtein.normalized_similarity: RAISED AttributeError: module 'Levenshtein' has no attribute 'normalized_similarity'
+rf Levenshtein.normalized_distance: 0.3333333333333333
+rf Levenshtein.normalized_similarity: 0.6666666666666667
+rf Indel.normalized_distance: 0.3333333333333333
+rf Indel.normalized_similarity: 0.6666666666666667
+
+== distance weights ==
+distance('lewenstein','levenshtein',weights=(1, 1, 1)): 2
+distance('lewenstein','levenshtein',weights=(1, 1, 2)): 3
+distance('lewenstein','levenshtein',weights=(2, 2, 1)): 3
+distance('lewenstein','levenshtein',weights=(1, 2, 1)): 2
+distance('lewenstein','levenshtein',weights=(2, 1, 1)): 3
+distance('lewenstein','levenshtein',weights=(0, 1, 1)): 1
+distance('lewenstein','levenshtein',weights=(1, 1, 0)): 1
+distance('lewenstein','levenshtein',weights=(-1, 1, 1)): RAISED OverflowError: can't convert negative value to size_t
+distance('lewenstein','levenshtein',weights=(1, 1, 100)): 3
+distance('lewenstein','levenshtein',weights=(1, 1, 1.5)): 2
+distance('lewenstein','levenshtein',weights=None): 2
+weighted abc/adc (1,1,2): 2
+weighted abc/adc (1,1,3): 2
+
+== score_cutoff semantics ==
+distance('abc','xyz'): 3
+distance('abc','xyz',score_cutoff=1): 2
+distance('abc','adc',score_cutoff=0): 1
+distance('abc','adc',score_hint=100): 1
+ratio('abc','adc',score_cutoff=0.9): 0.0
+ratio('abc','adc',score_cutoff=0.6): 0.6666666666666667
+hamming('abc','abx',score_cutoff=0): 1
+
+== hamming ==
+hamming('abc','abc',pad=True): 0
+hamming('abc','ab',pad=True): 1
+hamming('abc','ab',pad=False): RAISED ValueError: Sequences are not the same length.
+hamming('abc','xyz',pad=True): 3
+hamming('','',pad=True): 0
+hamming('é','e',pad=True): 1
+hamming('😀','',pad=True): 1
+rf Hamming.distance('abc','ab',pad=True) = 1
+rf Hamming.distance('abc','ab',pad=False): RAISED ValueError: Sequences are not the same length.
+
+== jaro and jaro_winkler ==
+jaro('','') = 1.0 | rf=1.0 | jw=1.0 | rf_jw=1.0
+jaro('','a') = 0.0 | rf=0.0 | jw=0.0 | rf_jw=0.0
+jaro('a','') = 0.0 | rf=0.0 | jw=0.0 | rf_jw=0.0
+jaro('a','a') = 1.0 | rf=1.0 | jw=1.0 | rf_jw=1.0
+jaro('MARTHA','MARHTA') = 0.9444444444444445 | rf=0.9444444444444445 | jw=0.9611111111111111 | rf_jw=0.9611111111111111
+jaro('DIXON','DICKSONX') = 0.7666666666666666 | rf=0.7666666666666666 | jw=0.8133333333333332 | rf_jw=0.8133333333333332
+jaro('abc','abc') = 1.0 | rf=1.0 | jw=1.0 | rf_jw=1.0
+jaro('abc','xyz') = 0.0 | rf=0.0 | jw=0.0 | rf_jw=0.0
+jaro_winkler('MARTHA','MARHTA',prefix_weight=0.0): 0.9444444444444445
+jaro_winkler('MARTHA','MARHTA',prefix_weight=0.1): 0.9611111111111111
+jaro_winkler('MARTHA','MARHTA',prefix_weight=0.25): 0.9861111111111112
+jaro_winkler('MARTHA','MARHTA',prefix_weight=0.2501): 0.9861277777777778
+jaro_winkler('MARTHA','MARHTA',prefix_weight=-0.1): RAISED ValueError: prefix_weight has to be in the range 0.0 - 1.0
+jaro('MARTHA','MARHTA',score_cutoff=0.99): 0.0
+jaro_winkler('MARTHA','MARHTA',score_cutoff=0.99): 0.0
+
+== unicode semantics ==
+'é' vs 'e': len=1/1 bytes=2/1 distance=1 ratio=0.0 jaro=0.0
+'é' vs 'é': len=1/2 bytes=2/3 distance=2 ratio=0.0 jaro=0.0
+'é' vs 'é': len=1/2 bytes=2/3 distance=2 ratio=0.0 jaro=0.0
+'😀' vs '': len=1/0 bytes=4/0 distance=1 ratio=0.0 jaro=0.0
+'😀' vs '😃': len=1/1 bytes=4/4 distance=1 ratio=0.0 jaro=0.0
+'👩\u200d👩\u200d👧\u200d👦' vs '': len=7/0 bytes=25/0 distance=7 ratio=0.0 jaro=0.0
+'a😀b' vs 'ab': len=3/2 bytes=6/2 distance=1 ratio=0.8 jaro=0.611111111111111
+'naïve' vs 'naive': len=5/5 bytes=6/5 distance=1 ratio=0.8 jaro=0.8666666666666667
+'straße' vs 'strasse': len=6/7 bytes=7/7 distance=2 ratio=0.7692307692307692 jaro=0.8492063492063492
+'æ' vs 'ae': len=1/2 bytes=2/2 distance=2 ratio=0.0 jaro=0.0
+NFC == NFD (codepoint equality): False
+NFC == NFD (byte equality): False
+
+== input types and mixing ==
+distance(b'abc', b'adc'): 1
+distance(bytearray(b'abc'), bytearray(b'adc')): 1
+distance(['a','b'], ['a','c']): 1
+distance([1,2,3],[1,2,4]): 1
+distance(('a','b'), ('a','c')): 1
+distance('abc', b'abc'): 0
+distance('abc', ['a','b','c']): 0
+ratio(['ab'],['ac']): 0.0
+ratio(['ab'],['ac'],processor=lambda s: s[0]): 0.5
+distance('ABC','abd',processor=str.lower): 1
+
+== edit operations ==
+editops('spam','park') = [('delete', 0, 0), ('insert', 3, 2), ('replace', 3, 3)]
+opcodes('spam','park') = [('delete', 0, 1, 0, 0), ('equal', 1, 3, 0, 2), ('insert', 3, 3, 2, 3), ('replace', 3, 4, 3, 4)]
+matching_blocks('spam','park') = [MatchingBlock(a=1, b=0, size=2), MatchingBlock(a=4, b=4, size=0)]
+editops('kitten','sitting') = [('replace', 0, 0), ('replace', 4, 4), ('insert', 6, 6)]
+opcodes('kitten','sitting') = [('replace', 0, 1, 0, 1), ('equal', 1, 4, 1, 4), ('replace', 4, 5, 4, 5), ('equal', 5, 6, 5, 6), ('insert', 6, 6, 6, 7)]
+matching_blocks('kitten','sitting') = [MatchingBlock(a=1, b=1, size=3), MatchingBlock(a=5, b=5, size=1), MatchingBlock(a=6, b=7, size=0)]/media/sunny/New Volume1/ADARSH/7_Programming Files/4. my_projects/1_pyromojo/.venv/lib/python3.13/site-packages/Levenshtein/StringMatcher.py:33: UserWarning: isjunk NOT implemented, it will be ignored
+  warn("isjunk NOT implemented, it will be ignored", stacklevel=1)
+/media/sunny/New Volume1/ADARSH/7_Programming Files/4. my_projects/1_pyromojo/.venv/lib/python3.13/site-packages/Levenshtein/StringMatcher.py:35: UserWarning: autojunk NOT implemented, it will be ignored
+  warn("autojunk NOT implemented, it will be ignored", stacklevel=1)
+
+editops('man','scotsman') = [('insert', 0, 0), ('insert', 0, 1), ('insert', 0, 2), ('insert', 0, 3), ('insert', 0, 4)]
+opcodes('man','scotsman') = [('insert', 0, 0, 0, 5), ('equal', 0, 3, 5, 8)]
+matching_blocks('man','scotsman') = [MatchingBlock(a=0, b=5, size=3), MatchingBlock(a=3, b=8, size=0)]
+inverse(editops) = [('delete', 0, 0), ('delete', 1, 0), ('delete', 2, 0), ('delete', 3, 0), ('delete', 4, 0)]
+apply_edit(full) = scotsman
+apply_edit(partial) = scoman
+subtract_edit demo = scotsman
+
+== median family ==
+median(fixme): 'Levenshtein'
+quickmedian(fixme): 'Levnshein'
+setmedian(fixme): 'Levnhtein'
+median_improve('spam', fixme): 'enhtein'
+median weighted: 'ab'
+seqratio: 0.21517857142857144
+setratio: 0.2818452380952381
+median([]): ''
+median([b'ab', b'ac']): 'ab'
+median(['ab', b'ac']): 'ab'
+
+== symmetry and reference identity ==
+''/'': dist_sym=True ratio_sym=True jaro_sym=True jw_sym=True dist==rf=True ratio==indel_ns=True
+'a'/'b': dist_sym=True ratio_sym=True jaro_sym=True jw_sym=True dist==rf=True ratio==indel_ns=True
+'kitten'/'sitting': dist_sym=True ratio_sym=True jaro_sym=True jw_sym=True dist==rf=True ratio==indel_ns=True
+'abc'/'adc': dist_sym=True ratio_sym=True jaro_sym=True jw_sym=True dist==rf=True ratio==indel_ns=True
+'😀ab'/'ab😀': dist_sym=True ratio_sym=True jaro_sym=True jw_sym=True dist==rf=True ratio==indel_ns=True
+'aaaaaaaa'/'aaa': dist_sym=True ratio_sym=True jaro_sym=True jw_sym=True dist==rf=True ratio==indel_ns=True
+
+== StringMatcher ==
+StringMatcher.ratio() = 0.5
+StringMatcher.quick_ratio() = 0.5
+StringMatcher.get_editops() = [('delete', 0, 0), ('insert', 3, 2), ('replace', 3, 3)]
+StringMatcher.get_opcodes() = [('delete', 0, 1, 0, 0), ('equal', 1, 3, 0, 2), ('insert', 3, 3, 2, 3), ('replace', 3, 4, 3, 4)]
+StringMatcher.get_matching_blocks() = [MatchingBlock(a=1, b=0, size=2), MatchingBlock(a=4, b=4, size=0)]
+StringMatcher(isjunk=True): <Levenshtein.StringMatcher.StringMatcher object at 0x7bba46c33b10>
+StringMatcher(autojunk=True): <Levenshtein.StringMatcher.StringMatcher object at 0x7bba46c33b10>

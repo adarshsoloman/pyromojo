@@ -1,0 +1,6 @@
+myers128 checks (n=0..128): ok
+== Myers128 vs DP timings (min of 5, ns) ==
+n 64 myers128_ns 1543 dp_ns 57778
+n 96 myers128_ns 922 dp_ns 55434
+n 128 myers128_ns 1212 dp_ns 98173
+probe: ok

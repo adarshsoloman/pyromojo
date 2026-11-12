@@ -1,0 +1,4533 @@
+{
+  "schema_version": "1.0.0",
+  "generator": {
+    "name": "levenshtein_vectors",
+    "version": "1.0.0"
+  },
+  "reference": {
+    "package": "rapidfuzz",
+    "version": "3.14.6"
+  },
+  "seed": 20260202,
+  "cases": [
+    {
+      "id": "fixed_00_distance",
+      "op": "distance",
+      "s1": "kitten",
+      "s2": "sitting",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "fixed_00_ratio",
+      "op": "ratio",
+      "s1": "kitten",
+      "s2": "sitting",
+      "expected": 0.6153846153846154
+    },
+    {
+      "id": "fixed_00_hamming",
+      "op": "hamming",
+      "s1": "kitten",
+      "s2": "sitting",
+      "pad": true,
+      "expected": 3
+    },
+    {
+      "id": "fixed_01_distance",
+      "op": "distance",
+      "s1": "lewenstein",
+      "s2": "levenshtein",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 2
+    },
+    {
+      "id": "fixed_01_ratio",
+      "op": "ratio",
+      "s1": "lewenstein",
+      "s2": "levenshtein",
+      "expected": 0.8571428571428572
+    },
+    {
+      "id": "fixed_01_hamming",
+      "op": "hamming",
+      "s1": "lewenstein",
+      "s2": "levenshtein",
+      "pad": true,
+      "expected": 6
+    },
+    {
+      "id": "fixed_02_distance",
+      "op": "distance",
+      "s1": "spam",
+      "s2": "park",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "fixed_02_ratio",
+      "op": "ratio",
+      "s1": "spam",
+      "s2": "park",
+      "expected": 0.5
+    },
+    {
+      "id": "fixed_02_hamming",
+      "op": "hamming",
+      "s1": "spam",
+      "s2": "park",
+      "pad": true,
+      "expected": 4
+    },
+    {
+      "id": "fixed_03_distance",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "adc",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 1
+    },
+    {
+      "id": "fixed_03_ratio",
+      "op": "ratio",
+      "s1": "abc",
+      "s2": "adc",
+      "expected": 0.6666666666666667
+    },
+    {
+      "id": "fixed_03_hamming",
+      "op": "hamming",
+      "s1": "abc",
+      "s2": "adc",
+      "pad": true,
+      "expected": 1
+    },
+    {
+      "id": "fixed_04_distance",
+      "op": "distance",
+      "s1": "ab",
+      "s2": "ba",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 2
+    },
+    {
+      "id": "fixed_04_ratio",
+      "op": "ratio",
+      "s1": "ab",
+      "s2": "ba",
+      "expected": 0.5
+    },
+    {
+      "id": "fixed_04_hamming",
+      "op": "hamming",
+      "s1": "ab",
+      "s2": "ba",
+      "pad": true,
+      "expected": 2
+    },
+    {
+      "id": "fixed_05_distance",
+      "op": "distance",
+      "s1": "a",
+      "s2": "b",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 1
+    },
+    {
+      "id": "fixed_05_ratio",
+      "op": "ratio",
+      "s1": "a",
+      "s2": "b",
+      "expected": 0.0
+    },
+    {
+      "id": "fixed_05_hamming",
+      "op": "hamming",
+      "s1": "a",
+      "s2": "b",
+      "pad": true,
+      "expected": 1
+    },
+    {
+      "id": "fixed_06_distance",
+      "op": "distance",
+      "s1": "",
+      "s2": "",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 0
+    },
+    {
+      "id": "fixed_06_ratio",
+      "op": "ratio",
+      "s1": "",
+      "s2": "",
+      "expected": 1.0
+    },
+    {
+      "id": "fixed_06_hamming",
+      "op": "hamming",
+      "s1": "",
+      "s2": "",
+      "pad": true,
+      "expected": 0
+    },
+    {
+      "id": "fixed_07_distance",
+      "op": "distance",
+      "s1": "",
+      "s2": "abc",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "fixed_07_ratio",
+      "op": "ratio",
+      "s1": "",
+      "s2": "abc",
+      "expected": 0.0
+    },
+    {
+      "id": "fixed_07_hamming",
+      "op": "hamming",
+      "s1": "",
+      "s2": "abc",
+      "pad": true,
+      "expected": 3
+    },
+    {
+      "id": "fixed_08_distance",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "fixed_08_ratio",
+      "op": "ratio",
+      "s1": "abc",
+      "s2": "",
+      "expected": 0.0
+    },
+    {
+      "id": "fixed_08_hamming",
+      "op": "hamming",
+      "s1": "abc",
+      "s2": "",
+      "pad": true,
+      "expected": 3
+    },
+    {
+      "id": "fixed_09_distance",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "abc",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 0
+    },
+    {
+      "id": "fixed_09_ratio",
+      "op": "ratio",
+      "s1": "abc",
+      "s2": "abc",
+      "expected": 1.0
+    },
+    {
+      "id": "fixed_09_hamming",
+      "op": "hamming",
+      "s1": "abc",
+      "s2": "abc",
+      "pad": true,
+      "expected": 0
+    },
+    {
+      "id": "fixed_10_distance",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "xyz",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "fixed_10_ratio",
+      "op": "ratio",
+      "s1": "abc",
+      "s2": "xyz",
+      "expected": 0.0
+    },
+    {
+      "id": "fixed_10_hamming",
+      "op": "hamming",
+      "s1": "abc",
+      "s2": "xyz",
+      "pad": true,
+      "expected": 3
+    },
+    {
+      "id": "fixed_11_distance",
+      "op": "distance",
+      "s1": "aaaa",
+      "s2": "aa",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 2
+    },
+    {
+      "id": "fixed_11_ratio",
+      "op": "ratio",
+      "s1": "aaaa",
+      "s2": "aa",
+      "expected": 0.6666666666666667
+    },
+    {
+      "id": "fixed_11_hamming",
+      "op": "hamming",
+      "s1": "aaaa",
+      "s2": "aa",
+      "pad": true,
+      "expected": 2
+    },
+    {
+      "id": "fixed_12_distance",
+      "op": "distance",
+      "s1": "aa",
+      "s2": "aaaa",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 2
+    },
+    {
+      "id": "fixed_12_ratio",
+      "op": "ratio",
+      "s1": "aa",
+      "s2": "aaaa",
+      "expected": 0.6666666666666667
+    },
+    {
+      "id": "fixed_12_hamming",
+      "op": "hamming",
+      "s1": "aa",
+      "s2": "aaaa",
+      "pad": true,
+      "expected": 2
+    },
+    {
+      "id": "fixed_13_distance",
+      "op": "distance",
+      "s1": "abcdef",
+      "s2": "azced",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "fixed_13_ratio",
+      "op": "ratio",
+      "s1": "abcdef",
+      "s2": "azced",
+      "expected": 0.5454545454545454
+    },
+    {
+      "id": "fixed_13_hamming",
+      "op": "hamming",
+      "s1": "abcdef",
+      "s2": "azced",
+      "pad": true,
+      "expected": 4
+    },
+    {
+      "id": "unicode_00_distance",
+      "op": "distance",
+      "s1": "é",
+      "s2": "e",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 1
+    },
+    {
+      "id": "unicode_00_ratio",
+      "op": "ratio",
+      "s1": "é",
+      "s2": "e",
+      "expected": 0.0
+    },
+    {
+      "id": "unicode_00_hamming",
+      "op": "hamming",
+      "s1": "é",
+      "s2": "e",
+      "pad": true,
+      "expected": 1
+    },
+    {
+      "id": "unicode_01_distance",
+      "op": "distance",
+      "s1": "é",
+      "s2": "é",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 2
+    },
+    {
+      "id": "unicode_01_ratio",
+      "op": "ratio",
+      "s1": "é",
+      "s2": "é",
+      "expected": 0.0
+    },
+    {
+      "id": "unicode_01_hamming",
+      "op": "hamming",
+      "s1": "é",
+      "s2": "é",
+      "pad": true,
+      "expected": 2
+    },
+    {
+      "id": "unicode_02_distance",
+      "op": "distance",
+      "s1": "😀",
+      "s2": "",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 1
+    },
+    {
+      "id": "unicode_02_ratio",
+      "op": "ratio",
+      "s1": "😀",
+      "s2": "",
+      "expected": 0.0
+    },
+    {
+      "id": "unicode_02_hamming",
+      "op": "hamming",
+      "s1": "😀",
+      "s2": "",
+      "pad": true,
+      "expected": 1
+    },
+    {
+      "id": "unicode_03_distance",
+      "op": "distance",
+      "s1": "😀",
+      "s2": "😃",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 1
+    },
+    {
+      "id": "unicode_03_ratio",
+      "op": "ratio",
+      "s1": "😀",
+      "s2": "😃",
+      "expected": 0.0
+    },
+    {
+      "id": "unicode_03_hamming",
+      "op": "hamming",
+      "s1": "😀",
+      "s2": "😃",
+      "pad": true,
+      "expected": 1
+    },
+    {
+      "id": "unicode_04_distance",
+      "op": "distance",
+      "s1": "a😀b",
+      "s2": "ab",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 1
+    },
+    {
+      "id": "unicode_04_ratio",
+      "op": "ratio",
+      "s1": "a😀b",
+      "s2": "ab",
+      "expected": 0.8
+    },
+    {
+      "id": "unicode_04_hamming",
+      "op": "hamming",
+      "s1": "a😀b",
+      "s2": "ab",
+      "pad": true,
+      "expected": 2
+    },
+    {
+      "id": "unicode_05_distance",
+      "op": "distance",
+      "s1": "naïve",
+      "s2": "naive",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 1
+    },
+    {
+      "id": "unicode_05_ratio",
+      "op": "ratio",
+      "s1": "naïve",
+      "s2": "naive",
+      "expected": 0.8
+    },
+    {
+      "id": "unicode_05_hamming",
+      "op": "hamming",
+      "s1": "naïve",
+      "s2": "naive",
+      "pad": true,
+      "expected": 1
+    },
+    {
+      "id": "unicode_06_distance",
+      "op": "distance",
+      "s1": "straße",
+      "s2": "strasse",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 2
+    },
+    {
+      "id": "unicode_06_ratio",
+      "op": "ratio",
+      "s1": "straße",
+      "s2": "strasse",
+      "expected": 0.7692307692307692
+    },
+    {
+      "id": "unicode_06_hamming",
+      "op": "hamming",
+      "s1": "straße",
+      "s2": "strasse",
+      "pad": true,
+      "expected": 3
+    },
+    {
+      "id": "unicode_07_distance",
+      "op": "distance",
+      "s1": "æ",
+      "s2": "ae",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 2
+    },
+    {
+      "id": "unicode_07_ratio",
+      "op": "ratio",
+      "s1": "æ",
+      "s2": "ae",
+      "expected": 0.0
+    },
+    {
+      "id": "unicode_07_hamming",
+      "op": "hamming",
+      "s1": "æ",
+      "s2": "ae",
+      "pad": true,
+      "expected": 2
+    },
+    {
+      "id": "unicode_08_distance",
+      "op": "distance",
+      "s1": "👩‍👩‍👧‍👦",
+      "s2": "",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 7
+    },
+    {
+      "id": "unicode_08_ratio",
+      "op": "ratio",
+      "s1": "👩‍👩‍👧‍👦",
+      "s2": "",
+      "expected": 0.0
+    },
+    {
+      "id": "unicode_08_hamming",
+      "op": "hamming",
+      "s1": "👩‍👩‍👧‍👦",
+      "s2": "",
+      "pad": true,
+      "expected": 7
+    },
+    {
+      "id": "unicode_09_distance",
+      "op": "distance",
+      "s1": "中文测试",
+      "s2": "中文測試",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 2
+    },
+    {
+      "id": "unicode_09_ratio",
+      "op": "ratio",
+      "s1": "中文测试",
+      "s2": "中文測試",
+      "expected": 0.5
+    },
+    {
+      "id": "unicode_09_hamming",
+      "op": "hamming",
+      "s1": "中文测试",
+      "s2": "中文測試",
+      "pad": true,
+      "expected": 2
+    },
+    {
+      "id": "unicode_10_distance",
+      "op": "distance",
+      "s1": "あいう",
+      "s2": "あえう",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 1
+    },
+    {
+      "id": "unicode_10_ratio",
+      "op": "ratio",
+      "s1": "あいう",
+      "s2": "あえう",
+      "expected": 0.6666666666666667
+    },
+    {
+      "id": "unicode_10_hamming",
+      "op": "hamming",
+      "s1": "あいう",
+      "s2": "あえう",
+      "pad": true,
+      "expected": 1
+    },
+    {
+      "id": "unicode_11_distance",
+      "op": "distance",
+      "s1": "café 😀 naïve",
+      "s2": "cafe 😃 naive",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "unicode_11_ratio",
+      "op": "ratio",
+      "s1": "café 😀 naïve",
+      "s2": "cafe 😃 naive",
+      "expected": 0.75
+    },
+    {
+      "id": "unicode_11_hamming",
+      "op": "hamming",
+      "s1": "café 😀 naïve",
+      "s2": "cafe 😃 naive",
+      "pad": true,
+      "expected": 3
+    },
+    {
+      "id": "weights_00_00",
+      "op": "distance",
+      "s1": "kitten",
+      "s2": "sitting",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "weights_00_01",
+      "op": "distance",
+      "s1": "kitten",
+      "s2": "sitting",
+      "weights": [
+        1,
+        1,
+        2
+      ],
+      "cutoff": null,
+      "expected": 5
+    },
+    {
+      "id": "weights_00_02",
+      "op": "distance",
+      "s1": "kitten",
+      "s2": "sitting",
+      "weights": [
+        2,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 4
+    },
+    {
+      "id": "weights_00_03",
+      "op": "distance",
+      "s1": "kitten",
+      "s2": "sitting",
+      "weights": [
+        1,
+        2,
+        1
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "weights_00_04",
+      "op": "distance",
+      "s1": "kitten",
+      "s2": "sitting",
+      "weights": [
+        2,
+        2,
+        1
+      ],
+      "cutoff": null,
+      "expected": 4
+    },
+    {
+      "id": "weights_00_05",
+      "op": "distance",
+      "s1": "kitten",
+      "s2": "sitting",
+      "weights": [
+        3,
+        1,
+        2
+      ],
+      "cutoff": null,
+      "expected": 7
+    },
+    {
+      "id": "weights_01_00",
+      "op": "distance",
+      "s1": "lewenstein",
+      "s2": "levenshtein",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 2
+    },
+    {
+      "id": "weights_01_01",
+      "op": "distance",
+      "s1": "lewenstein",
+      "s2": "levenshtein",
+      "weights": [
+        1,
+        1,
+        2
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "weights_01_02",
+      "op": "distance",
+      "s1": "lewenstein",
+      "s2": "levenshtein",
+      "weights": [
+        2,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "weights_01_03",
+      "op": "distance",
+      "s1": "lewenstein",
+      "s2": "levenshtein",
+      "weights": [
+        1,
+        2,
+        1
+      ],
+      "cutoff": null,
+      "expected": 2
+    },
+    {
+      "id": "weights_01_04",
+      "op": "distance",
+      "s1": "lewenstein",
+      "s2": "levenshtein",
+      "weights": [
+        2,
+        2,
+        1
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "weights_01_05",
+      "op": "distance",
+      "s1": "lewenstein",
+      "s2": "levenshtein",
+      "weights": [
+        3,
+        1,
+        2
+      ],
+      "cutoff": null,
+      "expected": 5
+    },
+    {
+      "id": "weights_02_00",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "adc",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 1
+    },
+    {
+      "id": "weights_02_01",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "adc",
+      "weights": [
+        1,
+        1,
+        2
+      ],
+      "cutoff": null,
+      "expected": 2
+    },
+    {
+      "id": "weights_02_02",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "adc",
+      "weights": [
+        2,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 1
+    },
+    {
+      "id": "weights_02_03",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "adc",
+      "weights": [
+        1,
+        2,
+        1
+      ],
+      "cutoff": null,
+      "expected": 1
+    },
+    {
+      "id": "weights_02_04",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "adc",
+      "weights": [
+        2,
+        2,
+        1
+      ],
+      "cutoff": null,
+      "expected": 1
+    },
+    {
+      "id": "weights_02_05",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "adc",
+      "weights": [
+        3,
+        1,
+        2
+      ],
+      "cutoff": null,
+      "expected": 2
+    },
+    {
+      "id": "weights_03_00",
+      "op": "distance",
+      "s1": "",
+      "s2": "abc",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "weights_03_01",
+      "op": "distance",
+      "s1": "",
+      "s2": "abc",
+      "weights": [
+        1,
+        1,
+        2
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "weights_03_02",
+      "op": "distance",
+      "s1": "",
+      "s2": "abc",
+      "weights": [
+        2,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 6
+    },
+    {
+      "id": "weights_03_03",
+      "op": "distance",
+      "s1": "",
+      "s2": "abc",
+      "weights": [
+        1,
+        2,
+        1
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "weights_03_04",
+      "op": "distance",
+      "s1": "",
+      "s2": "abc",
+      "weights": [
+        2,
+        2,
+        1
+      ],
+      "cutoff": null,
+      "expected": 6
+    },
+    {
+      "id": "weights_03_05",
+      "op": "distance",
+      "s1": "",
+      "s2": "abc",
+      "weights": [
+        3,
+        1,
+        2
+      ],
+      "cutoff": null,
+      "expected": 9
+    },
+    {
+      "id": "weights_04_00",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "weights_04_01",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "",
+      "weights": [
+        1,
+        1,
+        2
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "weights_04_02",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "",
+      "weights": [
+        2,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "weights_04_03",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "",
+      "weights": [
+        1,
+        2,
+        1
+      ],
+      "cutoff": null,
+      "expected": 6
+    },
+    {
+      "id": "weights_04_04",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "",
+      "weights": [
+        2,
+        2,
+        1
+      ],
+      "cutoff": null,
+      "expected": 6
+    },
+    {
+      "id": "weights_04_05",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "",
+      "weights": [
+        3,
+        1,
+        2
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "cutoff_00_1",
+      "op": "distance",
+      "s1": "kitten",
+      "s2": "sitting",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": 1,
+      "expected": 2
+    },
+    {
+      "id": "cutoff_00_2",
+      "op": "distance",
+      "s1": "kitten",
+      "s2": "sitting",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": 2,
+      "expected": 3
+    },
+    {
+      "id": "cutoff_00_3",
+      "op": "distance",
+      "s1": "kitten",
+      "s2": "sitting",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": 3,
+      "expected": 3
+    },
+    {
+      "id": "cutoff_00_4",
+      "op": "distance",
+      "s1": "kitten",
+      "s2": "sitting",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": 4,
+      "expected": 3
+    },
+    {
+      "id": "cutoff_01_0",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "adc",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": 0,
+      "expected": 1
+    },
+    {
+      "id": "cutoff_01_1",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "adc",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": 1,
+      "expected": 1
+    },
+    {
+      "id": "cutoff_01_2",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "adc",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": 2,
+      "expected": 1
+    },
+    {
+      "id": "cutoff_02_0",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "xyz",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": 0,
+      "expected": 1
+    },
+    {
+      "id": "cutoff_02_1",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "xyz",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": 1,
+      "expected": 2
+    },
+    {
+      "id": "cutoff_02_2",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "xyz",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": 2,
+      "expected": 3
+    },
+    {
+      "id": "cutoff_02_3",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "xyz",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": 3,
+      "expected": 3
+    },
+    {
+      "id": "cutoff_02_4",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "xyz",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": 4,
+      "expected": 3
+    },
+    {
+      "id": "cutoff_03_0",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "abc",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": 0,
+      "expected": 0
+    },
+    {
+      "id": "cutoff_03_1",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "abc",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": 1,
+      "expected": 0
+    },
+    {
+      "id": "hamming_pad_shorter",
+      "op": "hamming",
+      "s1": "abc",
+      "s2": "ab",
+      "pad": true,
+      "expected": 1
+    },
+    {
+      "id": "hamming_pad_empty",
+      "op": "hamming",
+      "s1": "abc",
+      "s2": "",
+      "pad": true,
+      "expected": 3
+    },
+    {
+      "id": "hamming_nopad_unequal",
+      "op": "hamming",
+      "s1": "abc",
+      "s2": "ab",
+      "error_contains": "Sequences are not the same length.",
+      "via_cli": true,
+      "pad": false
+    },
+    {
+      "id": "hamming_nopad_empty",
+      "op": "hamming",
+      "s1": "",
+      "s2": "a",
+      "error_contains": "Sequences are not the same length.",
+      "via_cli": true,
+      "pad": false
+    },
+    {
+      "id": "weights_zero",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "adc",
+      "error_contains": "positive integers",
+      "via_cli": true,
+      "weights": [
+        0,
+        1,
+        1
+      ],
+      "cutoff": null
+    },
+    {
+      "id": "weights_negative",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "adc",
+      "error_contains": "positive integers",
+      "via_cli": false,
+      "weights": [
+        -1,
+        1,
+        1
+      ],
+      "cutoff": null
+    },
+    {
+      "id": "cutoff_negative",
+      "op": "distance",
+      "s1": "abc",
+      "s2": "adc",
+      "error_contains": "non-negative integer",
+      "via_cli": false,
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": -1
+    },
+    {
+      "id": "boundary_001_random",
+      "op": "distance",
+      "s1": "c",
+      "s2": "b",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 1
+    },
+    {
+      "id": "boundary_001_random_ratio",
+      "op": "ratio",
+      "s1": "c",
+      "s2": "b",
+      "expected": 0.0
+    },
+    {
+      "id": "boundary_001_repeated",
+      "op": "distance",
+      "s1": "a",
+      "s2": "b",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 1
+    },
+    {
+      "id": "boundary_001_uniform",
+      "op": "distance",
+      "s1": "a",
+      "s2": "b",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 1
+    },
+    {
+      "id": "boundary_002_random",
+      "op": "distance",
+      "s1": "eb",
+      "s2": "ed",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 1
+    },
+    {
+      "id": "boundary_002_random_ratio",
+      "op": "ratio",
+      "s1": "eb",
+      "s2": "ed",
+      "expected": 0.5
+    },
+    {
+      "id": "boundary_002_repeated",
+      "op": "distance",
+      "s1": "aa",
+      "s2": "ed",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 2
+    },
+    {
+      "id": "boundary_002_uniform",
+      "op": "distance",
+      "s1": "aa",
+      "s2": "bb",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 2
+    },
+    {
+      "id": "boundary_003_random",
+      "op": "distance",
+      "s1": "cda",
+      "s2": "fdf",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 2
+    },
+    {
+      "id": "boundary_003_random_ratio",
+      "op": "ratio",
+      "s1": "cda",
+      "s2": "fdf",
+      "expected": 0.33333333333333337
+    },
+    {
+      "id": "boundary_003_repeated",
+      "op": "distance",
+      "s1": "aaa",
+      "s2": "fdf",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "boundary_003_uniform",
+      "op": "distance",
+      "s1": "aaa",
+      "s2": "bbb",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "boundary_063_random",
+      "op": "distance",
+      "s1": "bdcaddcacceeedfacbcbcefbcfdcdcbfcfebfeffabaaeccfffdabecdeeebedd",
+      "s2": "abeedacccdcdbebfdcfffbfebaddbfedaedfeacfcbefbfeebacaaeaafbdadbb",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 44
+    },
+    {
+      "id": "boundary_063_random_ratio",
+      "op": "ratio",
+      "s1": "bdcaddcacceeedfacbcbcefbcfdcdcbfcfebfeffabaaeccfffdabecdeeebedd",
+      "s2": "abeedacccdcdbebfdcfffbfebaddbfedaedfeacfcbefbfeebacaaeaafbdadbb",
+      "expected": 0.5238095238095238
+    },
+    {
+      "id": "boundary_063_repeated",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "abeedacccdcdbebfdcfffbfebaddbfedaedfeacfcbefbfeebacaaeaafbdadbb",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 52
+    },
+    {
+      "id": "boundary_063_uniform",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 63
+    },
+    {
+      "id": "boundary_064_random",
+      "op": "distance",
+      "s1": "bcabeafeceaeffbbcfefabfcacdefcaacadddaddfefdbcbefeebadaaefcbddeb",
+      "s2": "caceecbfffaabdfafcefaedafcddeddfacbfccbeafdfffdaadfadcaecffeedcd",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 42
+    },
+    {
+      "id": "boundary_064_random_ratio",
+      "op": "ratio",
+      "s1": "bcabeafeceaeffbbcfefabfcacdefcaacadddaddfefdbcbefeebadaaefcbddeb",
+      "s2": "caceecbfffaabdfafcefaedafcddeddfacbfccbeafdfffdaadfadcaecffeedcd",
+      "expected": 0.5625
+    },
+    {
+      "id": "boundary_064_repeated",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "caceecbfffaabdfafcefaedafcddeddfacbfccbeafdfffdaadfadcaecffeedcd",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 52
+    },
+    {
+      "id": "boundary_064_uniform",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 64
+    },
+    {
+      "id": "boundary_065_random",
+      "op": "distance",
+      "s1": "aeafafbaeeeebdabefcdbceecdadaeadefbbdefeedaedfcacdfaecfcbdeeeacfc",
+      "s2": "ccebdfdfffbcbafbaedecfbfecbdfcaccccafcebdbfcddecfacfcffbffdbfefba",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 47
+    },
+    {
+      "id": "boundary_065_random_ratio",
+      "op": "ratio",
+      "s1": "aeafafbaeeeebdabefcdbceecdadaeadefbbdefeedaedfcacdfaecfcbdeeeacfc",
+      "s2": "ccebdfdfffbcbafbaedecfbfecbdfcaccccafcebdbfcddecfacfcffbffdbfefba",
+      "expected": 0.49230769230769234
+    },
+    {
+      "id": "boundary_065_repeated",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "ccebdfdfffbcbafbaedecfbfecbdfcaccccafcebdbfcddecfacfcffbffdbfefba",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 59
+    },
+    {
+      "id": "boundary_065_uniform",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 65
+    },
+    {
+      "id": "boundary_127_random",
+      "op": "distance",
+      "s1": "cbeccaecaaacecbcddfcdeeafbdfedbcadeceebbaefafffdcfdafadbaefcaedeeddbcffaaacadebdfedbfbbfdecebafbbedcdfbdaafcedbbbcfdbbbfabeceaa",
+      "s2": "bafdbdecbbbcddaddbafdebabbeabdfcdcdbdfadfffaecacccebeadcbdcfbbbafceaafdcbdfceaeccfdbcbfbefeceedecaffeeeaeafccadfedffabfafbfddbd",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 86
+    },
+    {
+      "id": "boundary_127_random_ratio",
+      "op": "ratio",
+      "s1": "cbeccaecaaacecbcddfcdeeafbdfedbcadeceebbaefafffdcfdafadbaefcaedeeddbcffaaacadebdfedbfbbfdecebafbbedcdfbdaafcedbbbcfdbbbfabeceaa",
+      "s2": "bafdbdecbbbcddaddbafdebabbeabdfcdcdbdfadfffaecacccebeadcbdcfbbbafceaafdcbdfceaeccfdbcbfbefeceedecaffeeeaeafccadfedffabfafbfddbd",
+      "expected": 0.5275590551181102
+    },
+    {
+      "id": "boundary_127_repeated",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "bafdbdecbbbcddaddbafdebabbeabdfcdcdbdfadfffaecacccebeadcbdcfbbbafceaafdcbdfceaeccfdbcbfbefeceedecaffeeeaeafccadfedffabfafbfddbd",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 108
+    },
+    {
+      "id": "boundary_127_uniform",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 127
+    },
+    {
+      "id": "boundary_128_random",
+      "op": "distance",
+      "s1": "eabdcbefbfffccfbaeaffebeedaeaadbfecaadeeafcfedddcbecbbbeafdccccbadeddedaabeaceffdfbabafeeffdddaedadafafaabddedffbaefeefafcddbdeb",
+      "s2": "ceeacaafcfbfbbfedfffacdbdfdedcecdafaafcfaeceabecebdbccaffdebfadbdafadaaaabeeabafcafaabfabdaafcddefbcccfdbcdaadabcdceefeeaefffeae",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 87
+    },
+    {
+      "id": "boundary_128_random_ratio",
+      "op": "ratio",
+      "s1": "eabdcbefbfffccfbaeaffebeedaeaadbfecaadeeafcfedddcbecbbbeafdccccbadeddedaabeaceffdfbabafeeffdddaedadafafaabddedffbaefeefafcddbdeb",
+      "s2": "ceeacaafcfbfbbfedfffacdbdfdedcecdafaafcfaeceabecebdbccaffdebfadbdafadaaaabeeabafcafaabfabdaafcddefbcccfdbcdaadabcdceefeeaefffeae",
+      "expected": 0.5390625
+    },
+    {
+      "id": "boundary_128_repeated",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "ceeacaafcfbfbbfedfffacdbdfdedcecdafaafcfaeceabecebdbccaffdebfadbdafadaaaabeeabafcafaabfabdaafcddefbcccfdbcdaadabcdceefeeaefffeae",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 98
+    },
+    {
+      "id": "boundary_128_uniform",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 128
+    },
+    {
+      "id": "boundary_129_random",
+      "op": "distance",
+      "s1": "abdeddbaefcdcfaeabacfecceadfdcffffddfecbaafcecaddfbedfcadbaedcceafefdabfbeceeddffdeeddccfecbaecedbfebafeebfeaaacadfcbeddbfffbffff",
+      "s2": "fdaaccadebedffeceddafeaeadcaaabecbdfbbcaddabefacbcabbfcddcadbfcfdfccbeacbcefaaabecdfcfddfedaacacebadafeacfffbcedadbbfcabebbfebafd",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 83
+    },
+    {
+      "id": "boundary_129_random_ratio",
+      "op": "ratio",
+      "s1": "abdeddbaefcdcfaeabacfecceadfdcffffddfecbaafcecaddfbedfcadbaedcceafefdabfbeceeddffdeeddccfecbaecedbfebafeebfeaaacadfcbeddbfffbffff",
+      "s2": "fdaaccadebedffeceddafeaeadcaaabecbdfbbcaddabefacbcabbfcddcadbfcfdfccbeacbcefaaabecdfcfddfedaacacebadafeacfffbcedadbbfcabebbfebafd",
+      "expected": 0.5503875968992248
+    },
+    {
+      "id": "boundary_129_repeated",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "fdaaccadebedffeceddafeaeadcaaabecbdfbbcaddabefacbcabbfcddcadbfcfdfccbeacbcefaaabecdfcfddfedaacacebadafeacfffbcedadbbfcabebbfebafd",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 102
+    },
+    {
+      "id": "boundary_129_uniform",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 129
+    },
+    {
+      "id": "boundary_191_random",
+      "op": "distance",
+      "s1": "afafebdbebebdedecbbcbabbacffacbcebafcedadbeaabcafbedbcdabdadadcceeefbcbddffdccbdabfebfcdbcadbbfbfaadcddbccdcccdfecfccbdbfeeaadbdcedefdcecccfeddceeaedeadbacbceefceabcdceceaedabeddfeccafbdedcef",
+      "s2": "bddddadffabdeffbdffdbfeedaadabbafafecdfaaafbabeaeeafefbeadbaebbbecdfcfeafaaaddaefdafeddecafdfdeccbcebfdeedbbbbcedfacbebcbdcdcdefcfebfecceeedfcbabafeeeacdeefecfdebdecfaaeafbeebfadcecabbcfdabed",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 127
+    },
+    {
+      "id": "boundary_191_random_ratio",
+      "op": "ratio",
+      "s1": "afafebdbebebdedecbbcbabbacffacbcebafcedadbeaabcafbedbcdabdadadcceeefbcbddffdccbdabfebfcdbcadbbfbfaadcddbccdcccdfecfccbdbfeeaadbdcedefdcecccfeddceeaedeadbacbceefceabcdceceaedabeddfeccafbdedcef",
+      "s2": "bddddadffabdeffbdffdbfeedaadabbafafecdfaaafbabeaeeafefbeadbaebbbecdfcfeafaaaddaefdafeddecafdfdeccbcebfdeedbbbbcedfacbebcbdcdcdefcfebfecceeedfcbabafeeeacdeefecfdebdecfaaeafbeebfadcecabbcfdabed",
+      "expected": 0.5445026178010471
+    },
+    {
+      "id": "boundary_191_repeated",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "bddddadffabdeffbdffdbfeedaadabbafafecdfaaafbabeaeeafefbeadbaebbbecdfcfeafaaaddaefdafeddecafdfdeccbcebfdeedbbbbcedfacbebcbdcdcdefcfebfecceeedfcbabafeeeacdeefecfdebdecfaaeafbeebfadcecabbcfdabed",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 159
+    },
+    {
+      "id": "boundary_191_uniform",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 191
+    },
+    {
+      "id": "boundary_192_random",
+      "op": "distance",
+      "s1": "bacbdeffdbfaefedafecbfdeccfcdeeebeeecfcbffefbfaaafedcfcbbbfadabeaeabaadcfbffcccbfaecdefdeaacdfcdfdabccbffecfbbffceaacaaaddbefccdaedddbedbefaaeaabeedffbedbceeaacaacbfeafdbfcdbdcfeadfbddcbbbedab",
+      "s2": "cbbffcedecdfcedeffedaadadfffcbebcbcfafebfcdfaefccfbcbcdfdfafbdbdbaccdadecbbdefcdebbbebfefefdccbccdacebfcaeffddfdeadaeaefeccbdbfefecceeedeeeabcfaeedabcbbfeceaaceebbebfcadabccbecdecfebafcdacccda",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 123
+    },
+    {
+      "id": "boundary_192_random_ratio",
+      "op": "ratio",
+      "s1": "bacbdeffdbfaefedafecbfdeccfcdeeebeeecfcbffefbfaaafedcfcbbbfadabeaeabaadcfbffcccbfaecdefdeaacdfcdfdabccbffecfbbffceaacaaaddbefccdaedddbedbefaaeaabeedffbedbceeaacaacbfeafdbfcdbdcfeadfbddcbbbedab",
+      "s2": "cbbffcedecdfcedeffedaadadfffcbebcbcfafebfcdfaefccfbcbcdfdfafbdbdbaccdadecbbdefcdebbbebfefefdccbccdacebfcaeffddfdeadaeaefeccbdbfefecceeedeeeabcfaeedabcbbfeceaaceebbebfcadabccbecdecfebafcdacccda",
+      "expected": 0.546875
+    },
+    {
+      "id": "boundary_192_repeated",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "cbbffcedecdfcedeffedaadadfffcbebcbcfafebfcdfaefccfbcbcdfdfafbdbdbaccdadecbbdefcdebbbebfefefdccbccdacebfcaeffddfdeadaeaefeccbdbfefecceeedeeeabcfaeedabcbbfeceaaceebbebfcadabccbecdecfebafcdacccda",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 169
+    },
+    {
+      "id": "boundary_192_uniform",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 192
+    },
+    {
+      "id": "boundary_193_random",
+      "op": "distance",
+      "s1": "eefedfffccbdfacaadabcaccaeecdededcaeaecebacfccafbcdeaaabbbccbfbaeddeedffbbdedcefaeccddeabdeafbbbbaabfdfaeecdebedbefccffaadebcecebfbddfaebaaeabebfcadddebbbbcfccececaebaeaadeddacacccfdefdeeaaddbb",
+      "s2": "acdfffbadedffeaebcffffaedfeecbbdcdabadfbcefbecbaadfaaeecdebbacaaabafddedbecdfbbdaedcceffefdaeadcadbeafdcedbadfcfedbabbdbedbabdfaaefaaacdcaabdcfaeeecebecbcbddbbcfedeebccdfcabceddaeaebeffefdcafec",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 120
+    },
+    {
+      "id": "boundary_193_random_ratio",
+      "op": "ratio",
+      "s1": "eefedfffccbdfacaadabcaccaeecdededcaeaecebacfccafbcdeaaabbbccbfbaeddeedffbbdedcefaeccddeabdeafbbbbaabfdfaeecdebedbefccffaadebcecebfbddfaebaaeabebfcadddebbbbcfccececaebaeaadeddacacccfdefdeeaaddbb",
+      "s2": "acdfffbadedffeaebcffffaedfeecbbdcdabadfbcefbecbaadfaaeecdebbacaaabafddedbecdfbbdaedcceffefdaeadcadbeafdcedbadfcfedbabbdbedbabdfaaefaaacdcaabdcfaeeecebecbcbddbbcfedeebccdfcabceddaeaebeffefdcafec",
+      "expected": 0.538860103626943
+    },
+    {
+      "id": "boundary_193_repeated",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "acdfffbadedffeaebcffffaedfeecbbdcdabadfbcefbecbaadfaaeecdebbacaaabafddedbecdfbbdaedcceffefdaeadcadbeafdcedbadfcfedbabbdbedbabdfaaefaaacdcaabdcfaeeecebecbcbddbbcfedeebccdfcabceddaeaebeffefdcafec",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 158
+    },
+    {
+      "id": "boundary_193_uniform",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 193
+    },
+    {
+      "id": "boundary_255_random",
+      "op": "distance",
+      "s1": "bbbbefbbeedbfaedaebfaeabcefddfaecbaffacecfcfacbacbaffebdcaecbadacaffdfdebfadabefebbafaadcfbacdbbbbdcadabbdbabbffcaaaabeadfcaaffbcbdbacfacecaabbdbcbdfafdfaaefdaddfceddcadcfaabaffeeeecffeceedebfaeafcddaadaeaecbdcacdfdeadbdcadabededadffbdaacefebafeabdcddeabe",
+      "s2": "efcdcadbabecfbdffebbbfaacaebcacfdbbdbfbebccddddbcfeddffeaafefadaadceefeaffcabdcdddeecdddecacdbdacecadcbeadccceadbeecdcbefcedcecccfcfbafebeedaeafcedecccebbfbcacdececaeacdbebaedfbcacbddaccdfeeeebfbcbceaaaaebcaeefdacbcbcfeafcfebccccbccacfabcebcadccabebacdfeb",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 175
+    },
+    {
+      "id": "boundary_255_random_ratio",
+      "op": "ratio",
+      "s1": "bbbbefbbeedbfaedaebfaeabcefddfaecbaffacecfcfacbacbaffebdcaecbadacaffdfdebfadabefebbafaadcfbacdbbbbdcadabbdbabbffcaaaabeadfcaaffbcbdbacfacecaabbdbcbdfafdfaaefdaddfceddcadcfaabaffeeeecffeceedebfaeafcddaadaeaecbdcacdfdeadbdcadabededadffbdaacefebafeabdcddeabe",
+      "s2": "efcdcadbabecfbdffebbbfaacaebcacfdbbdbfbebccddddbcfeddffeaafefadaadceefeaffcabdcdddeecdddecacdbdacecadcbeadccceadbeecdcbefcedcecccfcfbafebeedaeafcedecccebbfbcacdececaeacdbebaedfbcacbddaccdfeeeebfbcbceaaaaebcaeefdacbcbcfeafcfebccccbccacfabcebcadccabebacdfeb",
+      "expected": 0.5254901960784314
+    },
+    {
+      "id": "boundary_255_repeated",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "efcdcadbabecfbdffebbbfaacaebcacfdbbdbfbebccddddbcfeddffeaafefadaadceefeaffcabdcdddeecdddecacdbdacecadcbeadccceadbeecdcbefcedcecccfcfbafebeedaeafcedecccebbfbcacdececaeacdbebaedfbcacbddaccdfeeeebfbcbceaaaaebcaeefdacbcbcfeafcfebccccbccacfabcebcadccabebacdfeb",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 216
+    },
+    {
+      "id": "boundary_255_uniform",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 255
+    },
+    {
+      "id": "boundary_256_random",
+      "op": "distance",
+      "s1": "babbcabbdccdfdabddedbcfaaafafdacaeaedcbfbeabfdfefecbdefcafbbbcabcbdbcebefedfdbedcfbedffddbfcfbedcafcbddfbcbefccccddecedfcabcbaecfdddcedcdcfecdeaffebfecacdfdcfbdfefcfeaeeeafebeefeeadfefcbffcacededbddaefaeaffcefefbeaddcfddffcadcfbcbbcadbbdaecdbaacfbabeacefad",
+      "s2": "edaaddaceedbcdcfccedccefdbddfbfefcdcfcfaadafcdafefffaaebdaccceafdcfdfefcaffebeceaafeeabdafddecaafbebabbaebeaabedeefefccbcdcbaabadecfedcabefaaaccceedebdbccdadeecabffbeaffacebbdeccfedbdccdbdaccbbbcfacbfefdaafcfbdfeafeeafbabacbffaadecffdefbcbbaabadaaeedbddceb",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 172
+    },
+    {
+      "id": "boundary_256_random_ratio",
+      "op": "ratio",
+      "s1": "babbcabbdccdfdabddedbcfaaafafdacaeaedcbfbeabfdfefecbdefcafbbbcabcbdbcebefedfdbedcfbedffddbfcfbedcafcbddfbcbefccccddecedfcabcbaecfdddcedcdcfecdeaffebfecacdfdcfbdfefcfeaeeeafebeefeeadfefcbffcacededbddaefaeaffcefefbeaddcfddffcadcfbcbbcadbbdaecdbaacfbabeacefad",
+      "s2": "edaaddaceedbcdcfccedccefdbddfbfefcdcfcfaadafcdafefffaaebdaccceafdcfdfefcaffebeceaafeeabdafddecaafbebabbaebeaabedeefefccbcdcbaabadecfedcabefaaaccceedebdbccdadeecabffbeaffacebbdeccfedbdccdbdaccbbbcfacbfefdaafcfbdfeafeeafbabacbffaadecffdefbcbbaabadaaeedbddceb",
+      "expected": 0.54296875
+    },
+    {
+      "id": "boundary_256_repeated",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "edaaddaceedbcdcfccedccefdbddfbfefcdcfcfaadafcdafefffaaebdaccceafdcfdfefcaffebeceaafeeabdafddecaafbebabbaebeaabedeefefccbcdcbaabadecfedcabefaaaccceedebdbccdadeecabffbeaffacebbdeccfedbdccdbdaccbbbcfacbfefdaafcfbdfeafeeafbabacbffaadecffdefbcbbaabadaaeedbddceb",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 208
+    },
+    {
+      "id": "boundary_256_uniform",
+      "op": "distance",
+      "s1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "s2": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 256
+    },
+    {
+      "id": "random_000_distance",
+      "op": "distance",
+      "s1": "0文HW😀m8cjRøLiDU nD3文yあ1mN中FTMêk5KßACNs",
+      "s2": "fDß",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 36
+    },
+    {
+      "id": "random_000_ratio",
+      "op": "ratio",
+      "s1": "0文HW😀m8cjRøLiDU nD3文yあ1mN中FTMêk5KßACNs",
+      "s2": "fDß",
+      "expected": 0.09756097560975607
+    },
+    {
+      "id": "random_001_distance",
+      "op": "distance",
+      "s1": "az5ñCOTMOCKo😀JJiLyiWfxé7PLあJ😀中 nø6vl-P0",
+      "s2": "😀ZKzræ😀üm0FèêQGü0ItW😀zPs-1aS0ycT1IGvalUßèhDUüd0p",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 44
+    },
+    {
+      "id": "random_001_ratio",
+      "op": "ratio",
+      "s1": "az5ñCOTMOCKo😀JJiLyiWfxé7PLあJ😀中 nø6vl-P0",
+      "s2": "😀ZKzræ😀üm0FèêQGü0ItW😀zPs-1aS0ycT1IGvalUßèhDUüd0p",
+      "expected": 0.16091954022988508
+    },
+    {
+      "id": "random_002_distance",
+      "op": "distance",
+      "s1": "4AIwsNéüHßj中q6あ0 éü4qæwkzvæM-t4bflbu中-Eあé",
+      "s2": "xVèaudhS8F2V",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 41
+    },
+    {
+      "id": "random_002_ratio",
+      "op": "ratio",
+      "s1": "4AIwsNéüHßj中q6あ0 éü4qæwkzvæM-t4bflbu中-Eあé",
+      "s2": "xVèaudhS8F2V",
+      "expected": 0.037735849056603765
+    },
+    {
+      "id": "random_003_distance",
+      "op": "distance",
+      "s1": "QNOJpA1pbHz",
+      "s2": "æßtB6tbdøJsGøsfu文é2RksfN7mêNAdQakpn6QYf00あ-ëW",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 42
+    },
+    {
+      "id": "random_003_ratio",
+      "op": "ratio",
+      "s1": "QNOJpA1pbHz",
+      "s2": "æßtB6tbdøJsGøsfu文é2RksfN7mêNAdQakpn6QYf00あ-ëW",
+      "expected": 0.1071428571428571
+    },
+    {
+      "id": "random_004_distance",
+      "op": "distance",
+      "s1": "1fa😀RéZ8",
+      "s2": "2F-ZéHjbaLüSw4eXYèb2",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 19
+    },
+    {
+      "id": "random_004_ratio",
+      "op": "ratio",
+      "s1": "1fa😀RéZ8",
+      "s2": "2F-ZéHjbaLüSw4eXYèb2",
+      "expected": 0.0714285714285714
+    },
+    {
+      "id": "random_005_distance",
+      "op": "distance",
+      "s1": "0ZXSf9y6kN4Géykét1ñHBY",
+      "s2": "CUhHzmX",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 22
+    },
+    {
+      "id": "random_005_ratio",
+      "op": "ratio",
+      "s1": "0ZXSf9y6kN4Géykét1ñHBY",
+      "s2": "CUhHzmX",
+      "expected": 0.06896551724137934
+    },
+    {
+      "id": "random_006_distance",
+      "op": "distance",
+      "s1": "BvA5m文OccWcøju",
+      "s2": "èBWi92",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 13
+    },
+    {
+      "id": "random_006_ratio",
+      "op": "ratio",
+      "s1": "BvA5m文OccWcøju",
+      "s2": "èBWi92",
+      "expected": 0.19999999999999996
+    },
+    {
+      "id": "random_007_distance",
+      "op": "distance",
+      "s1": "5f9😀47oOøU中rSdMøhøü7",
+      "s2": "A😃FéWG24GbFB文Mël OG",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 19
+    },
+    {
+      "id": "random_007_ratio",
+      "op": "ratio",
+      "s1": "5f9😀47oOøU中rSdMøhøü7",
+      "s2": "A😃FéWG24GbFB文Mël OG",
+      "expected": 0.10256410256410253
+    },
+    {
+      "id": "random_008_distance",
+      "op": "distance",
+      "s1": "MøOgHxE",
+      "s2": "Jñ2èaqra中_iyNTkZiét wZ8h",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 24
+    },
+    {
+      "id": "random_008_ratio",
+      "op": "ratio",
+      "s1": "MøOgHxE",
+      "s2": "Jñ2èaqra中_iyNTkZiét wZ8h",
+      "expected": 0.0
+    },
+    {
+      "id": "random_009_distance",
+      "op": "distance",
+      "s1": "😃TaVmbKJvzAtAi😀7ndnOy😀ALYcéæcl7lstGéphëhevEQ",
+      "s2": "uëS3-hqzE",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 42
+    },
+    {
+      "id": "random_009_ratio",
+      "op": "ratio",
+      "s1": "😃TaVmbKJvzAtAi😀7ndnOy😀ALYcéæcl7lstGéphëhevEQ",
+      "s2": "uëS3-hqzE",
+      "expected": 0.1132075471698113
+    },
+    {
+      "id": "random_010_distance",
+      "op": "distance",
+      "s1": "xwあMsTMb3文MSOAGbpGßTT8s",
+      "s2": "ljië_cèèø8XqßmkU",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 22
+    },
+    {
+      "id": "random_010_ratio",
+      "op": "ratio",
+      "s1": "xwあMsTMb3文MSOAGbpGßTT8s",
+      "s2": "ljië_cèèø8XqßmkU",
+      "expected": 0.05128205128205132
+    },
+    {
+      "id": "random_011_distance",
+      "op": "distance",
+      "s1": "etßFtPJt0VVIhTB4tY",
+      "s2": "6IH8Hu40-xë6e50dgvLkëGBgg",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 24
+    },
+    {
+      "id": "random_011_ratio",
+      "op": "ratio",
+      "s1": "etßFtPJt0VVIhTB4tY",
+      "s2": "6IH8Hu40-xë6e50dgvLkëGBgg",
+      "expected": 0.13953488372093026
+    },
+    {
+      "id": "random_012_distance",
+      "op": "distance",
+      "s1": "F TñDWPj_LQ1X中文Xx8CLBあODøæあkdpNgsm",
+      "s2": "a33BEéQcw1MèdèkT ZzZéh3êTêo1ê",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 33
+    },
+    {
+      "id": "random_012_ratio",
+      "op": "ratio",
+      "s1": "F TñDWPj_LQ1X中文Xx8CLBあODøæあkdpNgsm",
+      "s2": "a33BEéQcw1MèdèkT ZzZéh3êTêo1ê",
+      "expected": 0.09523809523809523
+    },
+    {
+      "id": "random_013_distance",
+      "op": "distance",
+      "s1": "yMa文KeßRiLoO_5mVérTNxéeWd78j",
+      "s2": "Yñsæü7pHj ZRVñfLa0xあag😃ê😃QbV50Hé文zV",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 33
+    },
+    {
+      "id": "random_013_ratio",
+      "op": "ratio",
+      "s1": "yMa文KeßRiLoO_5mVérTNxéeWd78j",
+      "s2": "Yñsæü7pHj ZRVñfLa0xあag😃ê😃QbV50Hé文zV",
+      "expected": 0.12698412698412698
+    },
+    {
+      "id": "random_014_distance",
+      "op": "distance",
+      "s1": "BëlYJ1xSS5Gs",
+      "s2": "中あRr4FrvTYñéh1tæBiYmSg😃ø9",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 22
+    },
+    {
+      "id": "random_014_ratio",
+      "op": "ratio",
+      "s1": "BëlYJ1xSS5Gs",
+      "s2": "中あRr4FrvTYñéh1tæBiYmSg😃ø9",
+      "expected": 0.16216216216216217
+    },
+    {
+      "id": "random_015_distance",
+      "op": "distance",
+      "s1": "e2C8Uë😀2EFéyéR😀eHJr文LfP26D5NpthuM2XDODøæ8wNあpC",
+      "s2": "u19-Lns1r2t OJmS5I1réJ3UP4Swあ中FYあækKc4L7E😀Zdz",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 46
+    },
+    {
+      "id": "random_015_ratio",
+      "op": "ratio",
+      "s1": "e2C8Uë😀2EFéyéR😀eHJr文LfP26D5NpthuM2XDODøæ8wNあpC",
+      "s2": "u19-Lns1r2t OJmS5I1réJ3UP4Swあ中FYあækKc4L7E😀Zdz",
+      "expected": 0.13186813186813184
+    },
+    {
+      "id": "random_016_distance",
+      "op": "distance",
+      "s1": "😀éO",
+      "s2": "æñë_中m4k4YawEOü",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 14
+    },
+    {
+      "id": "random_016_ratio",
+      "op": "ratio",
+      "s1": "😀éO",
+      "s2": "æñë_中m4k4YawEOü",
+      "expected": 0.11111111111111116
+    },
+    {
+      "id": "random_017_distance",
+      "op": "distance",
+      "s1": "E1ñrあSoè1T3KTc_9dRxéVXøiø",
+      "s2": "EyñßaBmæNßbEu8文Y07në_-2ßxyBéphihu4ßzuMXW",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 35
+    },
+    {
+      "id": "random_017_ratio",
+      "op": "ratio",
+      "s1": "E1ñrあSoè1T3KTc_9dRxéVXøiø",
+      "s2": "EyñßaBmæNßbEu8文Y07në_-2ßxyBéphihu4ßzuMXW",
+      "expected": 0.18461538461538463
+    },
+    {
+      "id": "random_018_distance",
+      "op": "distance",
+      "s1": "7-sbaCzTézzFciwbñIfZ5😃êr58XñaMh",
+      "s2": "中46R_ègXjYwLév90 CvUOXHmYæyIaWñ1êJOtTG中rGjB6èYW",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 43
+    },
+    {
+      "id": "random_018_ratio",
+      "op": "ratio",
+      "s1": "7-sbaCzTézzFciwbñIfZ5😃êr58XñaMh",
+      "s2": "中46R_ègXjYwLév90 CvUOXHmYæyIaWñ1êJOtTG中rGjB6èYW",
+      "expected": 0.10256410256410253
+    },
+    {
+      "id": "random_019_distance",
+      "op": "distance",
+      "s1": "Znß😀uCvxeYßj ørr1 xW7HTvOxS-w_xl",
+      "s2": "æSß😃qあ😀økëE2qeé",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 30
+    },
+    {
+      "id": "random_019_ratio",
+      "op": "ratio",
+      "s1": "Znß😀uCvxeYßj ørr1 xW7HTvOxS-w_xl",
+      "s2": "æSß😃qあ😀økëE2qeé",
+      "expected": 0.12765957446808507
+    },
+    {
+      "id": "random_020_distance",
+      "op": "distance",
+      "s1": "I-Za1m8HN",
+      "s2": "6aiG中HAMü文vßë中æm",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 16
+    },
+    {
+      "id": "random_020_ratio",
+      "op": "ratio",
+      "s1": "I-Za1m8HN",
+      "s2": "6aiG中HAMü文vßë中æm",
+      "expected": 0.16000000000000003
+    },
+    {
+      "id": "random_021_distance",
+      "op": "distance",
+      "s1": "J2T0W_😀nIUfnXñn4vuFl",
+      "s2": "あBêI文hLT4kE2enElD",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 19
+    },
+    {
+      "id": "random_021_ratio",
+      "op": "ratio",
+      "s1": "J2T0W_😀nIUfnXñn4vuFl",
+      "s2": "あBêI文hLT4kE2enElD",
+      "expected": 0.16216216216216217
+    },
+    {
+      "id": "random_022_distance",
+      "op": "distance",
+      "s1": "YMZnêD4eræ8FあRü7æßSéQVOüApbJJnC😃N5BéLEtxCzs文wë",
+      "s2": "oGYKPbDf文yëcF文  6hqøê😃OysGè",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 43
+    },
+    {
+      "id": "random_022_ratio",
+      "op": "ratio",
+      "s1": "YMZnêD4eræ8FあRü7æßSéQVOüApbJJnC😃N5BéLEtxCzs文wë",
+      "s2": "oGYKPbDf文yëcF文  6hqøê😃OysGè",
+      "expected": 0.136986301369863
+    },
+    {
+      "id": "random_023_distance",
+      "op": "distance",
+      "s1": "kbzt_35o4😃LEZOß4æoLUあ😃NDwseQæmae1whq0hRZm",
+      "s2": "L",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 40
+    },
+    {
+      "id": "random_023_ratio",
+      "op": "ratio",
+      "s1": "kbzt_35o4😃LEZOß4æoLUあ😃NDwseQæmae1whq0hRZm",
+      "s2": "L",
+      "expected": 0.04761904761904767
+    },
+    {
+      "id": "random_024_distance",
+      "op": "distance",
+      "s1": "oSHWècéa7SZLBv895p7AéC_Vあ",
+      "s2": "sqy9Do中WêC8K_RkyY",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 24
+    },
+    {
+      "id": "random_024_ratio",
+      "op": "ratio",
+      "s1": "oSHWècéa7SZLBv895p7AéC_Vあ",
+      "s2": "sqy9Do中WêC8K_RkyY",
+      "expected": 0.19047619047619047
+    },
+    {
+      "id": "random_025_distance",
+      "op": "distance",
+      "s1": "FBEuwubDghhñëNAX9Ng F4éjWu4中ë2-中aCS",
+      "s2": "êb",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 34
+    },
+    {
+      "id": "random_025_ratio",
+      "op": "ratio",
+      "s1": "FBEuwubDghhñëNAX9Ng F4éjWu4中ë2-中aCS",
+      "s2": "êb",
+      "expected": 0.05405405405405406
+    },
+    {
+      "id": "random_026_distance",
+      "op": "distance",
+      "s1": "éXMeU7EQ V60Y5GBdi4kiøGbgZFs文SiS中",
+      "s2": "yGFzrKh-P qZ",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 31
+    },
+    {
+      "id": "random_026_ratio",
+      "op": "ratio",
+      "s1": "éXMeU7EQ V60Y5GBdi4kiøGbgZFs文SiS中",
+      "s2": "yGFzrKh-P qZ",
+      "expected": 0.0888888888888889
+    },
+    {
+      "id": "random_027_distance",
+      "op": "distance",
+      "s1": "XOlëZzgvß3RGup5è8😃qTXXøN中zpa Jt中_s-èOVéWø",
+      "s2": "-æOhpBéetあulK😀文vB-a4X rNyHUc1ywëQYQx",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 39
+    },
+    {
+      "id": "random_027_ratio",
+      "op": "ratio",
+      "s1": "XOlëZzgvß3RGup5è8😃qTXXøN中zpa Jt中_s-èOVéWø",
+      "s2": "-æOhpBéetあulK😀文vB-a4X rNyHUc1ywëQYQx",
+      "expected": 0.1298701298701299
+    },
+    {
+      "id": "random_028_distance",
+      "op": "distance",
+      "s1": "q😀c5piFntyggWé75æé😀pdHc",
+      "s2": "J12GI5ê 6ë9è-rUß中ëGa😀1Cß文orZ",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 26
+    },
+    {
+      "id": "random_028_ratio",
+      "op": "ratio",
+      "s1": "q😀c5piFntyggWé75æé😀pdHc",
+      "s2": "J12GI5ê 6ë9è-rUß中ëGa😀1Cß文orZ",
+      "expected": 0.07843137254901966
+    },
+    {
+      "id": "random_029_distance",
+      "op": "distance",
+      "s1": "7中",
+      "s2": "YOE9_ømèøE😃中H iLYZFøWdARPbIW_ukfC中NaSF7Y6",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 40
+    },
+    {
+      "id": "random_029_ratio",
+      "op": "ratio",
+      "s1": "7中",
+      "s2": "YOE9_ømèøE😃中H iLYZFøWdARPbIW_ukfC中NaSF7Y6",
+      "expected": 0.046511627906976716
+    },
+    {
+      "id": "random_030_distance",
+      "op": "distance",
+      "s1": "ibYééë",
+      "s2": "3q2DøHmKV8WzüL",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 14
+    },
+    {
+      "id": "random_030_ratio",
+      "op": "ratio",
+      "s1": "ibYééë",
+      "s2": "3q2DøHmKV8WzüL",
+      "expected": 0.0
+    },
+    {
+      "id": "random_031_distance",
+      "op": "distance",
+      "s1": "qy",
+      "s2": "ñKnz_ék8513éüêZßHüWjjøtueCOBG文中i 3DHiévdéßn😃7",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 45
+    },
+    {
+      "id": "random_031_ratio",
+      "op": "ratio",
+      "s1": "qy",
+      "s2": "ñKnz_ék8513éüêZßHüWjjøtueCOBG文中i 3DHiévdéßn😃7",
+      "expected": 0.0
+    },
+    {
+      "id": "random_032_distance",
+      "op": "distance",
+      "s1": "DoiHmOfkqbæ",
+      "s2": "Sm5aFët_L😃0uOêiFgæE1",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 18
+    },
+    {
+      "id": "random_032_ratio",
+      "op": "ratio",
+      "s1": "DoiHmOfkqbæ",
+      "s2": "Sm5aFët_L😃0uOêiFgæE1",
+      "expected": 0.19354838709677424
+    },
+    {
+      "id": "random_033_distance",
+      "op": "distance",
+      "s1": "CVzWßFæjgæwhPë😃nk5Z",
+      "s2": "XSéMü0_R文中éHGLIcks43lCGKijPêeß7B😃eWXwZxS",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 37
+    },
+    {
+      "id": "random_033_ratio",
+      "op": "ratio",
+      "s1": "CVzWßFæjgæwhPë😃nk5Z",
+      "s2": "XSéMü0_R文中éHGLIcks43lCGKijPêeß7B😃eWXwZxS",
+      "expected": 0.1694915254237288
+    },
+    {
+      "id": "random_034_distance",
+      "op": "distance",
+      "s1": "PAmd6ßc1VWT aeKgQ9éctpéU bë文tO中WZLRréUtø",
+      "s2": "sFaqあlpæk1dMJtZCütBRgéCzEjUê",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 37
+    },
+    {
+      "id": "random_034_ratio",
+      "op": "ratio",
+      "s1": "PAmd6ßc1VWT aeKgQ9éctpéU bë文tO中WZLRréUtø",
+      "s2": "sFaqあlpæk1dMJtZCütBRgéCzEjUê",
+      "expected": 0.20588235294117652
+    },
+    {
+      "id": "random_035_distance",
+      "op": "distance",
+      "s1": "HXHY文éTé8AnT1ldBdQXK_ dH4Un-G2vosJ",
+      "s2": "4ëNGuuoNX5tFYHqê😀Ve",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 32
+    },
+    {
+      "id": "random_035_ratio",
+      "op": "ratio",
+      "s1": "HXHY文éTé8AnT1ldBdQXK_ dH4Un-G2vosJ",
+      "s2": "4ëNGuuoNX5tFYHqê😀Ve",
+      "expected": 0.1132075471698113
+    },
+    {
+      "id": "random_036_distance",
+      "op": "distance",
+      "s1": "3xQzqsfxXmêgé",
+      "s2": "sLE-umKwA1中lTD8vあéP3jG SL",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 24
+    },
+    {
+      "id": "random_036_ratio",
+      "op": "ratio",
+      "s1": "3xQzqsfxXmêgé",
+      "s2": "sLE-umKwA1中lTD8vあéP3jG SL",
+      "expected": 0.1578947368421053
+    },
+    {
+      "id": "random_037_distance",
+      "op": "distance",
+      "s1": "ñé RAC中ëq1NFXé6d8cWßs中MIce",
+      "s2": "dS 98døfnPPbfüm9dx5",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 25
+    },
+    {
+      "id": "random_037_ratio",
+      "op": "ratio",
+      "s1": "ñé RAC中ëq1NFXé6d8cWßs中MIce",
+      "s2": "dS 98døfnPPbfüm9dx5",
+      "expected": 0.0888888888888889
+    },
+    {
+      "id": "random_038_distance",
+      "op": "distance",
+      "s1": "baFn9_VêVß oé-あKDHøKあvüé41bh4e3ßmkDF fDw1Fñ",
+      "s2": "HCYL-",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 42
+    },
+    {
+      "id": "random_038_ratio",
+      "op": "ratio",
+      "s1": "baFn9_VêVß oé-あKDHøKあvüé41bh4e3ßmkDF fDw1Fñ",
+      "s2": "HCYL-",
+      "expected": 0.04166666666666663
+    },
+    {
+      "id": "random_039_distance",
+      "op": "distance",
+      "s1": "-_e",
+      "s2": "h8D êaQCzTMTêezY3s中BFDnêF4QlMüv2vébNë",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 36
+    },
+    {
+      "id": "random_039_ratio",
+      "op": "ratio",
+      "s1": "-_e",
+      "s2": "h8D êaQCzTMTêezY3s中BFDnêF4QlMüv2vébNë",
+      "expected": 0.050000000000000044
+    },
+    {
+      "id": "random_040_distance",
+      "op": "distance",
+      "s1": "r8GèñRKiISNzxWßSUZêkITq7e0do",
+      "s2": "",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 28
+    },
+    {
+      "id": "random_040_ratio",
+      "op": "ratio",
+      "s1": "r8GèñRKiISNzxWßSUZêkITq7e0do",
+      "s2": "",
+      "expected": 0.0
+    },
+    {
+      "id": "random_041_distance",
+      "op": "distance",
+      "s1": "81😀üyæGæ3èc_文ntJ",
+      "s2": "oX1l2😃cc😃E9z Rw99K 2é_90S😀OéFé yn91B-km ñ",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 38
+    },
+    {
+      "id": "random_041_ratio",
+      "op": "ratio",
+      "s1": "81😀üyæGæ3èc_文ntJ",
+      "s2": "oX1l2😃cc😃E9z Rw99K 2é_90S😀OéFé yn91B-km ñ",
+      "expected": 0.14035087719298245
+    },
+    {
+      "id": "random_042_distance",
+      "op": "distance",
+      "s1": "sltêêPDü0u1中CevSPnTUHq8zdnO中Bzè-",
+      "s2": "YW zLoU",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 31
+    },
+    {
+      "id": "random_042_ratio",
+      "op": "ratio",
+      "s1": "sltêêPDü0u1中CevSPnTUHq8zdnO中Bzè-",
+      "s2": "YW zLoU",
+      "expected": 0.05128205128205132
+    },
+    {
+      "id": "random_043_distance",
+      "op": "distance",
+      "s1": "o中UCb😃DOY49üS😀ew91v6oFY",
+      "s2": "5BEwEocm6Tes",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 22
+    },
+    {
+      "id": "random_043_ratio",
+      "op": "ratio",
+      "s1": "o中UCb😃DOY49üS😀ew91v6oFY",
+      "s2": "5BEwEocm6Tes",
+      "expected": 0.11428571428571432
+    },
+    {
+      "id": "random_044_distance",
+      "op": "distance",
+      "s1": "pccLM4IgñæNo4t4jva6j😃cMêeojMA",
+      "s2": "uD",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 29
+    },
+    {
+      "id": "random_044_ratio",
+      "op": "ratio",
+      "s1": "pccLM4IgñæNo4t4jva6j😃cMêeojMA",
+      "s2": "uD",
+      "expected": 0.0
+    },
+    {
+      "id": "random_045_distance",
+      "op": "distance",
+      "s1": "9C",
+      "s2": "R3H",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 3
+    },
+    {
+      "id": "random_045_ratio",
+      "op": "ratio",
+      "s1": "9C",
+      "s2": "R3H",
+      "expected": 0.0
+    },
+    {
+      "id": "random_046_distance",
+      "op": "distance",
+      "s1": "ntGQé5Dw😃s😃ëwQcMRT3Kbq01vcyD8中éRj2文ønRSVl",
+      "s2": "0v",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 39
+    },
+    {
+      "id": "random_046_ratio",
+      "op": "ratio",
+      "s1": "ntGQé5Dw😃s😃ëwQcMRT3Kbq01vcyD8中éRj2文ønRSVl",
+      "s2": "0v",
+      "expected": 0.09302325581395354
+    },
+    {
+      "id": "random_047_distance",
+      "op": "distance",
+      "s1": "uèUbu2JA文dßo-DüLあXiEè-ñcUtp3AiTKzoüLx5tcWCWC",
+      "s2": "b中èê文O5K",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 41
+    },
+    {
+      "id": "random_047_ratio",
+      "op": "ratio",
+      "s1": "uèUbu2JA文dßo-DüLあXiEè-ñcUtp3AiTKzoüLx5tcWCWC",
+      "s2": "b中èê文O5K",
+      "expected": 0.11538461538461542
+    },
+    {
+      "id": "random_048_distance",
+      "op": "distance",
+      "s1": "øZ7swDE",
+      "s2": "9aXixaWZCghMD4Qzw_gV6tPßsèü0Mm中hëX0Evw_-文_",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 39
+    },
+    {
+      "id": "random_048_ratio",
+      "op": "ratio",
+      "s1": "øZ7swDE",
+      "s2": "9aXixaWZCghMD4Qzw_gV6tPßsèü0Mm中hëX0Evw_-文_",
+      "expected": 0.12244897959183676
+    },
+    {
+      "id": "random_049_distance",
+      "op": "distance",
+      "s1": "T5uü1YsVvSßi文xOèWsé24y2CVop0",
+      "s2": "Zèb1😃SeyKW4",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 24
+    },
+    {
+      "id": "random_049_ratio",
+      "op": "ratio",
+      "s1": "T5uü1YsVvSßi文xOèWsé24y2CVop0",
+      "s2": "Zèb1😃SeyKW4",
+      "expected": 0.20512820512820518
+    },
+    {
+      "id": "random_050_distance",
+      "op": "distance",
+      "s1": "qXL3nü0w ë0Y文gXPvASsCO4nHtñあV_lêJt ",
+      "s2": "gsDê文H1pDYMêaSzêw6HèCdxvbêZADXjëWN1 中WxaKda",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 41
+    },
+    {
+      "id": "random_050_ratio",
+      "op": "ratio",
+      "s1": "qXL3nü0w ë0Y文gXPvASsCO4nHtñあV_lêJt ",
+      "s2": "gsDê文H1pDYMêaSzêw6HèCdxvbêZADXjëWN1 中WxaKda",
+      "expected": 0.1282051282051282
+    },
+    {
+      "id": "random_051_distance",
+      "op": "distance",
+      "s1": "ëkcwqM72Jéæ7",
+      "s2": "vUñwUßDUXa1mañB0ès",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 17
+    },
+    {
+      "id": "random_051_ratio",
+      "op": "ratio",
+      "s1": "ëkcwqM72Jéæ7",
+      "s2": "vUñwUßDUXa1mañB0ès",
+      "expected": 0.06666666666666665
+    },
+    {
+      "id": "random_052_distance",
+      "op": "distance",
+      "s1": "wPCüQYa1X1YI4ø",
+      "s2": "hbRgnñ",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 14
+    },
+    {
+      "id": "random_052_ratio",
+      "op": "ratio",
+      "s1": "wPCüQYa1X1YI4ø",
+      "s2": "hbRgnñ",
+      "expected": 0.0
+    },
+    {
+      "id": "random_053_distance",
+      "op": "distance",
+      "s1": "NNwI1øudês3あuñ1hあEUègLYあ",
+      "s2": "iziSZêUCl4z",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 22
+    },
+    {
+      "id": "random_053_ratio",
+      "op": "ratio",
+      "s1": "NNwI1øudês3あuñ1hあEUègLYあ",
+      "s2": "iziSZêUCl4z",
+      "expected": 0.11428571428571432
+    },
+    {
+      "id": "random_054_distance",
+      "op": "distance",
+      "s1": "hëHMrF😀iRi😃yxT7w😀u",
+      "s2": "PD6gzUBLYVuzkêJLvxUNpøüG😃üæCæ8あE",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 31
+    },
+    {
+      "id": "random_054_ratio",
+      "op": "ratio",
+      "s1": "hëHMrF😀iRi😃yxT7w😀u",
+      "s2": "PD6gzUBLYVuzkêJLvxUNpøüG😃üæCæ8あE",
+      "expected": 0.040000000000000036
+    },
+    {
+      "id": "random_055_distance",
+      "op": "distance",
+      "s1": "ëNlKbW3Tè4vkUPë95B39MJejëø2qtsMuI6ø539VeEé",
+      "s2": "êO-uHyPñXx7KêI4",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 40
+    },
+    {
+      "id": "random_055_ratio",
+      "op": "ratio",
+      "s1": "ëNlKbW3Tè4vkUPë95B39MJejëø2qtsMuI6ø539VeEé",
+      "s2": "êO-uHyPñXx7KêI4",
+      "expected": 0.07017543859649122
+    },
+    {
+      "id": "random_056_distance",
+      "op": "distance",
+      "s1": "😀øDZmOësüaFqHrtcd文DFFqW5ædyè6p",
+      "s2": "MSd😃9😃Iu😀rtë6VZYA😃ñé1uéê😀",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 28
+    },
+    {
+      "id": "random_056_ratio",
+      "op": "ratio",
+      "s1": "😀øDZmOësüaFqHrtcd文DFFqW5ædyè6p",
+      "s2": "MSd😃9😃Iu😀rtë6VZYA😃ñé1uéê😀",
+      "expected": 0.1454545454545455
+    },
+    {
+      "id": "random_057_distance",
+      "op": "distance",
+      "s1": "3ßv1PP91mtZV5V5mC中gkVüEü中x😀-5Mè 😃7P",
+      "s2": "s文7iJF😃deèéeuoTTPu4Z02æRa1",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 35
+    },
+    {
+      "id": "random_057_ratio",
+      "op": "ratio",
+      "s1": "3ßv1PP91mtZV5V5mC中gkVüEü中x😀-5Mè 😃7P",
+      "s2": "s文7iJF😃deèéeuoTTPu4Z02æRa1",
+      "expected": 0.06557377049180324
+    },
+    {
+      "id": "random_058_distance",
+      "op": "distance",
+      "s1": "w😃5Ii8A4Lññ7Yfw5wCeiø8ñè😃v201LPyY😀",
+      "s2": "MtmfékSD1l9V9UhAyJ文AkjRBoDpeL😀4NlEC",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 35
+    },
+    {
+      "id": "random_058_ratio",
+      "op": "ratio",
+      "s1": "w😃5Ii8A4Lññ7Yfw5wCeiø8ñè😃v201LPyY😀",
+      "s2": "MtmfékSD1l9V9UhAyJ文AkjRBoDpeL😀4NlEC",
+      "expected": 0.1159420289855072
+    },
+    {
+      "id": "random_059_distance",
+      "op": "distance",
+      "s1": "tZyKMcNøあ5DéuhpêTAm😃23G0éwro9あq",
+      "s2": "😃4sERlhn e",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 30
+    },
+    {
+      "id": "random_059_ratio",
+      "op": "ratio",
+      "s1": "tZyKMcNøあ5DéuhpêTAm😃23G0éwro9あq",
+      "s2": "😃4sERlhn e",
+      "expected": 0.04878048780487809
+    },
+    {
+      "id": "random_060_distance",
+      "op": "distance",
+      "s1": "éXqBH7W_Zn",
+      "s2": "ND_E文IiéJiæqJèr😀QNb2S😃fH5xr1L8",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 27
+    },
+    {
+      "id": "random_060_ratio",
+      "op": "ratio",
+      "s1": "éXqBH7W_Zn",
+      "s2": "ND_E文IiéJiæqJèr😀QNb2S😃fH5xr1L8",
+      "expected": 0.15000000000000002
+    },
+    {
+      "id": "random_061_distance",
+      "op": "distance",
+      "s1": "J5cnyñcFiGebøè5HxM aqTé88あUrqsvcxkfl2gd😃X-d",
+      "s2": "-YDKx8Oéあ8😃èa4中H5xwR文XYH😃GSFTあ",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 40
+    },
+    {
+      "id": "random_061_ratio",
+      "op": "ratio",
+      "s1": "J5cnyñcFiGebøè5HxM aqTé88あUrqsvcxkfl2gd😃X-d",
+      "s2": "-YDKx8Oéあ8😃èa4中H5xwR文XYH😃GSFTあ",
+      "expected": 0.136986301369863
+    },
+    {
+      "id": "random_062_distance",
+      "op": "distance",
+      "s1": "eKpuwm_ry-yvdè2éD MPTRëH2uJVR",
+      "s2": "ß3èWègVU2E8du5üæzYßS中øë  ñW中",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 28
+    },
+    {
+      "id": "random_062_ratio",
+      "op": "ratio",
+      "s1": "eKpuwm_ry-yvdè2éD MPTRëH2uJVR",
+      "s2": "ß3èWègVU2E8du5üæzYßS中øë  ñW中",
+      "expected": 0.10526315789473684
+    },
+    {
+      "id": "random_063_distance",
+      "op": "distance",
+      "s1": "s😀tw 0_文rñvy3o7-RxWé",
+      "s2": "aëéSzHbü7Sdb😃N😀XoWhQ9ßZuø😀-üW-d-Saê😀XsH😃uY",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 40
+    },
+    {
+      "id": "random_063_ratio",
+      "op": "ratio",
+      "s1": "s😀tw 0_文rñvy3o7-RxWé",
+      "s2": "aëéSzHbü7Sdb😃N😀XoWhQ9ßZuø😀-üW-d-Saê😀XsH😃uY",
+      "expected": 0.12903225806451613
+    },
+    {
+      "id": "random_064_distance",
+      "op": "distance",
+      "s1": "AYb1bVyHZæ",
+      "s2": "zséAzplUjdbあvSkñ",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 14
+    },
+    {
+      "id": "random_064_ratio",
+      "op": "ratio",
+      "s1": "AYb1bVyHZæ",
+      "s2": "zséAzplUjdbあvSkñ",
+      "expected": 0.15384615384615385
+    },
+    {
+      "id": "random_065_distance",
+      "op": "distance",
+      "s1": "1jKBX9😀8YJ",
+      "s2": "FEJ-0tCMf8cupG4é0YifLerJß2FS😃ëcauéDmzz",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 35
+    },
+    {
+      "id": "random_065_ratio",
+      "op": "ratio",
+      "s1": "1jKBX9😀8YJ",
+      "s2": "FEJ-0tCMf8cupG4é0YifLerJß2FS😃ëcauéDmzz",
+      "expected": 0.125
+    },
+    {
+      "id": "random_066_distance",
+      "op": "distance",
+      "s1": "bß5ßJN9yJあl7ü3jRCTGeOæx",
+      "s2": "58dQX MzB",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 22
+    },
+    {
+      "id": "random_066_ratio",
+      "op": "ratio",
+      "s1": "bß5ßJN9yJあl7ü3jRCTGeOæx",
+      "s2": "58dQX MzB",
+      "expected": 0.0625
+    },
+    {
+      "id": "random_067_distance",
+      "op": "distance",
+      "s1": "ld😀Ws w4Nu-xaoHo8k-E6_LElaLXm-YsjñE😃I中0c",
+      "s2": "あNßdB中 Yvr中Y413D9c7èhGJT1Uèaé😃d😃9êBazP",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 40
+    },
+    {
+      "id": "random_067_ratio",
+      "op": "ratio",
+      "s1": "ld😀Ws w4Nu-xaoHo8k-E6_LElaLXm-YsjñE😃I中0c",
+      "s2": "あNßdB中 Yvr中Y413D9c7èhGJT1Uèaé😃d😃9êBazP",
+      "expected": 0.1282051282051282
+    },
+    {
+      "id": "random_068_distance",
+      "op": "distance",
+      "s1": "n",
+      "s2": "æülu中zE_jOqj中wr",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 15
+    },
+    {
+      "id": "random_068_ratio",
+      "op": "ratio",
+      "s1": "n",
+      "s2": "æülu中zE_jOqj中wr",
+      "expected": 0.0
+    },
+    {
+      "id": "random_069_distance",
+      "op": "distance",
+      "s1": "ñC",
+      "s2": "1あcês3 p😀Y あ44w5hmIt_u_FèéJSPpéOoBsflqYkñ2ñ6",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 43
+    },
+    {
+      "id": "random_069_ratio",
+      "op": "ratio",
+      "s1": "ñC",
+      "s2": "1あcês3 p😀Y あ44w5hmIt_u_FèéJSPpéOoBsflqYkñ2ñ6",
+      "expected": 0.04347826086956519
+    },
+    {
+      "id": "random_070_distance",
+      "op": "distance",
+      "s1": "QkH3😃eWé_ñ6v7êJrGlvSøæあ中",
+      "s2": "xrë7mORAhj文 OsP49èRøBeZVb文WFLKæOoPrl7p",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 37
+    },
+    {
+      "id": "random_070_ratio",
+      "op": "ratio",
+      "s1": "QkH3😃eWé_ñ6v7êJrGlvSøæあ中",
+      "s2": "xrë7mORAhj文 OsP49èRøBeZVb文WFLKæOoPrl7p",
+      "expected": 0.12903225806451613
+    },
+    {
+      "id": "random_071_distance",
+      "op": "distance",
+      "s1": "N9HYoIPü3W😃MQS😀-ëbéTIW7eKZ文y文øWCP3p文xZ文if_",
+      "s2": "owEwFcLlpozunuB5",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 40
+    },
+    {
+      "id": "random_071_ratio",
+      "op": "ratio",
+      "s1": "N9HYoIPü3W😃MQS😀-ëbéTIW7eKZ文y文øWCP3p文xZ文if_",
+      "s2": "owEwFcLlpozunuB5",
+      "expected": 0.06896551724137934
+    },
+    {
+      "id": "random_072_distance",
+      "op": "distance",
+      "s1": "aJW1øFNx5O😃Jèf10æU文Ea67P2et中AunrY_juatUé",
+      "s2": "êzOP1fAHoIlëøBjñ",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 37
+    },
+    {
+      "id": "random_072_ratio",
+      "op": "ratio",
+      "s1": "aJW1øFNx5O😃Jèf10æU文Ea67P2et中AunrY_juatUé",
+      "s2": "êzOP1fAHoIlëøBjñ",
+      "expected": 0.1428571428571429
+    },
+    {
+      "id": "random_073_distance",
+      "op": "distance",
+      "s1": "7èc5q8__BhñéqNxJs中KouDè 43éa6Yhw😀pVAQ0bpèSJEI",
+      "s2": "0UXtLü5vg7Cëh_rRP0UG7O7rßB",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 44
+    },
+    {
+      "id": "random_073_ratio",
+      "op": "ratio",
+      "s1": "7èc5q8__BhñéqNxJs中KouDè 43éa6Yhw😀pVAQ0bpèSJEI",
+      "s2": "0UXtLü5vg7Cëh_rRP0UG7O7rßB",
+      "expected": 0.08450704225352113
+    },
+    {
+      "id": "random_074_distance",
+      "op": "distance",
+      "s1": "ßIüøCnljE3nPjn2WURQTUJbvèèLJLaqGQUmrno3BcOu",
+      "s2": "c3êëGKuDü_EQt5dZXEVMH0QoAW",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 40
+    },
+    {
+      "id": "random_074_ratio",
+      "op": "ratio",
+      "s1": "ßIüøCnljE3nPjn2WURQTUJbvèèLJLaqGQUmrno3BcOu",
+      "s2": "c3êëGKuDü_EQt5dZXEVMH0QoAW",
+      "expected": 0.14492753623188404
+    },
+    {
+      "id": "random_075_distance",
+      "op": "distance",
+      "s1": "zNqZæzVteGQøsB99éK",
+      "s2": "p文rLJWOH😃æY4U5TQ4é中KK eJñrCf中üXüvëvXBaIüwNi0😃文",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 43
+    },
+    {
+      "id": "random_075_ratio",
+      "op": "ratio",
+      "s1": "zNqZæzVteGQøsB99éK",
+      "s2": "p文rLJWOH😃æY4U5TQ4é中KK eJñrCf中üXüvëvXBaIüwNi0😃文",
+      "expected": 0.125
+    },
+    {
+      "id": "random_076_distance",
+      "op": "distance",
+      "s1": "bOgz6rO-T",
+      "s2": "éë",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 9
+    },
+    {
+      "id": "random_076_ratio",
+      "op": "ratio",
+      "s1": "bOgz6rO-T",
+      "s2": "éë",
+      "expected": 0.0
+    },
+    {
+      "id": "random_077_distance",
+      "op": "distance",
+      "s1": "mßéNHYFaUW",
+      "s2": "ø文😀ZEædø中QXCNHOw4Czüy1Ju",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 22
+    },
+    {
+      "id": "random_077_ratio",
+      "op": "ratio",
+      "s1": "mßéNHYFaUW",
+      "s2": "ø文😀ZEædø中QXCNHOw4Czüy1Ju",
+      "expected": 0.11764705882352944
+    },
+    {
+      "id": "random_078_distance",
+      "op": "distance",
+      "s1": "wææE7Ax9rMaND9ZgZ0êøa7ZyUXèZødeSAkæC",
+      "s2": "-EIßX71SjkS😀jC5QcnM9QVvl2q2",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 35
+    },
+    {
+      "id": "random_078_ratio",
+      "op": "ratio",
+      "s1": "wææE7Ax9rMaND9ZgZ0êøa7ZyUXèZødeSAkæC",
+      "s2": "-EIßX71SjkS😀jC5QcnM9QVvl2q2",
+      "expected": 0.15873015873015872
+    },
+    {
+      "id": "random_079_distance",
+      "op": "distance",
+      "s1": "VEあ1中2zRPpjOn文èYSéë9é3",
+      "s2": "ëèあycTObw6avsm2æ9pPH-bあ59æ",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 25
+    },
+    {
+      "id": "random_079_ratio",
+      "op": "ratio",
+      "s1": "VEあ1中2zRPpjOn文èYSéë9é3",
+      "s2": "ëèあycTObw6avsm2æ9pPH-bあ59æ",
+      "expected": 0.16666666666666663
+    },
+    {
+      "id": "random_080_distance",
+      "op": "distance",
+      "s1": "ñP4c7Oq",
+      "s2": "Inèe3ü-mS5😀i😃é1Wj_UMhPsLzkQV-中中éZku5e4文6blFIvu文ø",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 46
+    },
+    {
+      "id": "random_080_ratio",
+      "op": "ratio",
+      "s1": "ñP4c7Oq",
+      "s2": "Inèe3ü-mS5😀i😃é1Wj_UMhPsLzkQV-中中éZku5e4文6blFIvu文ø",
+      "expected": 0.07272727272727275
+    },
+    {
+      "id": "random_081_distance",
+      "op": "distance",
+      "s1": "GqKpKAk文5616üfDynw8øNJXSxsth",
+      "s2": "4êp😀UIñYKr9K8ë5cELZsBDbèß0あêbXyëFr8Mrmv",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 35
+    },
+    {
+      "id": "random_081_ratio",
+      "op": "ratio",
+      "s1": "GqKpKAk文5616üfDynw8øNJXSxsth",
+      "s2": "4êp😀UIñYKr9K8ë5cELZsBDbèß0あêbXyëFr8Mrmv",
+      "expected": 0.17910447761194026
+    },
+    {
+      "id": "random_082_distance",
+      "op": "distance",
+      "s1": "ywXæyLéYXtE😀EmoENRik6DxNrHIDVtèlqGks",
+      "s2": "è9Ie文éBzbnivñM中r😃lß9HêrjXq7",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 33
+    },
+    {
+      "id": "random_082_ratio",
+      "op": "ratio",
+      "s1": "ywXæyLéYXtE😀EmoENRik6DxNrHIDVtèlqGks",
+      "s2": "è9Ie文éBzbnivñM中r😃lß9HêrjXq7",
+      "expected": 0.15873015873015872
+    },
+    {
+      "id": "random_083_distance",
+      "op": "distance",
+      "s1": "noqøëZ😀üI",
+      "s2": "1あnYlKJqあug38VRtkRQBAKjG6-nQ95Jm😀Fejßê of中e wKE",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 44
+    },
+    {
+      "id": "random_083_ratio",
+      "op": "ratio",
+      "s1": "noqøëZ😀üI",
+      "s2": "1あnYlKJqあug38VRtkRQBAKjG6-nQ95Jm😀Fejßê of中e wKE",
+      "expected": 0.1071428571428571
+    },
+    {
+      "id": "random_084_distance",
+      "op": "distance",
+      "s1": "dUVTæ5HiWøNMefFsdü_ëDqOIs-KB7",
+      "s2": "w",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 29
+    },
+    {
+      "id": "random_084_ratio",
+      "op": "ratio",
+      "s1": "dUVTæ5HiWøNMefFsdü_ëDqOIs-KB7",
+      "s2": "w",
+      "expected": 0.0
+    },
+    {
+      "id": "random_085_distance",
+      "op": "distance",
+      "s1": "文yXNあ XUtërSd7ëkxnH",
+      "s2": "ox文wWJv8ñntV0TèXrbNKd8TLyD6Kwe3YBzü😀GfHM94",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 37
+    },
+    {
+      "id": "random_085_ratio",
+      "op": "ratio",
+      "s1": "文yXNあ XUtërSd7ëkxnH",
+      "s2": "ox文wWJv8ñntV0TèXrbNKd8TLyD6Kwe3YBzü😀GfHM94",
+      "expected": 0.16393442622950816
+    },
+    {
+      "id": "random_086_distance",
+      "op": "distance",
+      "s1": "YAUあèym90æB😀WUdCjhDSlRrqXYP",
+      "s2": "9L-ap",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 26
+    },
+    {
+      "id": "random_086_ratio",
+      "op": "ratio",
+      "s1": "YAUあèym90æB😀WUdCjhDSlRrqXYP",
+      "s2": "9L-ap",
+      "expected": 0.0625
+    },
+    {
+      "id": "random_087_distance",
+      "op": "distance",
+      "s1": "zAyiñDéacZ3qjZ😀SlRaZeæ-",
+      "s2": "OXfJøMß6vSX4ßdkülQßPèoCwêqDtYIFæ",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 31
+    },
+    {
+      "id": "random_087_ratio",
+      "op": "ratio",
+      "s1": "zAyiñDéacZ3qjZ😀SlRaZeæ-",
+      "s2": "OXfJøMß6vSX4ßdkülQßPèoCwêqDtYIFæ",
+      "expected": 0.10909090909090913
+    },
+    {
+      "id": "random_088_distance",
+      "op": "distance",
+      "s1": "ZOss-qtLNßcèyQegxRff😀ZcmNCmUsdQ",
+      "s2": "1oCëWéLQcW",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 28
+    },
+    {
+      "id": "random_088_ratio",
+      "op": "ratio",
+      "s1": "ZOss-qtLNßcèyQegxRff😀ZcmNCmUsdQ",
+      "s2": "1oCëWéLQcW",
+      "expected": 0.14634146341463417
+    },
+    {
+      "id": "random_089_distance",
+      "op": "distance",
+      "s1": "FvKAnüHYYiA6Pin_Tü-",
+      "s2": "1Cy😀zZ62ZzeJ1BEmfIあXviñßBXæYfZLGwfong中 Pz5pk",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 41
+    },
+    {
+      "id": "random_089_ratio",
+      "op": "ratio",
+      "s1": "FvKAnüHYYiA6Pin_Tü-",
+      "s2": "1Cy😀zZ62ZzeJ1BEmfIあXviñßBXæYfZLGwfong中 Pz5pk",
+      "expected": 0.09523809523809523
+    },
+    {
+      "id": "random_090_distance",
+      "op": "distance",
+      "s1": "l😃ü W😀-sF cWldQWæHaz😃KltßS_Un😃NfEG6",
+      "s2": "t_PZt8ebOwFPnFXGéfqK",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 34
+    },
+    {
+      "id": "random_090_ratio",
+      "op": "ratio",
+      "s1": "l😃ü W😀-sF cWldQWæHaz😃KltßS_Un😃NfEG6",
+      "s2": "t_PZt8ebOwFPnFXGéfqK",
+      "expected": 0.1454545454545455
+    },
+    {
+      "id": "random_091_distance",
+      "op": "distance",
+      "s1": "zJ36jJTbæütu2iiJ",
+      "s2": "kfUidM中_5ñZ8KrXm",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 16
+    },
+    {
+      "id": "random_091_ratio",
+      "op": "ratio",
+      "s1": "zJ36jJTbæütu2iiJ",
+      "s2": "kfUidM中_5ñZ8KrXm",
+      "expected": 0.0625
+    },
+    {
+      "id": "random_092_distance",
+      "op": "distance",
+      "s1": "1V0wBuMøPfé😀あèVKlsDß-0æ文文ëXFqy文N",
+      "s2": "o",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 32
+    },
+    {
+      "id": "random_092_ratio",
+      "op": "ratio",
+      "s1": "1V0wBuMøPfé😀あèVKlsDß-0æ文文ëXFqy文N",
+      "s2": "o",
+      "expected": 0.0
+    },
+    {
+      "id": "random_093_distance",
+      "op": "distance",
+      "s1": "ê文-nfY0",
+      "s2": "EæVJFKRrø5FS",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 12
+    },
+    {
+      "id": "random_093_ratio",
+      "op": "ratio",
+      "s1": "ê文-nfY0",
+      "s2": "EæVJFKRrø5FS",
+      "expected": 0.0
+    },
+    {
+      "id": "random_094_distance",
+      "op": "distance",
+      "s1": "xXRTEQüFfd",
+      "s2": "Y-8yi4FnSKg ü-9æ3kxüQ😃vZbKoJjjああF RH IRøgëepSvé",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 45
+    },
+    {
+      "id": "random_094_ratio",
+      "op": "ratio",
+      "s1": "xXRTEQüFfd",
+      "s2": "Y-8yi4FnSKg ü-9æ3kxüQ😃vZbKoJjjああF RH IRøgëepSvé",
+      "expected": 0.10526315789473684
+    },
+    {
+      "id": "random_095_distance",
+      "op": "distance",
+      "s1": "3AA中WAR😃Yk647aeT",
+      "s2": "kB😃BRø",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 15
+    },
+    {
+      "id": "random_095_ratio",
+      "op": "ratio",
+      "s1": "3AA中WAR😃Yk647aeT",
+      "s2": "kB😃BRø",
+      "expected": 0.09090909090909094
+    },
+    {
+      "id": "random_096_distance",
+      "op": "distance",
+      "s1": "",
+      "s2": "èk3jIêBmIEXKGvXCZ8-U0êBUFæ文êhüIaFHvjB yB",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 40
+    },
+    {
+      "id": "random_096_ratio",
+      "op": "ratio",
+      "s1": "",
+      "s2": "èk3jIêBmIEXKGvXCZ8-U0êBUFæ文êhüIaFHvjB yB",
+      "expected": 0.0
+    },
+    {
+      "id": "random_097_distance",
+      "op": "distance",
+      "s1": "6oAèé_wpP EmWlbAv7rxh-øRrY5-G",
+      "s2": "-BS3Jvz9_ñFQqあl0UcCQ",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 29
+    },
+    {
+      "id": "random_097_ratio",
+      "op": "ratio",
+      "s1": "6oAèé_wpP EmWlbAv7rxh-øRrY5-G",
+      "s2": "-BS3Jvz9_ñFQqあl0UcCQ",
+      "expected": 0.08163265306122447
+    },
+    {
+      "id": "random_098_distance",
+      "op": "distance",
+      "s1": "KvAyß2c中Oj3",
+      "s2": "SFëeu4_CRUëjøFflK ",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 17
+    },
+    {
+      "id": "random_098_ratio",
+      "op": "ratio",
+      "s1": "KvAyß2c中Oj3",
+      "s2": "SFëeu4_CRUëjøFflK ",
+      "expected": 0.06896551724137934
+    },
+    {
+      "id": "random_099_distance",
+      "op": "distance",
+      "s1": "kUDsあHaérAw6p3sRDèK1😃OO0ñwH5tdsp中XßñCtTp9",
+      "s2": "Bgef7woO9jërA😀HJêLø-OüuqhFø",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 39
+    },
+    {
+      "id": "random_099_ratio",
+      "op": "ratio",
+      "s1": "kUDsあHaérAw6p3sRDèK1😃OO0ñwH5tdsp中XßñCtTp9",
+      "s2": "Bgef7woO9jërA😀HJêLø-OüuqhFø",
+      "expected": 0.08823529411764708
+    },
+    {
+      "id": "random_100_distance",
+      "op": "distance",
+      "s1": "HKoøyüpCaYxIkI",
+      "s2": "EtVél5yIy_hXUv6VeESbEa3文ColOp ",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 28
+    },
+    {
+      "id": "random_100_ratio",
+      "op": "ratio",
+      "s1": "HKoøyüpCaYxIkI",
+      "s2": "EtVél5yIy_hXUv6VeESbEa3文ColOp ",
+      "expected": 0.09090909090909094
+    },
+    {
+      "id": "random_101_distance",
+      "op": "distance",
+      "s1": "D文BpW文G5ZB1üë-sF-SW4ëñ46LMs",
+      "s2": "YlAmtë4😀Bw_Zmxq2 èあArèßUjsdV",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 27
+    },
+    {
+      "id": "random_101_ratio",
+      "op": "ratio",
+      "s1": "D文BpW文G5ZB1üë-sF-SW4ëñ46LMs",
+      "s2": "YlAmtë4😀Bw_Zmxq2 èあArèßUjsdV",
+      "expected": 0.10909090909090913
+    },
+    {
+      "id": "random_102_distance",
+      "op": "distance",
+      "s1": "82Eæ中😃U2ILP",
+      "s2": "N",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 11
+    },
+    {
+      "id": "random_102_ratio",
+      "op": "ratio",
+      "s1": "82Eæ中😃U2ILP",
+      "s2": "N",
+      "expected": 0.0
+    },
+    {
+      "id": "random_103_distance",
+      "op": "distance",
+      "s1": "æz5lb9jxeArxüè2NRVNhLMNeXあCßoa😃j文0kBjQz5U",
+      "s2": "2bK文Xe9RRüéRñBPXxSINr9YPcGë_a",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 36
+    },
+    {
+      "id": "random_103_ratio",
+      "op": "ratio",
+      "s1": "æz5lb9jxeArxüè2NRVNhLMNeXあCßoa😃j文0kBjQz5U",
+      "s2": "2bK文Xe9RRüéRñBPXxSINr9YPcGë_a",
+      "expected": 0.17142857142857137
+    },
+    {
+      "id": "random_104_distance",
+      "op": "distance",
+      "s1": "ørJRiq0CWdiA_BFP34Px文YêDpGPa",
+      "s2": "UuNH",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 28
+    },
+    {
+      "id": "random_104_ratio",
+      "op": "ratio",
+      "s1": "ørJRiq0CWdiA_BFP34Px文YêDpGPa",
+      "s2": "UuNH",
+      "expected": 0.0
+    },
+    {
+      "id": "random_105_distance",
+      "op": "distance",
+      "s1": "æVFKèXあ文bBHnXZ",
+      "s2": "QRpSm_éGñ9r483wli😀HoZZwi03SH",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 26
+    },
+    {
+      "id": "random_105_ratio",
+      "op": "ratio",
+      "s1": "æVFKèXあ文bBHnXZ",
+      "s2": "QRpSm_éGñ9r483wli😀HoZZwi03SH",
+      "expected": 0.09523809523809523
+    },
+    {
+      "id": "random_106_distance",
+      "op": "distance",
+      "s1": "cæQRe2êqklëqp7ynVxULêjNUrH😀UvSAFTWfUz",
+      "s2": "T",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 36
+    },
+    {
+      "id": "random_106_ratio",
+      "op": "ratio",
+      "s1": "cæQRe2êqklëqp7ynVxULêjNUrH😀UvSAFTWfUz",
+      "s2": "T",
+      "expected": 0.052631578947368474
+    },
+    {
+      "id": "random_107_distance",
+      "op": "distance",
+      "s1": "_",
+      "s2": "C4q3mTIadHUJP5ñHKRS8U",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 21
+    },
+    {
+      "id": "random_107_ratio",
+      "op": "ratio",
+      "s1": "_",
+      "s2": "C4q3mTIadHUJP5ñHKRS8U",
+      "expected": 0.0
+    },
+    {
+      "id": "random_108_distance",
+      "op": "distance",
+      "s1": "CpFb603D9hsêHovebEuGSè9h中-44あ",
+      "s2": "PtñwoxBPJoOiDñø8😀文中uaSæpzgGjWあ6IMJ7vNQV",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 36
+    },
+    {
+      "id": "random_108_ratio",
+      "op": "ratio",
+      "s1": "CpFb603D9hsêHovebEuGSè9h中-44あ",
+      "s2": "PtñwoxBPJoOiDñø8😀文中uaSæpzgGjWあ6IMJ7vNQV",
+      "expected": 0.11764705882352944
+    },
+    {
+      "id": "random_109_distance",
+      "op": "distance",
+      "s1": "KtqL8jüWK6P9ééEh4rñKebあcüHlxøVHgVdo6z sUkt",
+      "s2": "rNsTpKFL",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 41
+    },
+    {
+      "id": "random_109_ratio",
+      "op": "ratio",
+      "s1": "KtqL8jüWK6P9ééEh4rñKebあcüHlxøVHgVdo6z sUkt",
+      "s2": "rNsTpKFL",
+      "expected": 0.07999999999999996
+    },
+    {
+      "id": "random_110_distance",
+      "op": "distance",
+      "s1": "9ëNnb",
+      "s2": "Z7V0gYYZpk",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 10
+    },
+    {
+      "id": "random_110_ratio",
+      "op": "ratio",
+      "s1": "9ëNnb",
+      "s2": "Z7V0gYYZpk",
+      "expected": 0.0
+    },
+    {
+      "id": "random_111_distance",
+      "op": "distance",
+      "s1": "iC😀soNdTaEuMKwCeéée8😀-FC",
+      "s2": "éSfTQ-æ4ë文Oz",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 23
+    },
+    {
+      "id": "random_111_ratio",
+      "op": "ratio",
+      "s1": "iC😀soNdTaEuMKwCeéée8😀-FC",
+      "s2": "éSfTQ-æ4ë文Oz",
+      "expected": 0.11111111111111116
+    },
+    {
+      "id": "random_112_distance",
+      "op": "distance",
+      "s1": "us09M8ImcwV4中æ😃z9ZVëê中æ-Tあ文vf4a😃hxU1w文",
+      "s2": "oR",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 38
+    },
+    {
+      "id": "random_112_ratio",
+      "op": "ratio",
+      "s1": "us09M8ImcwV4中æ😃z9ZVëê中æ-Tあ文vf4a😃hxU1w文",
+      "s2": "oR",
+      "expected": 0.0
+    },
+    {
+      "id": "random_113_distance",
+      "op": "distance",
+      "s1": "4Xs",
+      "s2": "y6DèFpëY1L ßB_Myèswrëc😀ghaNl4QLあPQあeTiK6KVLêNWAT",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 47
+    },
+    {
+      "id": "random_113_ratio",
+      "op": "ratio",
+      "s1": "4Xs",
+      "s2": "y6DèFpëY1L ßB_Myèswrëc😀ghaNl4QLあPQあeTiK6KVLêNWAT",
+      "expected": 0.039215686274509776
+    },
+    {
+      "id": "random_114_distance",
+      "op": "distance",
+      "s1": "OViøy50jLv",
+      "s2": "PL_æ9C8YqzXIZYuz3Kpëあ5VpCIGlO98p8pcg",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 35
+    },
+    {
+      "id": "random_114_ratio",
+      "op": "ratio",
+      "s1": "OViøy50jLv",
+      "s2": "PL_æ9C8YqzXIZYuz3Kpëあ5VpCIGlO98p8pcg",
+      "expected": 0.04347826086956519
+    },
+    {
+      "id": "random_115_distance",
+      "op": "distance",
+      "s1": "üEtYkun",
+      "s2": "3Pxß😀KFXLNøR9O_éKあHdrPjGiHBjvTæ",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 31
+    },
+    {
+      "id": "random_115_ratio",
+      "op": "ratio",
+      "s1": "üEtYkun",
+      "s2": "3Pxß😀KFXLNøR9O_éKあHdrPjGiHBjvTæ",
+      "expected": 0.0
+    },
+    {
+      "id": "random_116_distance",
+      "op": "distance",
+      "s1": "-N_5aVwtüñcRzßiRf6êøSxeßKRTz92文oønPavXGzn😃PhB",
+      "s2": "t1",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 44
+    },
+    {
+      "id": "random_116_ratio",
+      "op": "ratio",
+      "s1": "-N_5aVwtüñcRzßiRf6êøSxeßKRTz92文oønPavXGzn😃PhB",
+      "s2": "t1",
+      "expected": 0.04255319148936165
+    },
+    {
+      "id": "random_117_distance",
+      "op": "distance",
+      "s1": " OtU8Em",
+      "s2": "中MeiéYXüxt3 あ文hitA pSr😀ßRQ76sPkucMgVgZ9Réwie",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 42
+    },
+    {
+      "id": "random_117_ratio",
+      "op": "ratio",
+      "s1": " OtU8Em",
+      "s2": "中MeiéYXüxt3 あ文hitA pSr😀ßRQ76sPkucMgVgZ9Réwie",
+      "expected": 0.07843137254901966
+    },
+    {
+      "id": "random_118_distance",
+      "op": "distance",
+      "s1": "XøßfKSjLX2æBßn9iwUzX68nO5😃lhUPé",
+      "s2": "s-5J",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 30
+    },
+    {
+      "id": "random_118_ratio",
+      "op": "ratio",
+      "s1": "XøßfKSjLX2æBßn9iwUzX68nO5😃lhUPé",
+      "s2": "s-5J",
+      "expected": 0.05714285714285716
+    },
+    {
+      "id": "random_119_distance",
+      "op": "distance",
+      "s1": "1bbe",
+      "s2": "ubhwCあY67eß6中ëA1xg4sæ6èëz0-jéMX_hUVhjuBH-nRJ0k3m",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 46
+    },
+    {
+      "id": "random_119_ratio",
+      "op": "ratio",
+      "s1": "1bbe",
+      "s2": "ubhwCあY67eß6中ëA1xg4sæ6èëz0-jéMX_hUVhjuBH-nRJ0k3m",
+      "expected": 0.07692307692307687
+    },
+    {
+      "id": "long_500_random",
+      "op": "distance",
+      "s1": " xzあx2tB😀ëêXTz8øYëCüæHUy4ëfjülVV8Q7q文GRese-qhHnqQA2yC wlcêZあaHT05gCxlbæHdb0èWñuvdCwQq😃éNQd2oiê0ygLéDi1Idkq5mbrW_cz48dDSéKKCé😃OqQt7æut_cmOUCBUwéhèuDRvXøëwuqX1UbvL😃VIDfsZæd5èaI7C-JqU p-",
+      "s2": "qxTICUgrHWPênvoø5t5SGe3UQAUThß_ñd5éümHZFé文NnO6üwzëK😃imGqëLèñ7ISE0êdLl1ræS4 WvRyk HWPCn0ffñ6èø",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 164
+    },
+    {
+      "id": "long_500_random_ratio",
+      "op": "ratio",
+      "s1": " xzあx2tB😀ëêXTz8øYëCüæHUy4ëfjülVV8Q7q文GRese-qhHnqQA2yC wlcêZあaHT05gCxlbæHdb0èWñuvdCwQq😃éNQd2oiê0ygLéDi1Idkq5mbrW_cz48dDSéKKCé😃OqQt7æut_cmOUCBUwéhèuDRvXøëwuqX1UbvL😃VIDfsZæd5èaI7C-JqU p-",
+      "s2": "qxTICUgrHWPênvoø5t5SGe3UQAUThß_ñd5éümHZFé文NnO6üwzëK😃imGqëLèñ7ISE0êdLl1ræS4 WvRyk HWPCn0ffñ6èø",
+      "expected": 0.1594202898550725
+    },
+    {
+      "id": "long_500_onesub",
+      "op": "distance",
+      "s1": " xzあx2tB😀ëêXTz8øYëCüæHUy4ëfjülVV8Q7q文GRese-qhHnqQA2yC wlcêZあaHT05gCxlbæHdb0èWñuvdCwQq😃éNQd2oiê0ygLéDi1Idkq5mbrW_cz48dDSéKKCé😃OqQt7æut_cmOUCBUwéhèuDRvXøëwuqX1UbvL😃VIDfsZæd5èaI7C-JqU p-",
+      "s2": " xzあx2tB😀ëêXTz8øYëCüæHUy4ëfjülVV8Q7q文GRese-qhHnqQA2yC wlcêZiaHT05gCxlbæHdb0èWñuvdCwQq😃éNQd2oiê0ygLéDi1Idkq5mbrW_cz48dDSéKKCé😃OqQt7æut_cmOUCBUwéhèuDRvXøëwuqX1UbvL😃VIDfsZæd5èaI7C-JqU p-",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 1
+    },
+    {
+      "id": "long_1024_random",
+      "op": "distance",
+      "s1": "evoplñUx-Q😃_y1A文ws7-afQoqZßE1d LcêI_UW😀ßpあYmあC9d7L4pqPwIOX_gO文K7øekv😀è-bd😀P1ëDbNあNøIëß98WühあuFHAéiñ8lTøDM_-L9sè3Qvflk😃Nszaj7S5UdGMmUueY9znY cøUIcHßQ5èあXLj1W4uあAj2êßWpek文Ff中-éHüv_GrBPwD0RoøB_gvbmGj7séR5WU Gé1ëm😃êe_tøあVあ7h0m71 OxYZNIVUüwüoi😃中Y hS-あlê2qVë êèWB Wdax Fx6VCéfk6øT76NøRmxYeQqø_LMëM7KDësêbèé文5mv😃2I6aVTxJmg-A0AèdlZOsUH文ëQ27VzI中üDsdüJèWè😃_nV文yX8q8aUüj5é_s_èz0ü😃U_文YJ8W5fpoXtjxb0æJbhNñ_æwélあm中YéüEtzsæmz文NwESuMzYMæ😃ævhø8JF7Govw0fnbYñHnü55Vrm6kJM0fbëT中FbNñtIT9éé9dëgøy6yvéFæj9M1b7dqIw中E4MltNoéHsoJ5Sørw😀XæjAClf😀_MU1-paëëxp7fg6😀kS8JB😀FW0😃LHmßK9iV1A9q0nPPoMGamTq4éonøëSC6Xß3U2😀mcA😃JVbëéTEædjMCwZbj7üP0wX文êqj中ëhnYg0dldßvO7l",
+      "s2": "øKø_gaSXæx4AUfæw5tExeéU文aidAséGUø文RZdigE中sèèp6I😀of5boNk😃Bëa_Cæzè7HQe3😃DøRß0😃7spWjw_文Brê😃文文TGあA2EZPAXD9jあcuDSLzéIcy08oqé0ñJE😃ø0n-êéß4æbhAKfeZld😀mSiüJTk8YtzUiPoærdH2xéqZ1eLëjWa9GLæ文P_LsFcSFø6W7RAVé😃øXYVæ2éßp9jëyéêøCCñ6lcoDOPßlo😃😀yhSxZZñNqwwUyT7YvBあg_wDèC0vdYvE中ønsLOQPPgW8CF中9S6qpwv NToHBUrèsOTrEtj😀C4中bVñD0éRP-d4yhRz😀K3aêW4nMLVOz7UlENéq83êêEgSIzjA😀kRmN Q nImm_3æ 02v0éDE4wêYæKñm9tmBFêTOl H5Rx文あbH92uütXあ FNrJ3あgM2éeoWvYh1a😀x zwcCñb6sPp5-g4IëVDpbxMdOFprü😃øF0NqgzBøêCH8ZøWsu-éO文7iXx😃tHELxcFEüsSkdk6ßuéB中😃5XGCøeCêC_æsévVA9AptN中z0bx1ëFqYbFY30ñFHz4EyébvßWy_F2MあèEQ0gKi2zk8😃prHñ6øhhßHør😀jplñLGH-nñø2géIhg8üßiqNf3😀éo7énYzx1SQQénRküZ😀bYei3O_SFßF1è中q-12b-6N中4beYZg0Yæ9tjU中tJa6eD6ææySljYmRajEz5mVJ文cHëY3lgë-yAæ72lDYmMg中7b3øfyOéCYUhJADéZ😀øëc F😀ICzkhCnMèeøtksré0TrUH_ékvfXgL-CèJuæ7uTbmEüs_éSTéSñqñoèæ-GüCa",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 717
+    },
+    {
+      "id": "long_1024_random_ratio",
+      "op": "ratio",
+      "s1": "evoplñUx-Q😃_y1A文ws7-afQoqZßE1d LcêI_UW😀ßpあYmあC9d7L4pqPwIOX_gO文K7øekv😀è-bd😀P1ëDbNあNøIëß98WühあuFHAéiñ8lTøDM_-L9sè3Qvflk😃Nszaj7S5UdGMmUueY9znY cøUIcHßQ5èあXLj1W4uあAj2êßWpek文Ff中-éHüv_GrBPwD0RoøB_gvbmGj7séR5WU Gé1ëm😃êe_tøあVあ7h0m71 OxYZNIVUüwüoi😃中Y hS-あlê2qVë êèWB Wdax Fx6VCéfk6øT76NøRmxYeQqø_LMëM7KDësêbèé文5mv😃2I6aVTxJmg-A0AèdlZOsUH文ëQ27VzI中üDsdüJèWè😃_nV文yX8q8aUüj5é_s_èz0ü😃U_文YJ8W5fpoXtjxb0æJbhNñ_æwélあm中YéüEtzsæmz文NwESuMzYMæ😃ævhø8JF7Govw0fnbYñHnü55Vrm6kJM0fbëT中FbNñtIT9éé9dëgøy6yvéFæj9M1b7dqIw中E4MltNoéHsoJ5Sørw😀XæjAClf😀_MU1-paëëxp7fg6😀kS8JB😀FW0😃LHmßK9iV1A9q0nPPoMGamTq4éonøëSC6Xß3U2😀mcA😃JVbëéTEædjMCwZbj7üP0wX文êqj中ëhnYg0dldßvO7l",
+      "s2": "øKø_gaSXæx4AUfæw5tExeéU文aidAséGUø文RZdigE中sèèp6I😀of5boNk😃Bëa_Cæzè7HQe3😃DøRß0😃7spWjw_文Brê😃文文TGあA2EZPAXD9jあcuDSLzéIcy08oqé0ñJE😃ø0n-êéß4æbhAKfeZld😀mSiüJTk8YtzUiPoærdH2xéqZ1eLëjWa9GLæ文P_LsFcSFø6W7RAVé😃øXYVæ2éßp9jëyéêøCCñ6lcoDOPßlo😃😀yhSxZZñNqwwUyT7YvBあg_wDèC0vdYvE中ønsLOQPPgW8CF中9S6qpwv NToHBUrèsOTrEtj😀C4中bVñD0éRP-d4yhRz😀K3aêW4nMLVOz7UlENéq83êêEgSIzjA😀kRmN Q nImm_3æ 02v0éDE4wêYæKñm9tmBFêTOl H5Rx文あbH92uütXあ FNrJ3あgM2éeoWvYh1a😀x zwcCñb6sPp5-g4IëVDpbxMdOFprü😃øF0NqgzBøêCH8ZøWsu-éO文7iXx😃tHELxcFEüsSkdk6ßuéB中😃5XGCøeCêC_æsévVA9AptN中z0bx1ëFqYbFY30ñFHz4EyébvßWy_F2MあèEQ0gKi2zk8😃prHñ6øhhßHør😀jplñLGH-nñø2géIhg8üßiqNf3😀éo7énYzx1SQQénRküZ😀bYei3O_SFßF1è中q-12b-6N中4beYZg0Yæ9tjU中tJa6eD6ææySljYmRajEz5mVJ文cHëY3lgë-yAæ72lDYmMg中7b3øfyOéCYUhJADéZ😀øëc F😀ICzkhCnMèeøtksré0TrUH_ékvfXgL-CèJuæ7uTbmEüs_éSTéSñqñoèæ-GüCa",
+      "expected": 0.19181946403385053
+    },
+    {
+      "id": "long_1024_onesub",
+      "op": "distance",
+      "s1": "evoplñUx-Q😃_y1A文ws7-afQoqZßE1d LcêI_UW😀ßpあYmあC9d7L4pqPwIOX_gO文K7øekv😀è-bd😀P1ëDbNあNøIëß98WühあuFHAéiñ8lTøDM_-L9sè3Qvflk😃Nszaj7S5UdGMmUueY9znY cøUIcHßQ5èあXLj1W4uあAj2êßWpek文Ff中-éHüv_GrBPwD0RoøB_gvbmGj7séR5WU Gé1ëm😃êe_tøあVあ7h0m71 OxYZNIVUüwüoi😃中Y hS-あlê2qVë êèWB Wdax Fx6VCéfk6øT76NøRmxYeQqø_LMëM7KDësêbèé文5mv😃2I6aVTxJmg-A0AèdlZOsUH文ëQ27VzI中üDsdüJèWè😃_nV文yX8q8aUüj5é_s_èz0ü😃U_文YJ8W5fpoXtjxb0æJbhNñ_æwélあm中YéüEtzsæmz文NwESuMzYMæ😃ævhø8JF7Govw0fnbYñHnü55Vrm6kJM0fbëT中FbNñtIT9éé9dëgøy6yvéFæj9M1b7dqIw中E4MltNoéHsoJ5Sørw😀XæjAClf😀_MU1-paëëxp7fg6😀kS8JB😀FW0😃LHmßK9iV1A9q0nPPoMGamTq4éonøëSC6Xß3U2😀mcA😃JVbëéTEædjMCwZbj7üP0wX文êqj中ëhnYg0dldßvO7l",
+      "s2": "evoplñUx-Q😃_y1A文ws7-afQoqZßE1d LcêI_UW😀ßpあYmあC9d7L4pqPwIOX_gO文K7øekv😀è-bd😀P1ëDbNあNøIëß98WühあuFHAéiñ8lTøDM_-L9sè3Qvflk😃Nszaj7S5UdGMmUueY9znY cøUIcHßQ5èあXLj1W4uあAj2êßWpek文Ff中-éHüv_GrBPwD0RoøB_gvbmGj7séR5WU Gé1ëm😃êe_tøあVあ7h0m71 OxYZNIVUüwüoi😃中Y hS-あlê2qVë êèWB Wdax Fx6VCéfk6øT76NøRmxYeQqø_LMëM7KDësêbèé文5mv😃2I6aVTxJjg-A0AèdlZOsUH文ëQ27VzI中üDsdüJèWè😃_nV文yX8q8aUüj5é_s_èz0ü😃U_文YJ8W5fpoXtjxb0æJbhNñ_æwélあm中YéüEtzsæmz文NwESuMzYMæ😃ævhø8JF7Govw0fnbYñHnü55Vrm6kJM0fbëT中FbNñtIT9éé9dëgøy6yvéFæj9M1b7dqIw中E4MltNoéHsoJ5Sørw😀XæjAClf😀_MU1-paëëxp7fg6😀kS8JB😀FW0😃LHmßK9iV1A9q0nPPoMGamTq4éonøëSC6Xß3U2😀mcA😃JVbëéTEædjMCwZbj7üP0wX文êqj中ëhnYg0dldßvO7l",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 1
+    },
+    {
+      "id": "long_2048_random",
+      "op": "distance",
+      "s1": "iyisøtRê-dieQC2bE4ébI3AD0éwPkToeSædU3mAzG64あuDèhLcRéCP中_UMf Jm4gyYT-04p0あèJXmMfBE-ßFb😃Zzあ90t8v8-文æéæ1Yf0OrGhrgHQpItiSëñRñoyLe6U6kjQ2ñgHërTßoSXQxv1HæPDBTzußß0æDMeZbjZQ3t5eñb😀文üDéFHn DivAjOHmèñXA-99øBFñJ-uUJN9SNèüéi5文n5uQ2_fIkRk6ik中d4xY7😃😀éæRésAüWUHKUbJr5rD79OatBê文wQëCehF6ë8-UjrKG0xw-5CRYøéE😃kJmVfあtè-LI3mT3ZF8l-y9ßKXYzotBYzVdßbMq7ut1èGßyeXoe3xPzM__ßhEtpwy1iBUzxw0ë4SE9I9HJëOøI5B😀😃R9 6l püg-WfxKtjCuhzbBaKxøU3é6zv æあøüüé8iB9sClM5rqGNZk7tYTX5ü4-😃sViaU95ñkCëRUK9-wdßrYvQjxm8êø-9vK2fQStXx1a Yuvguあ2øKWBA0avZñ6W6æiKSあüCZKa中æYwkéd1😃v😃n2RIDVEWvMWI7中qEbgGl文_bSTñè9zS-zNUXpEJCeq7r26😀pejmH中mgLWJ_é d中BGxèmHëWK9øjGyntr6GPSKêURC😀ß1ZHA9DR æGXh0EkWouKX0jOvNüeeè1q XCN_H5JsZø5O_XXT😃cB文N文üzfWLlQG4nhdFSñIGC_dëWX2Xr2jérQTñf7m_0iyScwrDXCuog65F😀9ê8jyFMLuO文üFg_T7æEJ😀6VzdUksßyaëLhaWßZLfFxNpVmê😃youüñüqPcAzlFc😃ftXu7êi6g6中æwHAêAleé  Ouß-KSlcxézmWêZèøNt文u93V😀5RoM1øsafVkEtéQ1KcgèWmtaVO_S9PScC-kH😀xqoêZ2Fæñø3-9ævs0ßlb😀b üæ0mæFPg文eywjあADqN7øñXOéë5GIAl4RmLñYGi1Bé😀Y中xYWèL2ybpUbh4Wg w-TuYnQkO_qgUok sOë-ñfë中hi-eN1ODYwE 7ßpvMUZèPDXUék3KRêvGpèdaYèG9VNHßè5tRQooe1efbtnW366DFLQHwñwSV_HQ文IMrøß8lKbinßvuVzZyXéHu_nDNëéüQuZIhsIüéOa a9d0NéhèUOè-中cc6IttXOæé19eSQPbëHwN87😃dëaTlTéV 77éztw9kOß_ey BH hpz6RXkßL4ffkgIëêeHHm  ex😃0あipvvrあ8MJEd0w4SrndjßiiëM9KI😃😀èü4_😀ZlJæあæi0ta😀dx-p9æKIlñu3Fmty_ëWéèz中bèj😀Qcvéf_dußæu5up JYüM7on457Ys3JxhfPaèñFPQéfwéqDSmMEq33qX5Yy3TFsiwWuèあowGkëVあKxMDU3😃I2lp8Pf😃R3LuVßiIあrWr7nNyéLnRFYL5XßgéDwwFIt003😀èæbKSY1qFèw8éé3JeICd😀bfsyKamñ文sXéZ4hMBjmeA6ñ18b7vütügbq2ySacZyQ6ufCあèé7u-ihb2üYFoJVy😀xRQ5æDQtccFQseléK😀F1Zp2êwêPLあnBséaëëBFLunñéßèø3😃fAOD1UTq中D8NGm😀é😀LHUCZ5YKE6  cg文HñgTèsあKLあMNTéé9ø",
+      "s2": "HfjêqnRem中qXvXe33uü1fb中5TG_c😀bあm5Rd文Tあmp8m😀あz8v-syêrfxßSIi8FekiX6Sywt_xID5BZß文0ëWé_nM3R1ëñ😀fsYy5TDHCO文lñ7文GFlXRVDF1HXæd3èfm-ü2AwWu7gYIsKßCC-ezWvmßs8ëéG3éñSzNNü8pOBNQVæQD😀HuyvX0V😃FnJ😃jHzèGlB1JMsHRéø😀c Ftéあ😃E8wCEqZWS中HøMTéfV64N4êEê0èEquqあCfc8epYURLg5klF2FéS59uU5g😀CUoénbzgwJAあBFr6mGqh 9xSz5vts yZ中5Ae😃h60uE7a hPnSMあbz8fGあwqddvB9Ys6x8titèwñéHßjF6あoZLJhjæ_Al4CMdt9gQêVMeX😀tmoVGVeW中ypfh6OZDTêK-æéPaVvu3Cñu😀ff文tlbjkXHZDpO1文gJcw😀élNCsOY4fRpiWTüéfあF9Té6ëmñcj中jQNTbñvzN文中_üa5Bdoyjßr-ë5wjaJjaéS4IeyFn_wßJ2NøFF LjHR1ññ5s😀üBü4j -égMMrexQñfEyFQA4gAêiEV51ëëc42ñ2CaKRNJuüoYølzT-😀tkn7Kvsñxs😃I文dcypcUD7èBñjmB9あa中Tl9ryBwßcaK😃😃üëDßñw-éK文GèeHhDKaNeëéêßwzdCCCuPRè-a52B😀ëSZuWe K5中ziW-sapC_ßUèあêfpnbéêqA83êé-uIy-36_kyweñ9é_中ooYf2😀aQNuEg_Xx😃C0XEqg-文7KxOèn2ü0gßQzqs-éjLS5gii762ëIKuri2éD😃qXdHMnü7wX",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 1398
+    },
+    {
+      "id": "long_2048_random_ratio",
+      "op": "ratio",
+      "s1": "iyisøtRê-dieQC2bE4ébI3AD0éwPkToeSædU3mAzG64あuDèhLcRéCP中_UMf Jm4gyYT-04p0あèJXmMfBE-ßFb😃Zzあ90t8v8-文æéæ1Yf0OrGhrgHQpItiSëñRñoyLe6U6kjQ2ñgHërTßoSXQxv1HæPDBTzußß0æDMeZbjZQ3t5eñb😀文üDéFHn DivAjOHmèñXA-99øBFñJ-uUJN9SNèüéi5文n5uQ2_fIkRk6ik中d4xY7😃😀éæRésAüWUHKUbJr5rD79OatBê文wQëCehF6ë8-UjrKG0xw-5CRYøéE😃kJmVfあtè-LI3mT3ZF8l-y9ßKXYzotBYzVdßbMq7ut1èGßyeXoe3xPzM__ßhEtpwy1iBUzxw0ë4SE9I9HJëOøI5B😀😃R9 6l püg-WfxKtjCuhzbBaKxøU3é6zv æあøüüé8iB9sClM5rqGNZk7tYTX5ü4-😃sViaU95ñkCëRUK9-wdßrYvQjxm8êø-9vK2fQStXx1a Yuvguあ2øKWBA0avZñ6W6æiKSあüCZKa中æYwkéd1😃v😃n2RIDVEWvMWI7中qEbgGl文_bSTñè9zS-zNUXpEJCeq7r26😀pejmH中mgLWJ_é d中BGxèmHëWK9øjGyntr6GPSKêURC😀ß1ZHA9DR æGXh0EkWouKX0jOvNüeeè1q XCN_H5JsZø5O_XXT😃cB文N文üzfWLlQG4nhdFSñIGC_dëWX2Xr2jérQTñf7m_0iyScwrDXCuog65F😀9ê8jyFMLuO文üFg_T7æEJ😀6VzdUksßyaëLhaWßZLfFxNpVmê😃youüñüqPcAzlFc😃ftXu7êi6g6中æwHAêAleé  Ouß-KSlcxézmWêZèøNt文u93V😀5RoM1øsafVkEtéQ1KcgèWmtaVO_S9PScC-kH😀xqoêZ2Fæñø3-9ævs0ßlb😀b üæ0mæFPg文eywjあADqN7øñXOéë5GIAl4RmLñYGi1Bé😀Y中xYWèL2ybpUbh4Wg w-TuYnQkO_qgUok sOë-ñfë中hi-eN1ODYwE 7ßpvMUZèPDXUék3KRêvGpèdaYèG9VNHßè5tRQooe1efbtnW366DFLQHwñwSV_HQ文IMrøß8lKbinßvuVzZyXéHu_nDNëéüQuZIhsIüéOa a9d0NéhèUOè-中cc6IttXOæé19eSQPbëHwN87😃dëaTlTéV 77éztw9kOß_ey BH hpz6RXkßL4ffkgIëêeHHm  ex😃0あipvvrあ8MJEd0w4SrndjßiiëM9KI😃😀èü4_😀ZlJæあæi0ta😀dx-p9æKIlñu3Fmty_ëWéèz中bèj😀Qcvéf_dußæu5up JYüM7on457Ys3JxhfPaèñFPQéfwéqDSmMEq33qX5Yy3TFsiwWuèあowGkëVあKxMDU3😃I2lp8Pf😃R3LuVßiIあrWr7nNyéLnRFYL5XßgéDwwFIt003😀èæbKSY1qFèw8éé3JeICd😀bfsyKamñ文sXéZ4hMBjmeA6ñ18b7vütügbq2ySacZyQ6ufCあèé7u-ihb2üYFoJVy😀xRQ5æDQtccFQseléK😀F1Zp2êwêPLあnBséaëëBFLunñéßèø3😃fAOD1UTq中D8NGm😀é😀LHUCZ5YKE6  cg文HñgTèsあKLあMNTéé9ø",
+      "s2": "HfjêqnRem中qXvXe33uü1fb中5TG_c😀bあm5Rd文Tあmp8m😀あz8v-syêrfxßSIi8FekiX6Sywt_xID5BZß文0ëWé_nM3R1ëñ😀fsYy5TDHCO文lñ7文GFlXRVDF1HXæd3èfm-ü2AwWu7gYIsKßCC-ezWvmßs8ëéG3éñSzNNü8pOBNQVæQD😀HuyvX0V😃FnJ😃jHzèGlB1JMsHRéø😀c Ftéあ😃E8wCEqZWS中HøMTéfV64N4êEê0èEquqあCfc8epYURLg5klF2FéS59uU5g😀CUoénbzgwJAあBFr6mGqh 9xSz5vts yZ中5Ae😃h60uE7a hPnSMあbz8fGあwqddvB9Ys6x8titèwñéHßjF6あoZLJhjæ_Al4CMdt9gQêVMeX😀tmoVGVeW中ypfh6OZDTêK-æéPaVvu3Cñu😀ff文tlbjkXHZDpO1文gJcw😀élNCsOY4fRpiWTüéfあF9Té6ëmñcj中jQNTbñvzN文中_üa5Bdoyjßr-ë5wjaJjaéS4IeyFn_wßJ2NøFF LjHR1ññ5s😀üBü4j -égMMrexQñfEyFQA4gAêiEV51ëëc42ñ2CaKRNJuüoYølzT-😀tkn7Kvsñxs😃I文dcypcUD7èBñjmB9あa中Tl9ryBwßcaK😃😃üëDßñw-éK文GèeHhDKaNeëéêßwzdCCCuPRè-a52B😀ëSZuWe K5中ziW-sapC_ßUèあêfpnbéêqA83êé-uIy-36_kyweñ9é_中ooYf2😀aQNuEg_Xx😃C0XEqg-文7KxOèn2ü0gßQzqs-éjLS5gii762ëIKuri2éD😃qXdHMnü7wX",
+      "expected": 0.1870995301153353
+    },
+    {
+      "id": "long_2048_onesub",
+      "op": "distance",
+      "s1": "iyisøtRê-dieQC2bE4ébI3AD0éwPkToeSædU3mAzG64あuDèhLcRéCP中_UMf Jm4gyYT-04p0あèJXmMfBE-ßFb😃Zzあ90t8v8-文æéæ1Yf0OrGhrgHQpItiSëñRñoyLe6U6kjQ2ñgHërTßoSXQxv1HæPDBTzußß0æDMeZbjZQ3t5eñb😀文üDéFHn DivAjOHmèñXA-99øBFñJ-uUJN9SNèüéi5文n5uQ2_fIkRk6ik中d4xY7😃😀éæRésAüWUHKUbJr5rD79OatBê文wQëCehF6ë8-UjrKG0xw-5CRYøéE😃kJmVfあtè-LI3mT3ZF8l-y9ßKXYzotBYzVdßbMq7ut1èGßyeXoe3xPzM__ßhEtpwy1iBUzxw0ë4SE9I9HJëOøI5B😀😃R9 6l püg-WfxKtjCuhzbBaKxøU3é6zv æあøüüé8iB9sClM5rqGNZk7tYTX5ü4-😃sViaU95ñkCëRUK9-wdßrYvQjxm8êø-9vK2fQStXx1a Yuvguあ2øKWBA0avZñ6W6æiKSあüCZKa中æYwkéd1😃v😃n2RIDVEWvMWI7中qEbgGl文_bSTñè9zS-zNUXpEJCeq7r26😀pejmH中mgLWJ_é d中BGxèmHëWK9øjGyntr6GPSKêURC😀ß1ZHA9DR æGXh0EkWouKX0jOvNüeeè1q XCN_H5JsZø5O_XXT😃cB文N文üzfWLlQG4nhdFSñIGC_dëWX2Xr2jérQTñf7m_0iyScwrDXCuog65F😀9ê8jyFMLuO文üFg_T7æEJ😀6VzdUksßyaëLhaWßZLfFxNpVmê😃youüñüqPcAzlFc😃ftXu7êi6g6中æwHAêAleé  Ouß-KSlcxézmWêZèøNt文u93V😀5RoM1øsafVkEtéQ1KcgèWmtaVO_S9PScC-kH😀xqoêZ2Fæñø3-9ævs0ßlb😀b üæ0mæFPg文eywjあADqN7øñXOéë5GIAl4RmLñYGi1Bé😀Y中xYWèL2ybpUbh4Wg w-TuYnQkO_qgUok sOë-ñfë中hi-eN1ODYwE 7ßpvMUZèPDXUék3KRêvGpèdaYèG9VNHßè5tRQooe1efbtnW366DFLQHwñwSV_HQ文IMrøß8lKbinßvuVzZyXéHu_nDNëéüQuZIhsIüéOa a9d0NéhèUOè-中cc6IttXOæé19eSQPbëHwN87😃dëaTlTéV 77éztw9kOß_ey BH hpz6RXkßL4ffkgIëêeHHm  ex😃0あipvvrあ8MJEd0w4SrndjßiiëM9KI😃😀èü4_😀ZlJæあæi0ta😀dx-p9æKIlñu3Fmty_ëWéèz中bèj😀Qcvéf_dußæu5up JYüM7on457Ys3JxhfPaèñFPQéfwéqDSmMEq33qX5Yy3TFsiwWuèあowGkëVあKxMDU3😃I2lp8Pf😃R3LuVßiIあrWr7nNyéLnRFYL5XßgéDwwFIt003😀èæbKSY1qFèw8éé3JeICd😀bfsyKamñ文sXéZ4hMBjmeA6ñ18b7vütügbq2ySacZyQ6ufCあèé7u-ihb2üYFoJVy😀xRQ5æDQtccFQseléK😀F1Zp2êwêPLあnBséaëëBFLunñéßèø3😃fAOD1UTq中D8NGm😀é😀LHUCZ5YKE6  cg文HñgTèsあKLあMNTéé9ø",
+      "s2": "iyisøtRê-dieQC2bE4ébI3AD0éwPkToeSædU3mAzG64あuDèhLcRéCP中_UMf Jm4gyYT-04p0あèJXmMfBE-ßFb😃Zzあ90t8v8-文æéæ1Yf0OrGhrgHQpItiSëñRñoyLe6U6kjQ2ñgHërTßoSXQxv1HæPDBTzußß0æDMeZbjZQ3t5eñb😀文üDéFHn DivAjOHmèñXA-99øBFñJ-uUJN9SNèüéi5文n5uQ2_fIkRk6ik中d4xY7😃😀éæRésAüWUHKUbJr5rD79OatBê文wQëCehF6ë8-UjrKG0xw-5CRYøéE😃kJmVfあtè-LI3mT3ZF8l-y9ßKXYzotBYzVdßbMq7ut1èGßyeXoe3xPzM__ßhEtpwy1iBUzxw0ë4SE9I9HJëOøI5B😀😃R9 6l püg-WfxKtjCuhzbBaKxøU3é6zv æあøüüK8iB9sClM5rqGNZk7tYTX5ü4-😃sViaU95ñkCëRUK9-wdßrYvQjxm8êø-9vK2fQStXx1a Yuvguあ2øKWBA0avZñ6W6æiKSあüCZKa中æYwkéd1😃v😃n2RIDVEWvMWI7中qEbgGl文_bSTñè9zS-zNUXpEJCeq7r26😀pejmH中mgLWJ_é d中BGxèmHëWK9øjGyntr6GPSKêURC😀ß1ZHA9DR æGXh0EkWouKX0jOvNüeeè1q XCN_H5JsZø5O_XXT😃cB文N文üzfWLlQG4nhdFSñIGC_dëWX2Xr2jérQTñf7m_0iyScwrDXCuog65F😀9ê8jyFMLuO文üFg_T7æEJ😀6VzdUksßyaëLhaWßZLfFxNpVmê😃youüñüqPcAzlFc😃ftXu7êi6g6中æwHAêAleé  Ouß-KSlcxézmWêZèøNt文u93V😀5RoM1øsafVkEtéQ1KcgèWmtaVO_S9PScC-kH😀xqoêZ2Fæñø3-9ævs0ßlb😀b üæ0mæFPg文eywjあADqN7øñXOéë5GIAl4RmLñYGi1Bé😀Y中xYWèL2ybpUbh4Wg w-TuYnQkO_qgUok sOë-ñfë中hi-eN1ODYwE 7ßpvMUZèPDXUék3KRêvGpèdaYèG9VNHßè5tRQooe1efbtnW366DFLQHwñwSV_HQ文IMrøß8lKbinßvuVzZyXéHu_nDNëéüQuZIhsIüéOa a9d0NéhèUOè-中cc6IttXOæé19eSQPbëHwN87😃dëaTlTéV 77éztw9kOß_ey BH hpz6RXkßL4ffkgIëêeHHm  ex😃0あipvvrあ8MJEd0w4SrndjßiiëM9KI😃😀èü4_😀ZlJæあæi0ta😀dx-p9æKIlñu3Fmty_ëWéèz中bèj😀Qcvéf_dußæu5up JYüM7on457Ys3JxhfPaèñFPQéfwéqDSmMEq33qX5Yy3TFsiwWuèあowGkëVあKxMDU3😃I2lp8Pf😃R3LuVßiIあrWr7nNyéLnRFYL5XßgéDwwFIt003😀èæbKSY1qFèw8éé3JeICd😀bfsyKamñ文sXéZ4hMBjmeA6ñ18b7vütügbq2ySacZyQ6ufCあèé7u-ihb2üYFoJVy😀xRQ5æDQtccFQseléK😀F1Zp2êwêPLあnBséaëëBFLunñéßèø3😃fAOD1UTq中D8NGm😀é😀LHUCZ5YKE6  cg文HñgTèsあKLあMNTéé9ø",
+      "weights": [
+        1,
+        1,
+        1
+      ],
+      "cutoff": null,
+      "expected": 1
+    }
+  ]
+}
