@@ -7,8 +7,6 @@
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License: Apache 2.0"></a>
     <img src="https://img.shields.io/badge/Mojo-1.2.0-5e5e5e.svg" alt="Mojo 1.2.0">
     <img src="https://img.shields.io/badge/Python-%3E%3D3.11-5e5e5e.svg" alt="Python 3.11 or newer">
-    <img src="https://img.shields.io/badge/reference-msgpack%201.2.4-5e5e5e.svg" alt="Reference: msgpack 1.2.4">
-    <img src="https://img.shields.io/badge/reference-rapidfuzz%203.14.6-5e5e5e.svg" alt="Reference: rapidfuzz 3.14.6">
     <a href="https://github.com/adarshsoloman/pyromojo/actions/workflows/tests.yml"><img src="https://github.com/adarshsoloman/pyromojo/actions/workflows/tests.yml/badge.svg" alt="GitHub Actions tests workflow status"></a>
   </p>
 </p>
