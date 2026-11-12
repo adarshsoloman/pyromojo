@@ -40,6 +40,13 @@ packages = []
 line-length = 100
 target-version = "py311"
 src = ["libraries", "shared", "scripts"]
+# Legacy Mojo-interop experiments: `import mojo.importer` is an
+# intentional side-effectful import (registers the .mojo importer before
+# `import interop`), so I001/F401 must not be enforced here.
+extend-exclude = [
+    "experiments/interop_benchmark",
+    "experiments/toolchain_validation",
+]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
