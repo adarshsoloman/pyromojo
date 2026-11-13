@@ -638,11 +638,225 @@ struct BitArray(Sized):
         self.buffer = fresh.buffer.copy()
         self.length = fresh.length
 
+    # -- Phase 1D2: population count and search ------------------------------
+
+    def _popcount(self) -> Int:
+        """Number of set bits among LOGICAL bits (padding masked out).
+
+        Byte-wise SWAR popcount (the Phase 0 validated formulation);
+        the final partial byte is masked to its valid bits first, so
+        padding — always zero by invariant — can never leak into the
+        total even if an invariant were violated upstream.
+        """
+        var total = 0
+        var nb = len(self.buffer)
+        if nb == 0:
+            return 0
+        for i in range(nb - 1):
+            total += Int(_popcount_byte(self.buffer[i]))
+        var last = self.buffer[nb - 1]
+        var pad = self.padbits()
+        if pad != 0:
+            if self.big_endian:
+                last = last & (UInt8(0xFF) << UInt8(pad))
+            else:
+                last = last & (((UInt8(1) << UInt8(8 - pad)) - UInt8(1)))
+        total += Int(_popcount_byte(last))
+        return total
+
+    def count(self) raises -> Int:
+        """Count of set bits (reference default `value=1`)."""
+        return self._popcount()
+
+    def count(self, v: Int) raises -> Int:
+        """Count of `v` bits; only 0/1 accepted (zeros via complement)."""
+        _check_bit(v)
+        if v == 1:
+            return self._popcount()
+        return self.length - self._popcount()
+
+    def count(self, v: Bool) raises -> Int:
+        """Count of `True` (1) or `False` (0) bits."""
+        return self.count(1 if v else 0)
+
+    def count(self, v: Int, start: Int) raises -> Int:
+        """Count of `v` from `start` to the end (reference default stop)."""
+        return self.count(v, start, self.length, 1)
+
+    def count(self, v: Bool, start: Int) raises -> Int:
+        """Count of a boolean bit from `start` to the end."""
+        return self.count(1 if v else 0, start)
+
+    def count(self, v: Int, start: Int, stop: Int) raises -> Int:
+        """Count of `v` over `[start:stop)` (reference default step 1)."""
+        return self.count(v, start, stop, 1)
+
+    def count(self, v: Bool, start: Int, stop: Int) raises -> Int:
+        """Count of a boolean bit over `[start:stop)`."""
+        return self.count(1 if v else 0, start, stop)
+
+    def count(self, v: Bool, start: Int, stop: Int, step: Int) raises -> Int:
+        """Count of a boolean bit over `self[start:stop:step]`."""
+        return self.count(1 if v else 0, start, stop, step)
+
+    def count(self, v: Int, start: Int, stop: Int, step: Int) raises -> Int:
+        """Count of `v` over `self[start:stop:step]` — exactly the slice
+        semantics (reference: `a.count(v, s, e, st) == a[s:e:st].count(v)`),
+        including the step-zero error from slice normalization."""
+        _check_bit(v)
+        var idx = self._slice_indices(slice(start, stop, step))
+        var total = 0
+        for i in range(len(idx)):
+            if Int(self.read_bit(idx[i])) == v:
+                total += 1
+        return total
+
+    def count(self, sub: BitArray) raises -> Int:
+        """Non-overlapping occurrences of `sub` over the whole array."""
+        return self.count(sub, 0, self.length)
+
+    def count(self, sub: BitArray, start: Int, stop: Int) raises -> Int:
+        """Non-overlapping occurrences of `sub` with matches contained in
+        the clamped `[start:stop)` window. An empty pattern matches at
+        every position `lo..=hi` (reference: `n+1` over the window)."""
+        var bounds = self._simple_bounds(slice(start, stop))
+        var lo = bounds[0]
+        var hi = bounds[1]
+        var m = len(sub)
+        if m == 0:
+            return (hi - lo) + 1
+        var total = 0
+        var p = lo
+        while p + m <= hi:
+            if self._match_at(sub, p):
+                total += 1
+                p += m
+            else:
+                p += 1
+        return total
+
+    def _match_at(self, pat: BitArray, at: Int) raises -> Bool:
+        """Whether `pat` matches `self` starting at logical index `at`."""
+        for k in range(len(pat)):
+            if self.read_bit(at + k) != pat.read_bit(k):
+                return False
+        return True
+
+    def _search_from(
+        self, pat: BitArray, lo: Int, hi: Int, right: Bool
+    ) raises -> List[Int]:
+        """Match start positions with `pat` contained in `[lo:hi)`.
+
+        Overlapping matches are reported (like the reference); an empty
+        pattern matches every position `lo..=hi`. Ascending unless
+        `right` is set, which yields descending order.
+        """
+        var out = List[Int]()
+        var m = len(pat)
+        if m == 0:
+            var positions = List[Int](capacity=(hi - lo) + 1)
+            var q = lo
+            while q <= hi:
+                positions.append(q)
+                q += 1
+            if right:
+                var rev = List[Int](capacity=len(positions))
+                var r = len(positions) - 1
+                while r >= 0:
+                    rev.append(positions[r])
+                    r -= 1
+                return rev^
+            return positions^
+        if right:
+            var p = hi - m
+            while p >= lo:
+                if self._match_at(pat, p):
+                    out.append(p)
+                p -= 1
+        else:
+            var p = lo
+            while p + m <= hi:
+                if self._match_at(pat, p):
+                    out.append(p)
+                p += 1
+        return out^
+
+    def search(self, sub: BitArray) raises -> List[Int]:
+        """Start positions where `sub` occurs (ascending).
+
+        Returns a materialized `List[Int]`: the reference yields a lazy
+        iterator, which Mojo cannot express; the positions and order are
+        otherwise identical.
+        """
+        return self.search(sub, 0, self.length, False)
+
+    def search(self, sub: BitArray, start: Int, stop: Int) raises -> List[Int]:
+        """Start positions with matches contained in `[start:stop)`."""
+        return self.search(sub, start, stop, False)
+
+    def search(
+        self, sub: BitArray, start: Int, stop: Int, right: Bool
+    ) raises -> List[Int]:
+        """Start positions, descending when `right` is set (reference
+        `right=True`). Bounds clamp like slices; `start > stop` matches
+        nothing."""
+        var bounds = self._simple_bounds(slice(start, stop))
+        return self._search_from(sub, bounds[0], bounds[1], right)
+
+    def search(self, v: Int) raises -> List[Int]:
+        """Positions of the single bit `v` (reference accepts ints)."""
+        _check_bit(v)
+        return self.search(_one_bit(v, self.big_endian))
+
+    def search(self, v: Int, start: Int, stop: Int) raises -> List[Int]:
+        """Positions of `v` within `[start:stop)`."""
+        _check_bit(v)
+        return self.search(_one_bit(v, self.big_endian), start, stop)
+
+    def search(
+        self, v: Int, start: Int, stop: Int, right: Bool
+    ) raises -> List[Int]:
+        """Positions of `v` within `[start:stop)`, descending if `right`."""
+        _check_bit(v)
+        return self.search(_one_bit(v, self.big_endian), start, stop, right)
+
+    def search(self, v: Bool) raises -> List[Int]:
+        """Positions of `True` (1) or `False` (0) bits."""
+        return self.search(1 if v else 0)
+
+    def search(self, v: Bool, start: Int, stop: Int) raises -> List[Int]:
+        """Positions of a boolean bit within `[start:stop)`."""
+        return self.search(1 if v else 0, start, stop)
+
+    def search(
+        self, v: Bool, start: Int, stop: Int, right: Bool
+    ) raises -> List[Int]:
+        """Positions of a boolean bit within `[start:stop)`, descending
+        if `right`."""
+        return self.search(1 if v else 0, start, stop, right)
+
 
 def _check_bit(v: Int) raises:
     """Reject anything but 0/1 (reference: `ValueError`)."""
     if v != 0 and v != 1:
         raise Error("bit must be 0 or 1, got " + String(v))
+
+
+def _popcount_byte(b: UInt8) -> UInt8:
+    """SWAR population count of one byte (formulation validated against
+    a nibble table on adversarial inputs in Phase 0). All intermediate
+    values stay far below 255, so silent wraparound cannot occur."""
+    var x = b - ((b >> UInt8(1)) & UInt8(0x55))
+    x = (x & UInt8(0x33)) + ((x >> UInt8(2)) & UInt8(0x33))
+    return (x + (x >> UInt8(4))) & UInt8(0x0F)
+
+
+def _one_bit(v: Int, big_endian: Bool) raises -> BitArray:
+    """Single-bit pattern array (endianness is irrelevant to logical
+    matching, but the constructor requires a flag)."""
+    var bits = List[Int](capacity=1)
+    bits.append(v)
+    return _pack_bits(bits, big_endian)
 
 
 def _pack_bits(bits: List[Int], big_endian: Bool) raises -> BitArray:
