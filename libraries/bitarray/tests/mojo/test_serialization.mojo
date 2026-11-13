@@ -107,6 +107,12 @@ def test_frombytes() raises:
     d.frombytes(u8list1(UInt8(0xCA)))
     d.frombytes(u8list1(UInt8(0x53)))
     assert_equal(d.to01(), String("1100101001010011"))
+    # Source bytes are only read, never mutated or aliased.
+    var src = u8list2(UInt8(0xCA), UInt8(0x53))
+    var e = BitArray(String("1"), ENDIAN_LITTLE)
+    e.frombytes(src)
+    assert_bytes_equal(src, u8list2(UInt8(0xCA), UInt8(0x53)))
+    assert_equal(e.to01(), String("10101001111001010"))
     assert_invariants(a, ENDIAN_BIG)
     assert_invariants(b, ENDIAN_BIG)
     assert_invariants(c, ENDIAN_LITTLE)

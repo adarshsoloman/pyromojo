@@ -1,14 +1,15 @@
 # bitarray (Mojo Port)
 
-## Status: Phase 1E complete — v0.1 implemented, awaiting release review
+## Status: v0.1.0 released (`bitarray-v0.1.0`)
 
-Implemented and tested (native Mojo + Python oracle suites): packed
-storage with endianness and padding invariants (1A); construction,
-indexing, slicing, `to01`/`tolist` (1B); mutation, concatenation,
-comparison (1C); bitwise ops and shifts (1D1); `count`/`search` (1D2);
-`reverse`/`fill`/`copy`/`rotate`/`find`/`index` (1D3); byte conversion
-(`tobytes`/`frombytes`), canonical framed payloads, batch CLI, and
-266 golden vectors (1E). See [Current status](#current-status) and the
+Native Mojo packed-bit arrays with parity tests against
+`bitarray==3.12.3`: storage and invariants (1A);
+construction, indexing, slicing, `to01`/`tolist` (1B);
+mutation, concatenation, comparison (1C); bitwise ops and shifts
+(1D1); `count`/`search` (1D2); `reverse`/`fill`/`copy`/`rotate`/
+`find`/`index` (1D3); byte conversion (`tobytes`/`frombytes`),
+canonical framed payloads, batch CLI, and 266 golden vectors (1E).
+See [Current status](#current-status) and the
 [1E reference probes](docs/phase1e-reference-probes.md).
 
 Phase 0 report: [`PHASE0_RESULTS.md`](PHASE0_RESULTS.md) (§11 records
@@ -25,18 +26,24 @@ counting, searching, slicing, packing, and conversion between bytes and
 integers, used in compression, cryptography, bioinformatics, and
 protocol handling.
 
-## v0.1 scope (frozen)
+## v0.1 scope (frozen) and release contents
 
-In scope: mutable bitarrays; packed `UInt8` storage; big/little bit
-endianness; construction from bit strings, int iterables, and bytes
-(owned-copy import); length/layout introspection; indexing, assignment
-(incl. resizing slices), and iteration; cross-endianness comparison and
-concatenation; append/extend/insert/delete/pop/remove/clear/reverse/
-setall; `+`/`+=`/`*`; `& | ^ ~` with in-place forms (equal endianness
-only, unequal lengths rejected); length-preserving shifts; count/find/
-index/search (incl. `right=`); `tobytes`/`frombytes`; `to01`/`tolist`;
-`fill`/`rotate`/`copy`. Full list with per-item semantics:
-[`docs/api-scope.md`](docs/api-scope.md).
+The frozen scope is recorded in [`docs/api-scope.md`](docs/api-scope.md).
+The v0.1.0 release implements this subset of it: mutable bitarrays;
+packed `UInt8` storage; big/little bit endianness; construction from
+bit strings, int/bool iterables, and packed bytes (owned-copy import);
+length/layout introspection; indexing, assignment (incl. resizing
+slices), and iteration; cross-endianness comparison and concatenation;
+append/extend/insert/`delete`; `+`/`+=`; `& | ^ ~` with in-place forms
+(equal endianness only, unequal lengths rejected); length-preserving
+shifts; count/find/index/search (incl. `right=`); `tobytes`/`frombytes`;
+`to01`/`tolist`; `fill`/`rotate`/`copy`/`reverse`.
+
+Approved in the frozen scope but not implemented in v0.1.0 (candidates
+for a later release, not deferred out): `pop`, `remove`, `clear`,
+`setall`, `invert(i)`, `all`/`any`, repetition (`*`/`*=`), and
+multi-index deletion (`del a[i:j]`; single-index deletion ships as
+`delete(i)`).
 
 Explicitly deferred with recorded reasons: `frozenbitarray` (no
 read-only flag, no subclassing emulation), buffer-protocol
@@ -48,15 +55,15 @@ interoperability (no shared views), file operations,
 
 - Package: `bitarray` **3.12.3** (import name `bitarray`, Python ≥3.7,
   license **PSF-2.0** — permissive, no copyleft review required).
-- Pinned in `python_reference/requirements.txt` when implementation
-  begins, per [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md).
+- Pinned in `python_reference/requirements.txt`
+  (`bitarray==3.12.3`), per [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md).
 - Upstream source is not vendored; the C sources were read for
   semantics only.
 
-## Planned Mojo implementation
+## Mojo implementation
 
 Native packed-bit buffer (`List[UInt8]` + bit length + endianness
-flag), word-at-a-time operations with masked tails, and a framed batch
+flag), byte-at-a-time operations with masked tails, and a framed batch
 CLI reusing the established transport pattern. The CLI payload carries
 packed bytes, the logical bit length, and the endianness explicitly —
 length is never inferred from the final byte. Phase 0 validated every
@@ -160,11 +167,9 @@ emits the typed Mojo case module consumed by the native golden tests.
 
 ## Current status
 
-Phase 1E complete: the v0.1 API is implemented in native Mojo with
-parity tests against `bitarray==3.12.3` — storage and invariants (1A),
-construction/indexing/slicing/conversions (1B),
-mutation/concatenation/comparison (1C), bitwise ops and shifts (1D1),
-`count`/`search` (1D2), `reverse`/`fill`/`copy`/`rotate`/`find`/`index`
-(1D3), and byte conversion plus framed serialization with 266 golden
-vectors and a batch CLI (1E). Remaining before release: release
-packaging and review (out of scope for implementation phases).
+v0.1.0 released (`bitarray-v0.1.0`): the release API above is
+implemented in native Mojo with parity tests against
+`bitarray==3.12.3` — 74 native Mojo tests, 391 Python compatibility
+tests, and 266 golden vectors with drift checking, plus the framed
+batch CLI. See the repository release notes for the full verification
+summary.

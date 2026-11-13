@@ -11,7 +11,7 @@
   </p>
 </p>
 
-> **Status:** Two native ports are complete and tagged — **MessagePack `v0.1.0`** and **Levenshtein `v0.1.0`** (tagged `levenshtein-v0.1.0`) — and the **Bitarray** v0.1 implementation is complete through Phase 1E (untagged; release preparation is separate). CI runs lint, formatting, and the Python test suite on every push.
+> **Status:** Three native ports are complete and tagged — **MessagePack `v0.1.0`**, **Levenshtein `v0.1.0`** (tagged `levenshtein-v0.1.0`), and **Bitarray `v0.1.0`** (tagged `bitarray-v0.1.0`). CI runs lint, formatting, and the Python test suite on every push.
 
 ## Project overview
 
@@ -33,11 +33,11 @@ A port is considered complete when it reproduces the documented compatibility su
 |---|---|---|---|
 | [MessagePack](libraries/msgpack/) | Complete | `v0.1.0` | Native Mojo binary serialization codec |
 | [Levenshtein](libraries/levenshtein/) | Complete | `v0.1.0` | Native Mojo string distance and similarity algorithms |
-| [Bitarray](libraries/bitarray/) | Implementation complete (Phases 1A–1E, untagged) | — | Native Mojo packed-bit arrays |
+| [Bitarray](libraries/bitarray/) | Complete | `v0.1.0` | Native Mojo packed-bit arrays |
 | [Audioop](libraries/audioop/) | Planned | — | Digital audio processing |
 | [Resampy](libraries/resampy/) | Planned | — | Audio resampling |
 
-MessagePack was the first finished port and remains the reference project for the full workflow. Levenshtein is the second finished port. Bitarray is the third port with its v0.1 implementation complete (release preparation is separate). Audioop and resampy remain scoped directories only — no implementation work has begun on them.
+MessagePack was the first finished port and remains the reference project for the full workflow. Levenshtein is the second finished port. Bitarray is the third finished port. Audioop and resampy remain scoped directories only — no implementation work has begun on them.
 
 ## MessagePack spotlight
 
@@ -80,7 +80,7 @@ Details: [library README](libraries/levenshtein/README.md) · [reference audit](
 
 ## Bitarray spotlight
 
-The third port: native Mojo packed-bit arrays, implementation-complete through Phase 1E (v0.1.0 release preparation is separate and untagged). The Python reference is [`bitarray==3.12.3`](https://github.com/ilanschnell/bitarray) (PSF-2.0).
+The third finished port: native Mojo packed-bit arrays, [tagged `bitarray-v0.1.0`](https://github.com/adarshsoloman/pyromojo/releases/tag/bitarray-v0.1.0). The Python reference is [`bitarray==3.12.3`](https://github.com/ilanschnell/bitarray) (PSF-2.0).
 
 Public operations (mutable bit arrays, packed `UInt8` storage, big/little-endian bit ordering):
 
@@ -262,7 +262,7 @@ Run the Levenshtein benchmark suite:
 | 4. Expand toward 20 libraries | Broad, sustainable coverage | Planned |
 | 5. Performance analysis | Cross-library analysis and upstream contributions | Planned |
 
-Port sequence: **1. MessagePack — Complete (`v0.1.0`, tagged). 2. Levenshtein — Complete (`v0.1.0`, tagged as `levenshtein-v0.1.0`). 3. Bitarray — implementation complete through Phase 1E (untagged; v0.1.0 release preparation is separate).** Audioop and resampy remain planned scope stubs; no implementation work has begun on them.
+Port sequence: **1. MessagePack — Complete (`v0.1.0`, tagged). 2. Levenshtein — Complete (`v0.1.0`, tagged as `levenshtein-v0.1.0`). 3. Bitarray — Complete (`v0.1.0`, tagged as `bitarray-v0.1.0`).** Audioop and resampy remain planned scope stubs; no implementation work has begun on them.
 
 Details, exit criteria, and deliberately omitted dates: [docs/roadmap.md](docs/roadmap.md).
 
