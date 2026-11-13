@@ -352,6 +352,157 @@ struct BitArray(Sized):
         """Logical iteration in sequence order (snapshot semantics)."""
         return BitArrayIter(self)
 
+    # -- Phase 1C: mutation and structural operations -----------------------
+
+    def append(mut self, v: Int) raises:
+        """Append one logical bit; only 0/1 are accepted.
+
+        Grows the buffer by one byte exactly at byte boundaries;
+        existing bits and zeroed padding are otherwise untouched.
+        """
+        _check_bit(v)
+        if self.length % 8 == 0:
+            self.buffer.append(UInt8(0))
+        self.length += 1
+        if v == 1:
+            self.set_bit(self.length - 1)
+        self.normalize_padding()
+
+    def append(mut self, v: Bool) raises:
+        """Append one logical bit from a boolean (`True` -> 1)."""
+        self.append(1 if v else 0)
+
+    def extend(mut self, other: BitArray) raises:
+        """Append `other`'s logical bits; this endianness is kept.
+
+        The source is snapshotted first, so self-extension works and
+        no buffer is read while it is being grown.
+        """
+        var add = other.tolist()
+        for i in range(len(add)):
+            self.append(add[i])
+
+    def extend(mut self, items: List[Int]) raises:
+        """Append validated bits; the whole input is validated before
+        anything is appended, so a bad value leaves `self` untouched."""
+        for i in range(len(items)):
+            _check_bit(items[i])
+        for i in range(len(items)):
+            self.append(items[i])
+
+    def extend(mut self, items: List[Bool]) raises:
+        """Append booleans (`True` -> 1)."""
+        for i in range(len(items)):
+            self.append(1 if items[i] else 0)
+
+    def extend(mut self, s: String) raises:
+        """Append bits from a `'0'`/`'1'` string (validated first, via
+        the string constructor)."""
+        var add = BitArray(s, self.big_endian)
+        self.extend(add)
+
+    def insert(mut self, i: Int, v: Int) raises:
+        """Insert one bit; the index clamps like the reference (past-end
+        appends, far-negative prepends, `-1` goes before the last bit)."""
+        _check_bit(v)
+        var pos = i
+        if pos < 0:
+            pos += self.length
+        pos = max(0, min(self.length, pos))
+        var bits = self.tolist()
+        var combo = List[Int](capacity=len(bits) + 1)
+        for k in range(pos):
+            combo.append(bits[k])
+        combo.append(v)
+        for k in range(pos, len(bits)):
+            combo.append(bits[k])
+        var fresh = _pack_bits(combo, self.big_endian)
+        self.buffer = fresh.buffer.copy()
+        self.length = fresh.length
+
+    def insert(mut self, i: Int, v: Bool) raises:
+        """Insert one bit from a boolean (`True` -> 1)."""
+        self.insert(i, 1 if v else 0)
+
+    def delete(mut self, i: Int) raises:
+        """Delete the bit at `i` (negatives allowed).
+
+        Mojo has no `del a[i]` syntax, so this method carries the
+        reference `__delitem__` semantics verbatim, including its
+        `"bitarray assignment index out of range"` error.
+        """
+        var j = self._resolve_index(i, "bitarray assignment index out of range")
+        var bits = self.tolist()
+        var combo = List[Int](capacity=len(bits) - 1)
+        for k in range(len(bits)):
+            if k != j:
+                combo.append(bits[k])
+        var fresh = _pack_bits(combo, self.big_endian)
+        self.buffer = fresh.buffer.copy()
+        self.length = fresh.length
+
+    def __add__(self, other: BitArray) raises -> BitArray:
+        """Concatenate logical bits; the result keeps the LEFT operand's
+        endianness (reference behavior, verified by probe). Both inputs
+        are snapshotted, so self-concatenation is safe."""
+        var combo = self.tolist()
+        var right = other.tolist()
+        for i in range(len(right)):
+            combo.append(right[i])
+        return _pack_bits(combo, self.big_endian)
+
+    def __iadd__(mut self, other: BitArray) raises:
+        """In-place concatenation; keeps this endianness."""
+        self.extend(other)
+
+    def __eq__(self, other: BitArray) raises -> Bool:
+        """Logical equality; endianness-insensitive, like the reference."""
+        if self.length != other.length:
+            return False
+        for i in range(self.length):
+            if self.read_bit(i) != other.read_bit(i):
+                return False
+        return True
+
+    def __ne__(self, other: BitArray) raises -> Bool:
+        """Logical inequality."""
+        return not self.__eq__(other)
+
+    def _compare(self, other: BitArray) raises -> Int:
+        """Lexicographic order on logical bits (`-1`/`0`/`1`); a proper
+        prefix sorts first (shorter-is-smaller), per the reference."""
+        var n = min(self.length, other.length)
+        for i in range(n):
+            var a = self.read_bit(i)
+            var b = other.read_bit(i)
+            if a != b:
+                return -1 if a < b else 1
+        if self.length == other.length:
+            return 0
+        return -1 if self.length < other.length else 1
+
+    def __lt__(self, other: BitArray) raises -> Bool:
+        """Lexicographic less-than on logical bits."""
+        return self._compare(other) < 0
+
+    def __le__(self, other: BitArray) raises -> Bool:
+        """Lexicographic less-than-or-equal on logical bits."""
+        return self._compare(other) <= 0
+
+    def __gt__(self, other: BitArray) raises -> Bool:
+        """Lexicographic greater-than on logical bits."""
+        return self._compare(other) > 0
+
+    def __ge__(self, other: BitArray) raises -> Bool:
+        """Lexicographic greater-than-or-equal on logical bits."""
+        return self._compare(other) >= 0
+
+
+def _check_bit(v: Int) raises:
+    """Reject anything but 0/1 (reference: `ValueError`)."""
+    if v != 0 and v != 1:
+        raise Error("bit must be 0 or 1, got " + String(v))
+
 
 def _pack_bits(bits: List[Int], big_endian: Bool) raises -> BitArray:
     """Pack caller-validated 0/1 values into an owned `BitArray`."""

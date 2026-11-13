@@ -70,6 +70,7 @@ MOJO_SUITES = [
         "tests": [
             "test_storage",
             "test_sequence",
+            "test_mutation",
         ],
     },
 ]
