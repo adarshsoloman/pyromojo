@@ -263,6 +263,24 @@ struct BitArray(Sized):
             hi = max(0, min(n, hi))
         return (lo, hi)
 
+    def _find_bounds(self, start: Int, stop: Int) -> Tuple[Int, Int]:
+        """`[lo, hi)` window for `find`/`index`/sub-`count`.
+
+        Unlike slice bounds, the start is NOT clamped above: negatives
+        are relative to the end and both ends floor at zero, but an
+        over-length start stays over-length so the window is genuinely
+        empty (`start > stop` after this normalization means no match).
+        This reproduces the reference exactly, including its quirk that
+        an empty pattern with `start > n` finds nothing while `search`
+        (which uses slice bounds) still yields the boundary position.
+        """
+        var n = self.length
+        var lo = start + n if start < 0 else start
+        lo = max(0, lo)
+        var hi = stop + n if stop < 0 else stop
+        hi = max(0, min(n, hi))
+        return (lo, hi)
+
     def __getitem__(self, sl: Slice) raises -> BitArray:
         """Slice with Python semantics; result keeps this endianness and
         owns independent storage."""
@@ -717,9 +735,10 @@ struct BitArray(Sized):
 
     def count(self, sub: BitArray, start: Int, stop: Int) raises -> Int:
         """Non-overlapping occurrences of `sub` with matches contained in
-        the clamped `[start:stop)` window. An empty pattern matches at
-        every position `lo..=hi` (reference: `n+1` over the window)."""
-        var bounds = self._simple_bounds(slice(start, stop))
+        `[start:stop)`. An empty pattern matches at every position
+        `lo..=hi` of a non-empty window (reference: `n+1` over the full
+        array; an over-length start yields an empty window and 0)."""
+        var bounds = self._find_bounds(start, stop)
         var lo = bounds[0]
         var hi = bounds[1]
         var m = len(sub)
@@ -834,6 +853,215 @@ struct BitArray(Sized):
         """Positions of a boolean bit within `[start:stop)`, descending
         if `right`."""
         return self.search(1 if v else 0, start, stop, right)
+
+    # -- Phase 1D3: remaining sequence operations ----------------------------
+
+    def reverse(mut self) raises:
+        """Reverse the logical bit sequence in place.
+
+        Pairwise swap of symmetric logical bits; no temporary buffer is
+        allocated. Length, endianness, and padding are unaffected (empty
+        and single-bit arrays are natural no-ops).
+        """
+        var i = 0
+        var j = self.length - 1
+        while i < j:
+            var a = self.read_bit(i)
+            var b = self.read_bit(j)
+            if a == UInt8(1):
+                self.set_bit(j)
+            else:
+                self.clear_bit(j)
+            if b == UInt8(1):
+                self.set_bit(i)
+            else:
+                self.clear_bit(i)
+            i += 1
+            j -= 1
+
+    def fill(mut self) raises -> Int:
+        """Pad with zeros to a byte boundary; return bits added."""
+        return self.fill(8)
+
+    def fill(mut self, m: Int) raises -> Int:
+        """Append zeros until the length is a multiple of `m`; return the
+        number of bits added (in `range(m)`).
+
+        `m` must be a positive int (reference: `ValueError` otherwise).
+        """
+        if m <= 0:
+            raise Error("m must be a positive integer")
+        var add = (m - self.length % m) % m
+        for _ in range(add):
+            self.append(0)
+        return add
+
+    def copy(self) raises -> BitArray:
+        """Independent copy with the same logical bits and endianness."""
+        return BitArray(self.buffer.copy(), self.length, self.big_endian)
+
+    def rotate(mut self) raises:
+        """Rotate right by one position (reference default `k=1`)."""
+        self.rotate(1)
+
+    def rotate(mut self, k: Int) raises:
+        """Rotate right by `k mod n` in place (negative `k` rotates left).
+
+        Mojo `%` truncates toward zero, so negative counts use floored
+        modulo explicitly. Empty arrays are a no-op (avoids div-by-zero);
+        multiples of the length are identity.
+        """
+        var n = self.length
+        if n == 0:
+            return
+        var r = ((k % n) + n) % n
+        if r == 0:
+            return
+        var bits = self.tolist()
+        var combo = List[Int](capacity=n)
+        for i in range(n):
+            combo.append(bits[(i - r + n) % n])
+        var fresh = _pack_bits(combo, self.big_endian)
+        self.buffer = fresh.buffer.copy()
+        self.length = fresh.length
+
+    def _find_first(
+        self, pat: BitArray, lo: Int, hi: Int, right: Bool
+    ) raises -> Int:
+        """Lowest (or rightmost, if `right`) match start with `pat`
+        contained in `[lo:hi)`; -1 when absent. An empty pattern matches
+        `lo` (or `hi` when `right`); an empty window matches nothing."""
+        var m = len(pat)
+        if m == 0:
+            if hi < lo:
+                return -1
+            return hi if right else lo
+        if right:
+            var p = hi - m
+            while p >= lo:
+                if self._match_at(pat, p):
+                    return p
+                p -= 1
+            return -1
+        var p = lo
+        while p + m <= hi:
+            if self._match_at(pat, p):
+                return p
+            p += 1
+        return -1
+
+    def find(self, sub: BitArray) raises -> Int:
+        """Lowest index where `sub` occurs, or -1 when absent."""
+        return self.find(sub, 0, self.length, False)
+
+    def find(self, sub: BitArray, start: Int, stop: Int) raises -> Int:
+        """Lowest match start with `sub` contained in `[start:stop)`."""
+        return self.find(sub, start, stop, False)
+
+    def find(
+        self, sub: BitArray, start: Int, stop: Int, right: Bool
+    ) raises -> Int:
+        """Lowest (or rightmost, if `right`) match start, or -1."""
+        var bounds = self._find_bounds(start, stop)
+        return self._find_first(sub, bounds[0], bounds[1], right)
+
+    def find(self, v: Int) raises -> Int:
+        """Lowest index of the single bit `v`, or -1 when absent."""
+        _check_bit(v)
+        return self.find(_one_bit(v, self.big_endian))
+
+    def find(self, v: Int, start: Int, stop: Int) raises -> Int:
+        """Lowest index of `v` with the match in `[start:stop)`."""
+        _check_bit(v)
+        return self.find(_one_bit(v, self.big_endian), start, stop)
+
+    def find(
+        self, v: Int, start: Int, stop: Int, right: Bool
+    ) raises -> Int:
+        """Lowest (or rightmost) index of `v`, or -1 when absent."""
+        _check_bit(v)
+        return self.find(_one_bit(v, self.big_endian), start, stop, right)
+
+    def find(self, v: Bool) raises -> Int:
+        """Lowest index of a boolean bit, or -1 when absent."""
+        return self.find(1 if v else 0)
+
+    def find(self, v: Bool, start: Int, stop: Int) raises -> Int:
+        """Lowest boolean-bit index with the match in `[start:stop)`."""
+        return self.find(1 if v else 0, start, stop)
+
+    def find(
+        self, v: Bool, start: Int, stop: Int, right: Bool
+    ) raises -> Int:
+        """Lowest (or rightmost) boolean-bit index, or -1."""
+        return self.find(1 if v else 0, start, stop, right)
+
+    def index(self, sub: BitArray) raises -> Int:
+        """Lowest index where `sub` occurs; `ValueError` when absent."""
+        return self.index(sub, 0, self.length, False)
+
+    def index(self, sub: BitArray, start: Int, stop: Int) raises -> Int:
+        """Lowest match start in `[start:stop)`; `ValueError` if absent."""
+        return self.index(sub, start, stop, False)
+
+    def index(
+        self, sub: BitArray, start: Int, stop: Int, right: Bool
+    ) raises -> Int:
+        """Lowest (or rightmost) match start; `ValueError` when absent,
+        with the reference message `bitarray('<bits>') not in bitarray`."""
+        var at = self.find(sub, start, stop, right)
+        if at == -1:
+            raise Error("bitarray('" + sub.to01() + "') not in bitarray")
+        return at
+
+    def _index_int(
+        self, v: Int, start: Int, stop: Int, right: Bool
+    ) raises -> Int:
+        """Shared int-index core with the reference `<v> not in bitarray`
+        message (distinct from the sub-bitarray message)."""
+        _check_bit(v)
+        var at = self.find(_one_bit(v, self.big_endian), start, stop, right)
+        if at == -1:
+            raise Error(String(v) + " not in bitarray")
+        return at
+
+    def index(self, v: Int) raises -> Int:
+        """Lowest index of the single bit `v`; `ValueError` if absent."""
+        return self._index_int(v, 0, self.length, False)
+
+    def index(self, v: Int, start: Int, stop: Int) raises -> Int:
+        """Lowest index of `v` in `[start:stop)`; `ValueError` if absent."""
+        return self._index_int(v, start, stop, False)
+
+    def index(
+        self, v: Int, start: Int, stop: Int, right: Bool
+    ) raises -> Int:
+        """Lowest (or rightmost) index of `v`; `ValueError` when absent."""
+        return self._index_int(v, start, stop, right)
+
+    def _index_bool(
+        self, v: Bool, start: Int, stop: Int, right: Bool
+    ) raises -> Int:
+        """Shared boolean-index core with the reference `True`/`False`
+        spelling in the missing message."""
+        var at = self.find(1 if v else 0, start, stop, right)
+        if at == -1:
+            raise Error(String(v) + " not in bitarray")
+        return at
+
+    def index(self, v: Bool) raises -> Int:
+        """Lowest index of a boolean bit; `ValueError` if absent."""
+        return self._index_bool(v, 0, self.length, False)
+
+    def index(self, v: Bool, start: Int, stop: Int) raises -> Int:
+        """Lowest boolean-bit index in `[start:stop)`; `ValueError` if absent."""
+        return self._index_bool(v, start, stop, False)
+
+    def index(
+        self, v: Bool, start: Int, stop: Int, right: Bool
+    ) raises -> Int:
+        """Lowest (or rightmost) boolean-bit index; `ValueError` if absent."""
+        return self._index_bool(v, start, stop, right)
 
 
 def _check_bit(v: Int) raises:

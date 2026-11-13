@@ -73,6 +73,7 @@ MOJO_SUITES = [
             "test_mutation",
             "test_bitwise",
             "test_count_search",
+            "test_sequence_extras",
         ],
     },
 ]

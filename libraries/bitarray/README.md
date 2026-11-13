@@ -1,6 +1,14 @@
 # bitarray (Mojo Port)
 
-## Status: Phase 0 complete — v0.1 scope frozen, awaiting Phase 1 review
+## Status: Phase 1D3 complete — in-memory v0.1 sequence API implemented, awaiting review
+
+Implemented and tested (native Mojo + Python oracle suites): packed
+storage with endianness and padding invariants (1A); construction,
+indexing, slicing, `to01`/`tolist` (1B); mutation, concatenation,
+comparison (1C); bitwise ops and shifts (1D1); `count`/`search` (1D2);
+`reverse`/`fill`/`copy`/`rotate`/`find`/`index` (1D3). Not yet started:
+serialization (`tobytes`/`frombytes`), CLI/framed protocol, and release
+packaging (Phase 1E).
 
 Phase 0 report: [`PHASE0_RESULTS.md`](PHASE0_RESULTS.md) (§11 records
 the frozen decisions, including the initial architecture).
@@ -86,8 +94,10 @@ slice semantics, and packed↔logical round-trips.
 
 ## Current status
 
-Phase 0 complete and scope frozen: reference pinned and audited,
-v0.1 API fixed with deferred items recorded, algorithms mapped to
-verified Mojo primitives, benchmark methodology designed. No
-production implementation yet — that begins with Phase 1 after
-review of this report.
+Phase 1D3 complete: the in-memory v0.1 sequence API is implemented in
+native Mojo with parity tests against `bitarray==3.12.3` — storage and
+invariants (1A), construction/indexing/slicing/conversions (1B),
+mutation/concatenation/comparison (1C), bitwise ops and shifts (1D1),
+`count`/`search` (1D2), and `reverse`/`fill`/`copy`/`rotate`/`find`/
+`index` (1D3). Remaining for v0.1: serialization (`tobytes`/
+`frombytes`), CLI/framed protocol, and release packaging (Phase 1E).
