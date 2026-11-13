@@ -74,6 +74,7 @@ MOJO_SUITES = [
             "test_bitwise",
             "test_count_search",
             "test_sequence_extras",
+            "test_serialization",
         ],
     },
 ]
@@ -126,6 +127,10 @@ def main() -> int:
     _run(
         "levenshtein vector drift check",
         [*python, "libraries/levenshtein/python_reference/generate_vectors.py", "--check"],
+    )
+    _run(
+        "bitarray vector drift check",
+        [*python, "libraries/bitarray/python_reference/generate_vectors.py", "--check"],
     )
     _run("pytest", [*pytest, "-q"])
 

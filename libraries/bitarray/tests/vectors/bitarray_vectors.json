@@ -1,0 +1,2408 @@
+{
+  "schema_version": "1.0.0",
+  "generator": {
+    "name": "bitarray_vectors",
+    "version": "1.0.0"
+  },
+  "reference": {
+    "package": "bitarray",
+    "version": "3.12.3"
+  },
+  "seed": 20260607,
+  "cases": [
+    {
+      "id": "len00-big-000",
+      "bits": "",
+      "endian": "big",
+      "nbits": 0,
+      "packed_hex": "",
+      "padbits": 0,
+      "framed_hex": "0000000000"
+    },
+    {
+      "id": "len00-little-001",
+      "bits": "",
+      "endian": "little",
+      "nbits": 0,
+      "packed_hex": "",
+      "padbits": 0,
+      "framed_hex": "0000000001"
+    },
+    {
+      "id": "len01-big-002",
+      "bits": "0",
+      "endian": "big",
+      "nbits": 1,
+      "packed_hex": "00",
+      "padbits": 7,
+      "framed_hex": "000000010000"
+    },
+    {
+      "id": "len01-little-003",
+      "bits": "0",
+      "endian": "little",
+      "nbits": 1,
+      "packed_hex": "00",
+      "padbits": 7,
+      "framed_hex": "000000010100"
+    },
+    {
+      "id": "len01-big-004",
+      "bits": "1",
+      "endian": "big",
+      "nbits": 1,
+      "packed_hex": "80",
+      "padbits": 7,
+      "framed_hex": "000000010080"
+    },
+    {
+      "id": "len01-little-005",
+      "bits": "1",
+      "endian": "little",
+      "nbits": 1,
+      "packed_hex": "01",
+      "padbits": 7,
+      "framed_hex": "000000010101"
+    },
+    {
+      "id": "len02-big-006",
+      "bits": "00",
+      "endian": "big",
+      "nbits": 2,
+      "packed_hex": "00",
+      "padbits": 6,
+      "framed_hex": "000000020000"
+    },
+    {
+      "id": "len02-little-007",
+      "bits": "00",
+      "endian": "little",
+      "nbits": 2,
+      "packed_hex": "00",
+      "padbits": 6,
+      "framed_hex": "000000020100"
+    },
+    {
+      "id": "len02-big-008",
+      "bits": "11",
+      "endian": "big",
+      "nbits": 2,
+      "packed_hex": "c0",
+      "padbits": 6,
+      "framed_hex": "0000000200c0"
+    },
+    {
+      "id": "len02-little-009",
+      "bits": "11",
+      "endian": "little",
+      "nbits": 2,
+      "packed_hex": "03",
+      "padbits": 6,
+      "framed_hex": "000000020103"
+    },
+    {
+      "id": "len02-big-010",
+      "bits": "10",
+      "endian": "big",
+      "nbits": 2,
+      "packed_hex": "80",
+      "padbits": 6,
+      "framed_hex": "000000020080"
+    },
+    {
+      "id": "len02-little-011",
+      "bits": "10",
+      "endian": "little",
+      "nbits": 2,
+      "packed_hex": "01",
+      "padbits": 6,
+      "framed_hex": "000000020101"
+    },
+    {
+      "id": "len02-big-012",
+      "bits": "01",
+      "endian": "big",
+      "nbits": 2,
+      "packed_hex": "40",
+      "padbits": 6,
+      "framed_hex": "000000020040"
+    },
+    {
+      "id": "len02-little-013",
+      "bits": "01",
+      "endian": "little",
+      "nbits": 2,
+      "packed_hex": "02",
+      "padbits": 6,
+      "framed_hex": "000000020102"
+    },
+    {
+      "id": "len03-big-014",
+      "bits": "000",
+      "endian": "big",
+      "nbits": 3,
+      "packed_hex": "00",
+      "padbits": 5,
+      "framed_hex": "000000030000"
+    },
+    {
+      "id": "len03-little-015",
+      "bits": "000",
+      "endian": "little",
+      "nbits": 3,
+      "packed_hex": "00",
+      "padbits": 5,
+      "framed_hex": "000000030100"
+    },
+    {
+      "id": "len03-big-016",
+      "bits": "111",
+      "endian": "big",
+      "nbits": 3,
+      "packed_hex": "e0",
+      "padbits": 5,
+      "framed_hex": "0000000300e0"
+    },
+    {
+      "id": "len03-little-017",
+      "bits": "111",
+      "endian": "little",
+      "nbits": 3,
+      "packed_hex": "07",
+      "padbits": 5,
+      "framed_hex": "000000030107"
+    },
+    {
+      "id": "len03-big-018",
+      "bits": "101",
+      "endian": "big",
+      "nbits": 3,
+      "packed_hex": "a0",
+      "padbits": 5,
+      "framed_hex": "0000000300a0"
+    },
+    {
+      "id": "len03-little-019",
+      "bits": "101",
+      "endian": "little",
+      "nbits": 3,
+      "packed_hex": "05",
+      "padbits": 5,
+      "framed_hex": "000000030105"
+    },
+    {
+      "id": "len03-big-020",
+      "bits": "010",
+      "endian": "big",
+      "nbits": 3,
+      "packed_hex": "40",
+      "padbits": 5,
+      "framed_hex": "000000030040"
+    },
+    {
+      "id": "len03-little-021",
+      "bits": "010",
+      "endian": "little",
+      "nbits": 3,
+      "packed_hex": "02",
+      "padbits": 5,
+      "framed_hex": "000000030102"
+    },
+    {
+      "id": "len03-big-022",
+      "bits": "100",
+      "endian": "big",
+      "nbits": 3,
+      "packed_hex": "80",
+      "padbits": 5,
+      "framed_hex": "000000030080"
+    },
+    {
+      "id": "len03-little-023",
+      "bits": "100",
+      "endian": "little",
+      "nbits": 3,
+      "packed_hex": "01",
+      "padbits": 5,
+      "framed_hex": "000000030101"
+    },
+    {
+      "id": "len03-big-024",
+      "bits": "001",
+      "endian": "big",
+      "nbits": 3,
+      "packed_hex": "20",
+      "padbits": 5,
+      "framed_hex": "000000030020"
+    },
+    {
+      "id": "len03-little-025",
+      "bits": "001",
+      "endian": "little",
+      "nbits": 3,
+      "packed_hex": "04",
+      "padbits": 5,
+      "framed_hex": "000000030104"
+    },
+    {
+      "id": "len07-big-026",
+      "bits": "0000000",
+      "endian": "big",
+      "nbits": 7,
+      "packed_hex": "00",
+      "padbits": 1,
+      "framed_hex": "000000070000"
+    },
+    {
+      "id": "len07-little-027",
+      "bits": "0000000",
+      "endian": "little",
+      "nbits": 7,
+      "packed_hex": "00",
+      "padbits": 1,
+      "framed_hex": "000000070100"
+    },
+    {
+      "id": "len07-big-028",
+      "bits": "1111111",
+      "endian": "big",
+      "nbits": 7,
+      "packed_hex": "fe",
+      "padbits": 1,
+      "framed_hex": "0000000700fe"
+    },
+    {
+      "id": "len07-little-029",
+      "bits": "1111111",
+      "endian": "little",
+      "nbits": 7,
+      "packed_hex": "7f",
+      "padbits": 1,
+      "framed_hex": "00000007017f"
+    },
+    {
+      "id": "len07-big-030",
+      "bits": "1010101",
+      "endian": "big",
+      "nbits": 7,
+      "packed_hex": "aa",
+      "padbits": 1,
+      "framed_hex": "0000000700aa"
+    },
+    {
+      "id": "len07-little-031",
+      "bits": "1010101",
+      "endian": "little",
+      "nbits": 7,
+      "packed_hex": "55",
+      "padbits": 1,
+      "framed_hex": "000000070155"
+    },
+    {
+      "id": "len07-big-032",
+      "bits": "0101010",
+      "endian": "big",
+      "nbits": 7,
+      "packed_hex": "54",
+      "padbits": 1,
+      "framed_hex": "000000070054"
+    },
+    {
+      "id": "len07-little-033",
+      "bits": "0101010",
+      "endian": "little",
+      "nbits": 7,
+      "packed_hex": "2a",
+      "padbits": 1,
+      "framed_hex": "00000007012a"
+    },
+    {
+      "id": "len07-big-034",
+      "bits": "1000000",
+      "endian": "big",
+      "nbits": 7,
+      "packed_hex": "80",
+      "padbits": 1,
+      "framed_hex": "000000070080"
+    },
+    {
+      "id": "len07-little-035",
+      "bits": "1000000",
+      "endian": "little",
+      "nbits": 7,
+      "packed_hex": "01",
+      "padbits": 1,
+      "framed_hex": "000000070101"
+    },
+    {
+      "id": "len07-big-036",
+      "bits": "0000001",
+      "endian": "big",
+      "nbits": 7,
+      "packed_hex": "02",
+      "padbits": 1,
+      "framed_hex": "000000070002"
+    },
+    {
+      "id": "len07-little-037",
+      "bits": "0000001",
+      "endian": "little",
+      "nbits": 7,
+      "packed_hex": "40",
+      "padbits": 1,
+      "framed_hex": "000000070140"
+    },
+    {
+      "id": "len07-big-038",
+      "bits": "0001000",
+      "endian": "big",
+      "nbits": 7,
+      "packed_hex": "10",
+      "padbits": 1,
+      "framed_hex": "000000070010"
+    },
+    {
+      "id": "len07-little-039",
+      "bits": "0001000",
+      "endian": "little",
+      "nbits": 7,
+      "packed_hex": "08",
+      "padbits": 1,
+      "framed_hex": "000000070108"
+    },
+    {
+      "id": "len07-big-040",
+      "bits": "0000110",
+      "endian": "big",
+      "nbits": 7,
+      "packed_hex": "0c",
+      "padbits": 1,
+      "framed_hex": "00000007000c"
+    },
+    {
+      "id": "len07-little-041",
+      "bits": "0000110",
+      "endian": "little",
+      "nbits": 7,
+      "packed_hex": "30",
+      "padbits": 1,
+      "framed_hex": "000000070130"
+    },
+    {
+      "id": "len07-big-042",
+      "bits": "0111110",
+      "endian": "big",
+      "nbits": 7,
+      "packed_hex": "7c",
+      "padbits": 1,
+      "framed_hex": "00000007007c"
+    },
+    {
+      "id": "len07-little-043",
+      "bits": "0111110",
+      "endian": "little",
+      "nbits": 7,
+      "packed_hex": "3e",
+      "padbits": 1,
+      "framed_hex": "00000007013e"
+    },
+    {
+      "id": "len07-big-044",
+      "bits": "0001100",
+      "endian": "big",
+      "nbits": 7,
+      "packed_hex": "18",
+      "padbits": 1,
+      "framed_hex": "000000070018"
+    },
+    {
+      "id": "len07-little-045",
+      "bits": "0001100",
+      "endian": "little",
+      "nbits": 7,
+      "packed_hex": "18",
+      "padbits": 1,
+      "framed_hex": "000000070118"
+    },
+    {
+      "id": "len08-big-046",
+      "bits": "00000000",
+      "endian": "big",
+      "nbits": 8,
+      "packed_hex": "00",
+      "padbits": 0,
+      "framed_hex": "000000080000"
+    },
+    {
+      "id": "len08-little-047",
+      "bits": "00000000",
+      "endian": "little",
+      "nbits": 8,
+      "packed_hex": "00",
+      "padbits": 0,
+      "framed_hex": "000000080100"
+    },
+    {
+      "id": "len08-big-048",
+      "bits": "11111111",
+      "endian": "big",
+      "nbits": 8,
+      "packed_hex": "ff",
+      "padbits": 0,
+      "framed_hex": "0000000800ff"
+    },
+    {
+      "id": "len08-little-049",
+      "bits": "11111111",
+      "endian": "little",
+      "nbits": 8,
+      "packed_hex": "ff",
+      "padbits": 0,
+      "framed_hex": "0000000801ff"
+    },
+    {
+      "id": "len08-big-050",
+      "bits": "10101010",
+      "endian": "big",
+      "nbits": 8,
+      "packed_hex": "aa",
+      "padbits": 0,
+      "framed_hex": "0000000800aa"
+    },
+    {
+      "id": "len08-little-051",
+      "bits": "10101010",
+      "endian": "little",
+      "nbits": 8,
+      "packed_hex": "55",
+      "padbits": 0,
+      "framed_hex": "000000080155"
+    },
+    {
+      "id": "len08-big-052",
+      "bits": "01010101",
+      "endian": "big",
+      "nbits": 8,
+      "packed_hex": "55",
+      "padbits": 0,
+      "framed_hex": "000000080055"
+    },
+    {
+      "id": "len08-little-053",
+      "bits": "01010101",
+      "endian": "little",
+      "nbits": 8,
+      "packed_hex": "aa",
+      "padbits": 0,
+      "framed_hex": "0000000801aa"
+    },
+    {
+      "id": "len08-big-054",
+      "bits": "10000000",
+      "endian": "big",
+      "nbits": 8,
+      "packed_hex": "80",
+      "padbits": 0,
+      "framed_hex": "000000080080"
+    },
+    {
+      "id": "len08-little-055",
+      "bits": "10000000",
+      "endian": "little",
+      "nbits": 8,
+      "packed_hex": "01",
+      "padbits": 0,
+      "framed_hex": "000000080101"
+    },
+    {
+      "id": "len08-big-056",
+      "bits": "00000001",
+      "endian": "big",
+      "nbits": 8,
+      "packed_hex": "01",
+      "padbits": 0,
+      "framed_hex": "000000080001"
+    },
+    {
+      "id": "len08-little-057",
+      "bits": "00000001",
+      "endian": "little",
+      "nbits": 8,
+      "packed_hex": "80",
+      "padbits": 0,
+      "framed_hex": "000000080180"
+    },
+    {
+      "id": "len08-big-058",
+      "bits": "00001000",
+      "endian": "big",
+      "nbits": 8,
+      "packed_hex": "08",
+      "padbits": 0,
+      "framed_hex": "000000080008"
+    },
+    {
+      "id": "len08-little-059",
+      "bits": "00001000",
+      "endian": "little",
+      "nbits": 8,
+      "packed_hex": "10",
+      "padbits": 0,
+      "framed_hex": "000000080110"
+    },
+    {
+      "id": "len08-big-060",
+      "bits": "10001000",
+      "endian": "big",
+      "nbits": 8,
+      "packed_hex": "88",
+      "padbits": 0,
+      "framed_hex": "000000080088"
+    },
+    {
+      "id": "len08-little-061",
+      "bits": "10001000",
+      "endian": "little",
+      "nbits": 8,
+      "packed_hex": "11",
+      "padbits": 0,
+      "framed_hex": "000000080111"
+    },
+    {
+      "id": "len08-big-062",
+      "bits": "10110111",
+      "endian": "big",
+      "nbits": 8,
+      "packed_hex": "b7",
+      "padbits": 0,
+      "framed_hex": "0000000800b7"
+    },
+    {
+      "id": "len08-little-063",
+      "bits": "10110111",
+      "endian": "little",
+      "nbits": 8,
+      "packed_hex": "ed",
+      "padbits": 0,
+      "framed_hex": "0000000801ed"
+    },
+    {
+      "id": "len08-big-064",
+      "bits": "10110101",
+      "endian": "big",
+      "nbits": 8,
+      "packed_hex": "b5",
+      "padbits": 0,
+      "framed_hex": "0000000800b5"
+    },
+    {
+      "id": "len08-little-065",
+      "bits": "10110101",
+      "endian": "little",
+      "nbits": 8,
+      "packed_hex": "ad",
+      "padbits": 0,
+      "framed_hex": "0000000801ad"
+    },
+    {
+      "id": "len09-big-066",
+      "bits": "000000000",
+      "endian": "big",
+      "nbits": 9,
+      "packed_hex": "0000",
+      "padbits": 7,
+      "framed_hex": "00000009000000"
+    },
+    {
+      "id": "len09-little-067",
+      "bits": "000000000",
+      "endian": "little",
+      "nbits": 9,
+      "packed_hex": "0000",
+      "padbits": 7,
+      "framed_hex": "00000009010000"
+    },
+    {
+      "id": "len09-big-068",
+      "bits": "111111111",
+      "endian": "big",
+      "nbits": 9,
+      "packed_hex": "ff80",
+      "padbits": 7,
+      "framed_hex": "0000000900ff80"
+    },
+    {
+      "id": "len09-little-069",
+      "bits": "111111111",
+      "endian": "little",
+      "nbits": 9,
+      "packed_hex": "ff01",
+      "padbits": 7,
+      "framed_hex": "0000000901ff01"
+    },
+    {
+      "id": "len09-big-070",
+      "bits": "101010101",
+      "endian": "big",
+      "nbits": 9,
+      "packed_hex": "aa80",
+      "padbits": 7,
+      "framed_hex": "0000000900aa80"
+    },
+    {
+      "id": "len09-little-071",
+      "bits": "101010101",
+      "endian": "little",
+      "nbits": 9,
+      "packed_hex": "5501",
+      "padbits": 7,
+      "framed_hex": "00000009015501"
+    },
+    {
+      "id": "len09-big-072",
+      "bits": "010101010",
+      "endian": "big",
+      "nbits": 9,
+      "packed_hex": "5500",
+      "padbits": 7,
+      "framed_hex": "00000009005500"
+    },
+    {
+      "id": "len09-little-073",
+      "bits": "010101010",
+      "endian": "little",
+      "nbits": 9,
+      "packed_hex": "aa00",
+      "padbits": 7,
+      "framed_hex": "0000000901aa00"
+    },
+    {
+      "id": "len09-big-074",
+      "bits": "100000000",
+      "endian": "big",
+      "nbits": 9,
+      "packed_hex": "8000",
+      "padbits": 7,
+      "framed_hex": "00000009008000"
+    },
+    {
+      "id": "len09-little-075",
+      "bits": "100000000",
+      "endian": "little",
+      "nbits": 9,
+      "packed_hex": "0100",
+      "padbits": 7,
+      "framed_hex": "00000009010100"
+    },
+    {
+      "id": "len09-big-076",
+      "bits": "000000001",
+      "endian": "big",
+      "nbits": 9,
+      "packed_hex": "0080",
+      "padbits": 7,
+      "framed_hex": "00000009000080"
+    },
+    {
+      "id": "len09-little-077",
+      "bits": "000000001",
+      "endian": "little",
+      "nbits": 9,
+      "packed_hex": "0001",
+      "padbits": 7,
+      "framed_hex": "00000009010001"
+    },
+    {
+      "id": "len09-big-078",
+      "bits": "000010000",
+      "endian": "big",
+      "nbits": 9,
+      "packed_hex": "0800",
+      "padbits": 7,
+      "framed_hex": "00000009000800"
+    },
+    {
+      "id": "len09-little-079",
+      "bits": "000010000",
+      "endian": "little",
+      "nbits": 9,
+      "packed_hex": "1000",
+      "padbits": 7,
+      "framed_hex": "00000009011000"
+    },
+    {
+      "id": "len09-big-080",
+      "bits": "100010000",
+      "endian": "big",
+      "nbits": 9,
+      "packed_hex": "8800",
+      "padbits": 7,
+      "framed_hex": "00000009008800"
+    },
+    {
+      "id": "len09-little-081",
+      "bits": "100010000",
+      "endian": "little",
+      "nbits": 9,
+      "packed_hex": "1100",
+      "padbits": 7,
+      "framed_hex": "00000009011100"
+    },
+    {
+      "id": "len09-big-082",
+      "bits": "110110111",
+      "endian": "big",
+      "nbits": 9,
+      "packed_hex": "db80",
+      "padbits": 7,
+      "framed_hex": "0000000900db80"
+    },
+    {
+      "id": "len09-little-083",
+      "bits": "110110111",
+      "endian": "little",
+      "nbits": 9,
+      "packed_hex": "db01",
+      "padbits": 7,
+      "framed_hex": "0000000901db01"
+    },
+    {
+      "id": "len09-big-084",
+      "bits": "110000110",
+      "endian": "big",
+      "nbits": 9,
+      "packed_hex": "c300",
+      "padbits": 7,
+      "framed_hex": "0000000900c300"
+    },
+    {
+      "id": "len09-little-085",
+      "bits": "110000110",
+      "endian": "little",
+      "nbits": 9,
+      "packed_hex": "c300",
+      "padbits": 7,
+      "framed_hex": "0000000901c300"
+    },
+    {
+      "id": "len15-big-086",
+      "bits": "000000000000000",
+      "endian": "big",
+      "nbits": 15,
+      "packed_hex": "0000",
+      "padbits": 1,
+      "framed_hex": "0000000f000000"
+    },
+    {
+      "id": "len15-little-087",
+      "bits": "000000000000000",
+      "endian": "little",
+      "nbits": 15,
+      "packed_hex": "0000",
+      "padbits": 1,
+      "framed_hex": "0000000f010000"
+    },
+    {
+      "id": "len15-big-088",
+      "bits": "111111111111111",
+      "endian": "big",
+      "nbits": 15,
+      "packed_hex": "fffe",
+      "padbits": 1,
+      "framed_hex": "0000000f00fffe"
+    },
+    {
+      "id": "len15-little-089",
+      "bits": "111111111111111",
+      "endian": "little",
+      "nbits": 15,
+      "packed_hex": "ff7f",
+      "padbits": 1,
+      "framed_hex": "0000000f01ff7f"
+    },
+    {
+      "id": "len15-big-090",
+      "bits": "101010101010101",
+      "endian": "big",
+      "nbits": 15,
+      "packed_hex": "aaaa",
+      "padbits": 1,
+      "framed_hex": "0000000f00aaaa"
+    },
+    {
+      "id": "len15-little-091",
+      "bits": "101010101010101",
+      "endian": "little",
+      "nbits": 15,
+      "packed_hex": "5555",
+      "padbits": 1,
+      "framed_hex": "0000000f015555"
+    },
+    {
+      "id": "len15-big-092",
+      "bits": "010101010101010",
+      "endian": "big",
+      "nbits": 15,
+      "packed_hex": "5554",
+      "padbits": 1,
+      "framed_hex": "0000000f005554"
+    },
+    {
+      "id": "len15-little-093",
+      "bits": "010101010101010",
+      "endian": "little",
+      "nbits": 15,
+      "packed_hex": "aa2a",
+      "padbits": 1,
+      "framed_hex": "0000000f01aa2a"
+    },
+    {
+      "id": "len15-big-094",
+      "bits": "100000000000000",
+      "endian": "big",
+      "nbits": 15,
+      "packed_hex": "8000",
+      "padbits": 1,
+      "framed_hex": "0000000f008000"
+    },
+    {
+      "id": "len15-little-095",
+      "bits": "100000000000000",
+      "endian": "little",
+      "nbits": 15,
+      "packed_hex": "0100",
+      "padbits": 1,
+      "framed_hex": "0000000f010100"
+    },
+    {
+      "id": "len15-big-096",
+      "bits": "000000000000001",
+      "endian": "big",
+      "nbits": 15,
+      "packed_hex": "0002",
+      "padbits": 1,
+      "framed_hex": "0000000f000002"
+    },
+    {
+      "id": "len15-little-097",
+      "bits": "000000000000001",
+      "endian": "little",
+      "nbits": 15,
+      "packed_hex": "0040",
+      "padbits": 1,
+      "framed_hex": "0000000f010040"
+    },
+    {
+      "id": "len15-big-098",
+      "bits": "000000010000000",
+      "endian": "big",
+      "nbits": 15,
+      "packed_hex": "0100",
+      "padbits": 1,
+      "framed_hex": "0000000f000100"
+    },
+    {
+      "id": "len15-little-099",
+      "bits": "000000010000000",
+      "endian": "little",
+      "nbits": 15,
+      "packed_hex": "8000",
+      "padbits": 1,
+      "framed_hex": "0000000f018000"
+    },
+    {
+      "id": "len15-big-100",
+      "bits": "000001000010000",
+      "endian": "big",
+      "nbits": 15,
+      "packed_hex": "0420",
+      "padbits": 1,
+      "framed_hex": "0000000f000420"
+    },
+    {
+      "id": "len15-little-101",
+      "bits": "000001000010000",
+      "endian": "little",
+      "nbits": 15,
+      "packed_hex": "2004",
+      "padbits": 1,
+      "framed_hex": "0000000f012004"
+    },
+    {
+      "id": "len15-big-102",
+      "bits": "111011011111111",
+      "endian": "big",
+      "nbits": 15,
+      "packed_hex": "edfe",
+      "padbits": 1,
+      "framed_hex": "0000000f00edfe"
+    },
+    {
+      "id": "len15-little-103",
+      "bits": "111011011111111",
+      "endian": "little",
+      "nbits": 15,
+      "packed_hex": "b77f",
+      "padbits": 1,
+      "framed_hex": "0000000f01b77f"
+    },
+    {
+      "id": "len15-big-104",
+      "bits": "001111110110001",
+      "endian": "big",
+      "nbits": 15,
+      "packed_hex": "3f62",
+      "padbits": 1,
+      "framed_hex": "0000000f003f62"
+    },
+    {
+      "id": "len15-little-105",
+      "bits": "001111110110001",
+      "endian": "little",
+      "nbits": 15,
+      "packed_hex": "fc46",
+      "padbits": 1,
+      "framed_hex": "0000000f01fc46"
+    },
+    {
+      "id": "len16-big-106",
+      "bits": "0000000000000000",
+      "endian": "big",
+      "nbits": 16,
+      "packed_hex": "0000",
+      "padbits": 0,
+      "framed_hex": "00000010000000"
+    },
+    {
+      "id": "len16-little-107",
+      "bits": "0000000000000000",
+      "endian": "little",
+      "nbits": 16,
+      "packed_hex": "0000",
+      "padbits": 0,
+      "framed_hex": "00000010010000"
+    },
+    {
+      "id": "len16-big-108",
+      "bits": "1111111111111111",
+      "endian": "big",
+      "nbits": 16,
+      "packed_hex": "ffff",
+      "padbits": 0,
+      "framed_hex": "0000001000ffff"
+    },
+    {
+      "id": "len16-little-109",
+      "bits": "1111111111111111",
+      "endian": "little",
+      "nbits": 16,
+      "packed_hex": "ffff",
+      "padbits": 0,
+      "framed_hex": "0000001001ffff"
+    },
+    {
+      "id": "len16-big-110",
+      "bits": "1010101010101010",
+      "endian": "big",
+      "nbits": 16,
+      "packed_hex": "aaaa",
+      "padbits": 0,
+      "framed_hex": "0000001000aaaa"
+    },
+    {
+      "id": "len16-little-111",
+      "bits": "1010101010101010",
+      "endian": "little",
+      "nbits": 16,
+      "packed_hex": "5555",
+      "padbits": 0,
+      "framed_hex": "00000010015555"
+    },
+    {
+      "id": "len16-big-112",
+      "bits": "0101010101010101",
+      "endian": "big",
+      "nbits": 16,
+      "packed_hex": "5555",
+      "padbits": 0,
+      "framed_hex": "00000010005555"
+    },
+    {
+      "id": "len16-little-113",
+      "bits": "0101010101010101",
+      "endian": "little",
+      "nbits": 16,
+      "packed_hex": "aaaa",
+      "padbits": 0,
+      "framed_hex": "0000001001aaaa"
+    },
+    {
+      "id": "len16-big-114",
+      "bits": "1000000000000000",
+      "endian": "big",
+      "nbits": 16,
+      "packed_hex": "8000",
+      "padbits": 0,
+      "framed_hex": "00000010008000"
+    },
+    {
+      "id": "len16-little-115",
+      "bits": "1000000000000000",
+      "endian": "little",
+      "nbits": 16,
+      "packed_hex": "0100",
+      "padbits": 0,
+      "framed_hex": "00000010010100"
+    },
+    {
+      "id": "len16-big-116",
+      "bits": "0000000000000001",
+      "endian": "big",
+      "nbits": 16,
+      "packed_hex": "0001",
+      "padbits": 0,
+      "framed_hex": "00000010000001"
+    },
+    {
+      "id": "len16-little-117",
+      "bits": "0000000000000001",
+      "endian": "little",
+      "nbits": 16,
+      "packed_hex": "0080",
+      "padbits": 0,
+      "framed_hex": "00000010010080"
+    },
+    {
+      "id": "len16-big-118",
+      "bits": "0000000010000000",
+      "endian": "big",
+      "nbits": 16,
+      "packed_hex": "0080",
+      "padbits": 0,
+      "framed_hex": "00000010000080"
+    },
+    {
+      "id": "len16-little-119",
+      "bits": "0000000010000000",
+      "endian": "little",
+      "nbits": 16,
+      "packed_hex": "0001",
+      "padbits": 0,
+      "framed_hex": "00000010010001"
+    },
+    {
+      "id": "len16-big-120",
+      "bits": "0000000000000011",
+      "endian": "big",
+      "nbits": 16,
+      "packed_hex": "0003",
+      "padbits": 0,
+      "framed_hex": "00000010000003"
+    },
+    {
+      "id": "len16-little-121",
+      "bits": "0000000000000011",
+      "endian": "little",
+      "nbits": 16,
+      "packed_hex": "00c0",
+      "padbits": 0,
+      "framed_hex": "000000100100c0"
+    },
+    {
+      "id": "len16-big-122",
+      "bits": "1111001111111111",
+      "endian": "big",
+      "nbits": 16,
+      "packed_hex": "f3ff",
+      "padbits": 0,
+      "framed_hex": "0000001000f3ff"
+    },
+    {
+      "id": "len16-little-123",
+      "bits": "1111001111111111",
+      "endian": "little",
+      "nbits": 16,
+      "packed_hex": "cfff",
+      "padbits": 0,
+      "framed_hex": "0000001001cfff"
+    },
+    {
+      "id": "len16-big-124",
+      "bits": "0000011001100110",
+      "endian": "big",
+      "nbits": 16,
+      "packed_hex": "0666",
+      "padbits": 0,
+      "framed_hex": "00000010000666"
+    },
+    {
+      "id": "len16-little-125",
+      "bits": "0000011001100110",
+      "endian": "little",
+      "nbits": 16,
+      "packed_hex": "6066",
+      "padbits": 0,
+      "framed_hex": "00000010016066"
+    },
+    {
+      "id": "len17-big-126",
+      "bits": "00000000000000000",
+      "endian": "big",
+      "nbits": 17,
+      "packed_hex": "000000",
+      "padbits": 7,
+      "framed_hex": "0000001100000000"
+    },
+    {
+      "id": "len17-little-127",
+      "bits": "00000000000000000",
+      "endian": "little",
+      "nbits": 17,
+      "packed_hex": "000000",
+      "padbits": 7,
+      "framed_hex": "0000001101000000"
+    },
+    {
+      "id": "len17-big-128",
+      "bits": "11111111111111111",
+      "endian": "big",
+      "nbits": 17,
+      "packed_hex": "ffff80",
+      "padbits": 7,
+      "framed_hex": "0000001100ffff80"
+    },
+    {
+      "id": "len17-little-129",
+      "bits": "11111111111111111",
+      "endian": "little",
+      "nbits": 17,
+      "packed_hex": "ffff01",
+      "padbits": 7,
+      "framed_hex": "0000001101ffff01"
+    },
+    {
+      "id": "len17-big-130",
+      "bits": "10101010101010101",
+      "endian": "big",
+      "nbits": 17,
+      "packed_hex": "aaaa80",
+      "padbits": 7,
+      "framed_hex": "0000001100aaaa80"
+    },
+    {
+      "id": "len17-little-131",
+      "bits": "10101010101010101",
+      "endian": "little",
+      "nbits": 17,
+      "packed_hex": "555501",
+      "padbits": 7,
+      "framed_hex": "0000001101555501"
+    },
+    {
+      "id": "len17-big-132",
+      "bits": "01010101010101010",
+      "endian": "big",
+      "nbits": 17,
+      "packed_hex": "555500",
+      "padbits": 7,
+      "framed_hex": "0000001100555500"
+    },
+    {
+      "id": "len17-little-133",
+      "bits": "01010101010101010",
+      "endian": "little",
+      "nbits": 17,
+      "packed_hex": "aaaa00",
+      "padbits": 7,
+      "framed_hex": "0000001101aaaa00"
+    },
+    {
+      "id": "len17-big-134",
+      "bits": "10000000000000000",
+      "endian": "big",
+      "nbits": 17,
+      "packed_hex": "800000",
+      "padbits": 7,
+      "framed_hex": "0000001100800000"
+    },
+    {
+      "id": "len17-little-135",
+      "bits": "10000000000000000",
+      "endian": "little",
+      "nbits": 17,
+      "packed_hex": "010000",
+      "padbits": 7,
+      "framed_hex": "0000001101010000"
+    },
+    {
+      "id": "len17-big-136",
+      "bits": "00000000000000001",
+      "endian": "big",
+      "nbits": 17,
+      "packed_hex": "000080",
+      "padbits": 7,
+      "framed_hex": "0000001100000080"
+    },
+    {
+      "id": "len17-little-137",
+      "bits": "00000000000000001",
+      "endian": "little",
+      "nbits": 17,
+      "packed_hex": "000001",
+      "padbits": 7,
+      "framed_hex": "0000001101000001"
+    },
+    {
+      "id": "len17-big-138",
+      "bits": "00000000100000000",
+      "endian": "big",
+      "nbits": 17,
+      "packed_hex": "008000",
+      "padbits": 7,
+      "framed_hex": "0000001100008000"
+    },
+    {
+      "id": "len17-little-139",
+      "bits": "00000000100000000",
+      "endian": "little",
+      "nbits": 17,
+      "packed_hex": "000100",
+      "padbits": 7,
+      "framed_hex": "0000001101000100"
+    },
+    {
+      "id": "len17-big-140",
+      "bits": "00100000001000000",
+      "endian": "big",
+      "nbits": 17,
+      "packed_hex": "202000",
+      "padbits": 7,
+      "framed_hex": "0000001100202000"
+    },
+    {
+      "id": "len17-little-141",
+      "bits": "00100000001000000",
+      "endian": "little",
+      "nbits": 17,
+      "packed_hex": "040400",
+      "padbits": 7,
+      "framed_hex": "0000001101040400"
+    },
+    {
+      "id": "len17-big-142",
+      "bits": "11111011111110111",
+      "endian": "big",
+      "nbits": 17,
+      "packed_hex": "fbfb80",
+      "padbits": 7,
+      "framed_hex": "0000001100fbfb80"
+    },
+    {
+      "id": "len17-little-143",
+      "bits": "11111011111110111",
+      "endian": "little",
+      "nbits": 17,
+      "packed_hex": "dfdf01",
+      "padbits": 7,
+      "framed_hex": "0000001101dfdf01"
+    },
+    {
+      "id": "len17-big-144",
+      "bits": "11001101010000111",
+      "endian": "big",
+      "nbits": 17,
+      "packed_hex": "cd4380",
+      "padbits": 7,
+      "framed_hex": "0000001100cd4380"
+    },
+    {
+      "id": "len17-little-145",
+      "bits": "11001101010000111",
+      "endian": "little",
+      "nbits": 17,
+      "packed_hex": "b3c201",
+      "padbits": 7,
+      "framed_hex": "0000001101b3c201"
+    },
+    {
+      "id": "len31-big-146",
+      "bits": "0000000000000000000000000000000",
+      "endian": "big",
+      "nbits": 31,
+      "packed_hex": "00000000",
+      "padbits": 1,
+      "framed_hex": "0000001f0000000000"
+    },
+    {
+      "id": "len31-little-147",
+      "bits": "0000000000000000000000000000000",
+      "endian": "little",
+      "nbits": 31,
+      "packed_hex": "00000000",
+      "padbits": 1,
+      "framed_hex": "0000001f0100000000"
+    },
+    {
+      "id": "len31-big-148",
+      "bits": "1111111111111111111111111111111",
+      "endian": "big",
+      "nbits": 31,
+      "packed_hex": "fffffffe",
+      "padbits": 1,
+      "framed_hex": "0000001f00fffffffe"
+    },
+    {
+      "id": "len31-little-149",
+      "bits": "1111111111111111111111111111111",
+      "endian": "little",
+      "nbits": 31,
+      "packed_hex": "ffffff7f",
+      "padbits": 1,
+      "framed_hex": "0000001f01ffffff7f"
+    },
+    {
+      "id": "len31-big-150",
+      "bits": "1010101010101010101010101010101",
+      "endian": "big",
+      "nbits": 31,
+      "packed_hex": "aaaaaaaa",
+      "padbits": 1,
+      "framed_hex": "0000001f00aaaaaaaa"
+    },
+    {
+      "id": "len31-little-151",
+      "bits": "1010101010101010101010101010101",
+      "endian": "little",
+      "nbits": 31,
+      "packed_hex": "55555555",
+      "padbits": 1,
+      "framed_hex": "0000001f0155555555"
+    },
+    {
+      "id": "len31-big-152",
+      "bits": "0101010101010101010101010101010",
+      "endian": "big",
+      "nbits": 31,
+      "packed_hex": "55555554",
+      "padbits": 1,
+      "framed_hex": "0000001f0055555554"
+    },
+    {
+      "id": "len31-little-153",
+      "bits": "0101010101010101010101010101010",
+      "endian": "little",
+      "nbits": 31,
+      "packed_hex": "aaaaaa2a",
+      "padbits": 1,
+      "framed_hex": "0000001f01aaaaaa2a"
+    },
+    {
+      "id": "len31-big-154",
+      "bits": "1000000000000000000000000000000",
+      "endian": "big",
+      "nbits": 31,
+      "packed_hex": "80000000",
+      "padbits": 1,
+      "framed_hex": "0000001f0080000000"
+    },
+    {
+      "id": "len31-little-155",
+      "bits": "1000000000000000000000000000000",
+      "endian": "little",
+      "nbits": 31,
+      "packed_hex": "01000000",
+      "padbits": 1,
+      "framed_hex": "0000001f0101000000"
+    },
+    {
+      "id": "len31-big-156",
+      "bits": "0000000000000000000000000000001",
+      "endian": "big",
+      "nbits": 31,
+      "packed_hex": "00000002",
+      "padbits": 1,
+      "framed_hex": "0000001f0000000002"
+    },
+    {
+      "id": "len31-little-157",
+      "bits": "0000000000000000000000000000001",
+      "endian": "little",
+      "nbits": 31,
+      "packed_hex": "00000040",
+      "padbits": 1,
+      "framed_hex": "0000001f0100000040"
+    },
+    {
+      "id": "len31-big-158",
+      "bits": "0000000000000001000000000000000",
+      "endian": "big",
+      "nbits": 31,
+      "packed_hex": "00010000",
+      "padbits": 1,
+      "framed_hex": "0000001f0000010000"
+    },
+    {
+      "id": "len31-little-159",
+      "bits": "0000000000000001000000000000000",
+      "endian": "little",
+      "nbits": 31,
+      "packed_hex": "00800000",
+      "padbits": 1,
+      "framed_hex": "0000001f0100800000"
+    },
+    {
+      "id": "len31-big-160",
+      "bits": "0010001000000000000000000000000",
+      "endian": "big",
+      "nbits": 31,
+      "packed_hex": "22000000",
+      "padbits": 1,
+      "framed_hex": "0000001f0022000000"
+    },
+    {
+      "id": "len31-little-161",
+      "bits": "0010001000000000000000000000000",
+      "endian": "little",
+      "nbits": 31,
+      "packed_hex": "44000000",
+      "padbits": 1,
+      "framed_hex": "0000001f0144000000"
+    },
+    {
+      "id": "len31-big-162",
+      "bits": "0111111011111111111111111111111",
+      "endian": "big",
+      "nbits": 31,
+      "packed_hex": "7efffffe",
+      "padbits": 1,
+      "framed_hex": "0000001f007efffffe"
+    },
+    {
+      "id": "len31-little-163",
+      "bits": "0111111011111111111111111111111",
+      "endian": "little",
+      "nbits": 31,
+      "packed_hex": "7effff7f",
+      "padbits": 1,
+      "framed_hex": "0000001f017effff7f"
+    },
+    {
+      "id": "len31-big-164",
+      "bits": "1000010010101011010000001111011",
+      "endian": "big",
+      "nbits": 31,
+      "packed_hex": "84ab40f6",
+      "padbits": 1,
+      "framed_hex": "0000001f0084ab40f6"
+    },
+    {
+      "id": "len31-little-165",
+      "bits": "1000010010101011010000001111011",
+      "endian": "little",
+      "nbits": 31,
+      "packed_hex": "21d5026f",
+      "padbits": 1,
+      "framed_hex": "0000001f0121d5026f"
+    },
+    {
+      "id": "len32-big-166",
+      "bits": "00000000000000000000000000000000",
+      "endian": "big",
+      "nbits": 32,
+      "packed_hex": "00000000",
+      "padbits": 0,
+      "framed_hex": "000000200000000000"
+    },
+    {
+      "id": "len32-little-167",
+      "bits": "00000000000000000000000000000000",
+      "endian": "little",
+      "nbits": 32,
+      "packed_hex": "00000000",
+      "padbits": 0,
+      "framed_hex": "000000200100000000"
+    },
+    {
+      "id": "len32-big-168",
+      "bits": "11111111111111111111111111111111",
+      "endian": "big",
+      "nbits": 32,
+      "packed_hex": "ffffffff",
+      "padbits": 0,
+      "framed_hex": "0000002000ffffffff"
+    },
+    {
+      "id": "len32-little-169",
+      "bits": "11111111111111111111111111111111",
+      "endian": "little",
+      "nbits": 32,
+      "packed_hex": "ffffffff",
+      "padbits": 0,
+      "framed_hex": "0000002001ffffffff"
+    },
+    {
+      "id": "len32-big-170",
+      "bits": "10101010101010101010101010101010",
+      "endian": "big",
+      "nbits": 32,
+      "packed_hex": "aaaaaaaa",
+      "padbits": 0,
+      "framed_hex": "0000002000aaaaaaaa"
+    },
+    {
+      "id": "len32-little-171",
+      "bits": "10101010101010101010101010101010",
+      "endian": "little",
+      "nbits": 32,
+      "packed_hex": "55555555",
+      "padbits": 0,
+      "framed_hex": "000000200155555555"
+    },
+    {
+      "id": "len32-big-172",
+      "bits": "01010101010101010101010101010101",
+      "endian": "big",
+      "nbits": 32,
+      "packed_hex": "55555555",
+      "padbits": 0,
+      "framed_hex": "000000200055555555"
+    },
+    {
+      "id": "len32-little-173",
+      "bits": "01010101010101010101010101010101",
+      "endian": "little",
+      "nbits": 32,
+      "packed_hex": "aaaaaaaa",
+      "padbits": 0,
+      "framed_hex": "0000002001aaaaaaaa"
+    },
+    {
+      "id": "len32-big-174",
+      "bits": "10000000000000000000000000000000",
+      "endian": "big",
+      "nbits": 32,
+      "packed_hex": "80000000",
+      "padbits": 0,
+      "framed_hex": "000000200080000000"
+    },
+    {
+      "id": "len32-little-175",
+      "bits": "10000000000000000000000000000000",
+      "endian": "little",
+      "nbits": 32,
+      "packed_hex": "01000000",
+      "padbits": 0,
+      "framed_hex": "000000200101000000"
+    },
+    {
+      "id": "len32-big-176",
+      "bits": "00000000000000000000000000000001",
+      "endian": "big",
+      "nbits": 32,
+      "packed_hex": "00000001",
+      "padbits": 0,
+      "framed_hex": "000000200000000001"
+    },
+    {
+      "id": "len32-little-177",
+      "bits": "00000000000000000000000000000001",
+      "endian": "little",
+      "nbits": 32,
+      "packed_hex": "00000080",
+      "padbits": 0,
+      "framed_hex": "000000200100000080"
+    },
+    {
+      "id": "len32-big-178",
+      "bits": "00000000000000001000000000000000",
+      "endian": "big",
+      "nbits": 32,
+      "packed_hex": "00008000",
+      "padbits": 0,
+      "framed_hex": "000000200000008000"
+    },
+    {
+      "id": "len32-little-179",
+      "bits": "00000000000000001000000000000000",
+      "endian": "little",
+      "nbits": 32,
+      "packed_hex": "00000100",
+      "padbits": 0,
+      "framed_hex": "000000200100000100"
+    },
+    {
+      "id": "len32-big-180",
+      "bits": "00000000000000000000100000000001",
+      "endian": "big",
+      "nbits": 32,
+      "packed_hex": "00000801",
+      "padbits": 0,
+      "framed_hex": "000000200000000801"
+    },
+    {
+      "id": "len32-little-181",
+      "bits": "00000000000000000000100000000001",
+      "endian": "little",
+      "nbits": 32,
+      "packed_hex": "00001080",
+      "padbits": 0,
+      "framed_hex": "000000200100001080"
+    },
+    {
+      "id": "len32-big-182",
+      "bits": "10111111011111111111111111111111",
+      "endian": "big",
+      "nbits": 32,
+      "packed_hex": "bf7fffff",
+      "padbits": 0,
+      "framed_hex": "0000002000bf7fffff"
+    },
+    {
+      "id": "len32-little-183",
+      "bits": "10111111011111111111111111111111",
+      "endian": "little",
+      "nbits": 32,
+      "packed_hex": "fdfeffff",
+      "padbits": 0,
+      "framed_hex": "0000002001fdfeffff"
+    },
+    {
+      "id": "len32-big-184",
+      "bits": "10111101101111110010101010000110",
+      "endian": "big",
+      "nbits": 32,
+      "packed_hex": "bdbf2a86",
+      "padbits": 0,
+      "framed_hex": "0000002000bdbf2a86"
+    },
+    {
+      "id": "len32-little-185",
+      "bits": "10111101101111110010101010000110",
+      "endian": "little",
+      "nbits": 32,
+      "packed_hex": "bdfd5461",
+      "padbits": 0,
+      "framed_hex": "0000002001bdfd5461"
+    },
+    {
+      "id": "len33-big-186",
+      "bits": "000000000000000000000000000000000",
+      "endian": "big",
+      "nbits": 33,
+      "packed_hex": "0000000000",
+      "padbits": 7,
+      "framed_hex": "00000021000000000000"
+    },
+    {
+      "id": "len33-little-187",
+      "bits": "000000000000000000000000000000000",
+      "endian": "little",
+      "nbits": 33,
+      "packed_hex": "0000000000",
+      "padbits": 7,
+      "framed_hex": "00000021010000000000"
+    },
+    {
+      "id": "len33-big-188",
+      "bits": "111111111111111111111111111111111",
+      "endian": "big",
+      "nbits": 33,
+      "packed_hex": "ffffffff80",
+      "padbits": 7,
+      "framed_hex": "0000002100ffffffff80"
+    },
+    {
+      "id": "len33-little-189",
+      "bits": "111111111111111111111111111111111",
+      "endian": "little",
+      "nbits": 33,
+      "packed_hex": "ffffffff01",
+      "padbits": 7,
+      "framed_hex": "0000002101ffffffff01"
+    },
+    {
+      "id": "len33-big-190",
+      "bits": "101010101010101010101010101010101",
+      "endian": "big",
+      "nbits": 33,
+      "packed_hex": "aaaaaaaa80",
+      "padbits": 7,
+      "framed_hex": "0000002100aaaaaaaa80"
+    },
+    {
+      "id": "len33-little-191",
+      "bits": "101010101010101010101010101010101",
+      "endian": "little",
+      "nbits": 33,
+      "packed_hex": "5555555501",
+      "padbits": 7,
+      "framed_hex": "00000021015555555501"
+    },
+    {
+      "id": "len33-big-192",
+      "bits": "010101010101010101010101010101010",
+      "endian": "big",
+      "nbits": 33,
+      "packed_hex": "5555555500",
+      "padbits": 7,
+      "framed_hex": "00000021005555555500"
+    },
+    {
+      "id": "len33-little-193",
+      "bits": "010101010101010101010101010101010",
+      "endian": "little",
+      "nbits": 33,
+      "packed_hex": "aaaaaaaa00",
+      "padbits": 7,
+      "framed_hex": "0000002101aaaaaaaa00"
+    },
+    {
+      "id": "len33-big-194",
+      "bits": "100000000000000000000000000000000",
+      "endian": "big",
+      "nbits": 33,
+      "packed_hex": "8000000000",
+      "padbits": 7,
+      "framed_hex": "00000021008000000000"
+    },
+    {
+      "id": "len33-little-195",
+      "bits": "100000000000000000000000000000000",
+      "endian": "little",
+      "nbits": 33,
+      "packed_hex": "0100000000",
+      "padbits": 7,
+      "framed_hex": "00000021010100000000"
+    },
+    {
+      "id": "len33-big-196",
+      "bits": "000000000000000000000000000000001",
+      "endian": "big",
+      "nbits": 33,
+      "packed_hex": "0000000080",
+      "padbits": 7,
+      "framed_hex": "00000021000000000080"
+    },
+    {
+      "id": "len33-little-197",
+      "bits": "000000000000000000000000000000001",
+      "endian": "little",
+      "nbits": 33,
+      "packed_hex": "0000000001",
+      "padbits": 7,
+      "framed_hex": "00000021010000000001"
+    },
+    {
+      "id": "len33-big-198",
+      "bits": "000000000000000010000000000000000",
+      "endian": "big",
+      "nbits": 33,
+      "packed_hex": "0000800000",
+      "padbits": 7,
+      "framed_hex": "00000021000000800000"
+    },
+    {
+      "id": "len33-little-199",
+      "bits": "000000000000000010000000000000000",
+      "endian": "little",
+      "nbits": 33,
+      "packed_hex": "0000010000",
+      "padbits": 7,
+      "framed_hex": "00000021010000010000"
+    },
+    {
+      "id": "len33-big-200",
+      "bits": "000000010100000000000000000000000",
+      "endian": "big",
+      "nbits": 33,
+      "packed_hex": "0140000000",
+      "padbits": 7,
+      "framed_hex": "00000021000140000000"
+    },
+    {
+      "id": "len33-little-201",
+      "bits": "000000010100000000000000000000000",
+      "endian": "little",
+      "nbits": 33,
+      "packed_hex": "8002000000",
+      "padbits": 7,
+      "framed_hex": "00000021018002000000"
+    },
+    {
+      "id": "len33-big-202",
+      "bits": "111111111101111111101111111111111",
+      "endian": "big",
+      "nbits": 33,
+      "packed_hex": "ffdfefff80",
+      "padbits": 7,
+      "framed_hex": "0000002100ffdfefff80"
+    },
+    {
+      "id": "len33-little-203",
+      "bits": "111111111101111111101111111111111",
+      "endian": "little",
+      "nbits": 33,
+      "packed_hex": "fffbf7ff01",
+      "padbits": 7,
+      "framed_hex": "0000002101fffbf7ff01"
+    },
+    {
+      "id": "len33-big-204",
+      "bits": "011110110001011001000011101011010",
+      "endian": "big",
+      "nbits": 33,
+      "packed_hex": "7b1643ad00",
+      "padbits": 7,
+      "framed_hex": "00000021007b1643ad00"
+    },
+    {
+      "id": "len33-little-205",
+      "bits": "011110110001011001000011101011010",
+      "endian": "little",
+      "nbits": 33,
+      "packed_hex": "de68c2b500",
+      "padbits": 7,
+      "framed_hex": "0000002101de68c2b500"
+    },
+    {
+      "id": "len63-big-206",
+      "bits": "000000000000000000000000000000000000000000000000000000000000000",
+      "endian": "big",
+      "nbits": 63,
+      "packed_hex": "0000000000000000",
+      "padbits": 1,
+      "framed_hex": "0000003f000000000000000000"
+    },
+    {
+      "id": "len63-little-207",
+      "bits": "000000000000000000000000000000000000000000000000000000000000000",
+      "endian": "little",
+      "nbits": 63,
+      "packed_hex": "0000000000000000",
+      "padbits": 1,
+      "framed_hex": "0000003f010000000000000000"
+    },
+    {
+      "id": "len63-big-208",
+      "bits": "111111111111111111111111111111111111111111111111111111111111111",
+      "endian": "big",
+      "nbits": 63,
+      "packed_hex": "fffffffffffffffe",
+      "padbits": 1,
+      "framed_hex": "0000003f00fffffffffffffffe"
+    },
+    {
+      "id": "len63-little-209",
+      "bits": "111111111111111111111111111111111111111111111111111111111111111",
+      "endian": "little",
+      "nbits": 63,
+      "packed_hex": "ffffffffffffff7f",
+      "padbits": 1,
+      "framed_hex": "0000003f01ffffffffffffff7f"
+    },
+    {
+      "id": "len63-big-210",
+      "bits": "101010101010101010101010101010101010101010101010101010101010101",
+      "endian": "big",
+      "nbits": 63,
+      "packed_hex": "aaaaaaaaaaaaaaaa",
+      "padbits": 1,
+      "framed_hex": "0000003f00aaaaaaaaaaaaaaaa"
+    },
+    {
+      "id": "len63-little-211",
+      "bits": "101010101010101010101010101010101010101010101010101010101010101",
+      "endian": "little",
+      "nbits": 63,
+      "packed_hex": "5555555555555555",
+      "padbits": 1,
+      "framed_hex": "0000003f015555555555555555"
+    },
+    {
+      "id": "len63-big-212",
+      "bits": "010101010101010101010101010101010101010101010101010101010101010",
+      "endian": "big",
+      "nbits": 63,
+      "packed_hex": "5555555555555554",
+      "padbits": 1,
+      "framed_hex": "0000003f005555555555555554"
+    },
+    {
+      "id": "len63-little-213",
+      "bits": "010101010101010101010101010101010101010101010101010101010101010",
+      "endian": "little",
+      "nbits": 63,
+      "packed_hex": "aaaaaaaaaaaaaa2a",
+      "padbits": 1,
+      "framed_hex": "0000003f01aaaaaaaaaaaaaa2a"
+    },
+    {
+      "id": "len63-big-214",
+      "bits": "100000000000000000000000000000000000000000000000000000000000000",
+      "endian": "big",
+      "nbits": 63,
+      "packed_hex": "8000000000000000",
+      "padbits": 1,
+      "framed_hex": "0000003f008000000000000000"
+    },
+    {
+      "id": "len63-little-215",
+      "bits": "100000000000000000000000000000000000000000000000000000000000000",
+      "endian": "little",
+      "nbits": 63,
+      "packed_hex": "0100000000000000",
+      "padbits": 1,
+      "framed_hex": "0000003f010100000000000000"
+    },
+    {
+      "id": "len63-big-216",
+      "bits": "000000000000000000000000000000000000000000000000000000000000001",
+      "endian": "big",
+      "nbits": 63,
+      "packed_hex": "0000000000000002",
+      "padbits": 1,
+      "framed_hex": "0000003f000000000000000002"
+    },
+    {
+      "id": "len63-little-217",
+      "bits": "000000000000000000000000000000000000000000000000000000000000001",
+      "endian": "little",
+      "nbits": 63,
+      "packed_hex": "0000000000000040",
+      "padbits": 1,
+      "framed_hex": "0000003f010000000000000040"
+    },
+    {
+      "id": "len63-big-218",
+      "bits": "000000000000000000000000000000010000000000000000000000000000000",
+      "endian": "big",
+      "nbits": 63,
+      "packed_hex": "0000000100000000",
+      "padbits": 1,
+      "framed_hex": "0000003f000000000100000000"
+    },
+    {
+      "id": "len63-little-219",
+      "bits": "000000000000000000000000000000010000000000000000000000000000000",
+      "endian": "little",
+      "nbits": 63,
+      "packed_hex": "0000008000000000",
+      "padbits": 1,
+      "framed_hex": "0000003f010000008000000000"
+    },
+    {
+      "id": "len63-big-220",
+      "bits": "000000000000000000000000000000000000000000000000001000000000100",
+      "endian": "big",
+      "nbits": 63,
+      "packed_hex": "0000000000002008",
+      "padbits": 1,
+      "framed_hex": "0000003f000000000000002008"
+    },
+    {
+      "id": "len63-little-221",
+      "bits": "000000000000000000000000000000000000000000000000001000000000100",
+      "endian": "little",
+      "nbits": 63,
+      "packed_hex": "0000000000000410",
+      "padbits": 1,
+      "framed_hex": "0000003f010000000000000410"
+    },
+    {
+      "id": "len63-big-222",
+      "bits": "111111111111111111111111111111111111111101111101111111111111111",
+      "endian": "big",
+      "nbits": 63,
+      "packed_hex": "ffffffffff7dfffe",
+      "padbits": 1,
+      "framed_hex": "0000003f00ffffffffff7dfffe"
+    },
+    {
+      "id": "len63-little-223",
+      "bits": "111111111111111111111111111111111111111101111101111111111111111",
+      "endian": "little",
+      "nbits": 63,
+      "packed_hex": "ffffffffffbeff7f",
+      "padbits": 1,
+      "framed_hex": "0000003f01ffffffffffbeff7f"
+    },
+    {
+      "id": "len63-big-224",
+      "bits": "101101101100001011111111001110110110001001100000000000001101111",
+      "endian": "big",
+      "nbits": 63,
+      "packed_hex": "b6c2ff3b626000de",
+      "padbits": 1,
+      "framed_hex": "0000003f00b6c2ff3b626000de"
+    },
+    {
+      "id": "len63-little-225",
+      "bits": "101101101100001011111111001110110110001001100000000000001101111",
+      "endian": "little",
+      "nbits": 63,
+      "packed_hex": "6d43ffdc4606007b",
+      "padbits": 1,
+      "framed_hex": "0000003f016d43ffdc4606007b"
+    },
+    {
+      "id": "len64-big-226",
+      "bits": "0000000000000000000000000000000000000000000000000000000000000000",
+      "endian": "big",
+      "nbits": 64,
+      "packed_hex": "0000000000000000",
+      "padbits": 0,
+      "framed_hex": "00000040000000000000000000"
+    },
+    {
+      "id": "len64-little-227",
+      "bits": "0000000000000000000000000000000000000000000000000000000000000000",
+      "endian": "little",
+      "nbits": 64,
+      "packed_hex": "0000000000000000",
+      "padbits": 0,
+      "framed_hex": "00000040010000000000000000"
+    },
+    {
+      "id": "len64-big-228",
+      "bits": "1111111111111111111111111111111111111111111111111111111111111111",
+      "endian": "big",
+      "nbits": 64,
+      "packed_hex": "ffffffffffffffff",
+      "padbits": 0,
+      "framed_hex": "0000004000ffffffffffffffff"
+    },
+    {
+      "id": "len64-little-229",
+      "bits": "1111111111111111111111111111111111111111111111111111111111111111",
+      "endian": "little",
+      "nbits": 64,
+      "packed_hex": "ffffffffffffffff",
+      "padbits": 0,
+      "framed_hex": "0000004001ffffffffffffffff"
+    },
+    {
+      "id": "len64-big-230",
+      "bits": "1010101010101010101010101010101010101010101010101010101010101010",
+      "endian": "big",
+      "nbits": 64,
+      "packed_hex": "aaaaaaaaaaaaaaaa",
+      "padbits": 0,
+      "framed_hex": "0000004000aaaaaaaaaaaaaaaa"
+    },
+    {
+      "id": "len64-little-231",
+      "bits": "1010101010101010101010101010101010101010101010101010101010101010",
+      "endian": "little",
+      "nbits": 64,
+      "packed_hex": "5555555555555555",
+      "padbits": 0,
+      "framed_hex": "00000040015555555555555555"
+    },
+    {
+      "id": "len64-big-232",
+      "bits": "0101010101010101010101010101010101010101010101010101010101010101",
+      "endian": "big",
+      "nbits": 64,
+      "packed_hex": "5555555555555555",
+      "padbits": 0,
+      "framed_hex": "00000040005555555555555555"
+    },
+    {
+      "id": "len64-little-233",
+      "bits": "0101010101010101010101010101010101010101010101010101010101010101",
+      "endian": "little",
+      "nbits": 64,
+      "packed_hex": "aaaaaaaaaaaaaaaa",
+      "padbits": 0,
+      "framed_hex": "0000004001aaaaaaaaaaaaaaaa"
+    },
+    {
+      "id": "len64-big-234",
+      "bits": "1000000000000000000000000000000000000000000000000000000000000000",
+      "endian": "big",
+      "nbits": 64,
+      "packed_hex": "8000000000000000",
+      "padbits": 0,
+      "framed_hex": "00000040008000000000000000"
+    },
+    {
+      "id": "len64-little-235",
+      "bits": "1000000000000000000000000000000000000000000000000000000000000000",
+      "endian": "little",
+      "nbits": 64,
+      "packed_hex": "0100000000000000",
+      "padbits": 0,
+      "framed_hex": "00000040010100000000000000"
+    },
+    {
+      "id": "len64-big-236",
+      "bits": "0000000000000000000000000000000000000000000000000000000000000001",
+      "endian": "big",
+      "nbits": 64,
+      "packed_hex": "0000000000000001",
+      "padbits": 0,
+      "framed_hex": "00000040000000000000000001"
+    },
+    {
+      "id": "len64-little-237",
+      "bits": "0000000000000000000000000000000000000000000000000000000000000001",
+      "endian": "little",
+      "nbits": 64,
+      "packed_hex": "0000000000000080",
+      "padbits": 0,
+      "framed_hex": "00000040010000000000000080"
+    },
+    {
+      "id": "len64-big-238",
+      "bits": "0000000000000000000000000000000010000000000000000000000000000000",
+      "endian": "big",
+      "nbits": 64,
+      "packed_hex": "0000000080000000",
+      "padbits": 0,
+      "framed_hex": "00000040000000000080000000"
+    },
+    {
+      "id": "len64-little-239",
+      "bits": "0000000000000000000000000000000010000000000000000000000000000000",
+      "endian": "little",
+      "nbits": 64,
+      "packed_hex": "0000000001000000",
+      "padbits": 0,
+      "framed_hex": "00000040010000000001000000"
+    },
+    {
+      "id": "len64-big-240",
+      "bits": "0000000000000000000000000001000000000010000000000000000000000000",
+      "endian": "big",
+      "nbits": 64,
+      "packed_hex": "0000001002000000",
+      "padbits": 0,
+      "framed_hex": "00000040000000001002000000"
+    },
+    {
+      "id": "len64-little-241",
+      "bits": "0000000000000000000000000001000000000010000000000000000000000000",
+      "endian": "little",
+      "nbits": 64,
+      "packed_hex": "0000000840000000",
+      "padbits": 0,
+      "framed_hex": "00000040010000000840000000"
+    },
+    {
+      "id": "len64-big-242",
+      "bits": "1111111111111111111111111111111111111110111111111111111111111101",
+      "endian": "big",
+      "nbits": 64,
+      "packed_hex": "fffffffffefffffd",
+      "padbits": 0,
+      "framed_hex": "0000004000fffffffffefffffd"
+    },
+    {
+      "id": "len64-little-243",
+      "bits": "1111111111111111111111111111111111111110111111111111111111111101",
+      "endian": "little",
+      "nbits": 64,
+      "packed_hex": "ffffffff7fffffbf",
+      "padbits": 0,
+      "framed_hex": "0000004001ffffffff7fffffbf"
+    },
+    {
+      "id": "len64-big-244",
+      "bits": "1010110010010011000100001110010001010010101111101111000111100011",
+      "endian": "big",
+      "nbits": 64,
+      "packed_hex": "ac9310e452bef1e3",
+      "padbits": 0,
+      "framed_hex": "0000004000ac9310e452bef1e3"
+    },
+    {
+      "id": "len64-little-245",
+      "bits": "1010110010010011000100001110010001010010101111101111000111100011",
+      "endian": "little",
+      "nbits": 64,
+      "packed_hex": "35c908274a7d8fc7",
+      "padbits": 0,
+      "framed_hex": "000000400135c908274a7d8fc7"
+    },
+    {
+      "id": "len65-big-246",
+      "bits": "00000000000000000000000000000000000000000000000000000000000000000",
+      "endian": "big",
+      "nbits": 65,
+      "packed_hex": "000000000000000000",
+      "padbits": 7,
+      "framed_hex": "0000004100000000000000000000"
+    },
+    {
+      "id": "len65-little-247",
+      "bits": "00000000000000000000000000000000000000000000000000000000000000000",
+      "endian": "little",
+      "nbits": 65,
+      "packed_hex": "000000000000000000",
+      "padbits": 7,
+      "framed_hex": "0000004101000000000000000000"
+    },
+    {
+      "id": "len65-big-248",
+      "bits": "11111111111111111111111111111111111111111111111111111111111111111",
+      "endian": "big",
+      "nbits": 65,
+      "packed_hex": "ffffffffffffffff80",
+      "padbits": 7,
+      "framed_hex": "0000004100ffffffffffffffff80"
+    },
+    {
+      "id": "len65-little-249",
+      "bits": "11111111111111111111111111111111111111111111111111111111111111111",
+      "endian": "little",
+      "nbits": 65,
+      "packed_hex": "ffffffffffffffff01",
+      "padbits": 7,
+      "framed_hex": "0000004101ffffffffffffffff01"
+    },
+    {
+      "id": "len65-big-250",
+      "bits": "10101010101010101010101010101010101010101010101010101010101010101",
+      "endian": "big",
+      "nbits": 65,
+      "packed_hex": "aaaaaaaaaaaaaaaa80",
+      "padbits": 7,
+      "framed_hex": "0000004100aaaaaaaaaaaaaaaa80"
+    },
+    {
+      "id": "len65-little-251",
+      "bits": "10101010101010101010101010101010101010101010101010101010101010101",
+      "endian": "little",
+      "nbits": 65,
+      "packed_hex": "555555555555555501",
+      "padbits": 7,
+      "framed_hex": "0000004101555555555555555501"
+    },
+    {
+      "id": "len65-big-252",
+      "bits": "01010101010101010101010101010101010101010101010101010101010101010",
+      "endian": "big",
+      "nbits": 65,
+      "packed_hex": "555555555555555500",
+      "padbits": 7,
+      "framed_hex": "0000004100555555555555555500"
+    },
+    {
+      "id": "len65-little-253",
+      "bits": "01010101010101010101010101010101010101010101010101010101010101010",
+      "endian": "little",
+      "nbits": 65,
+      "packed_hex": "aaaaaaaaaaaaaaaa00",
+      "padbits": 7,
+      "framed_hex": "0000004101aaaaaaaaaaaaaaaa00"
+    },
+    {
+      "id": "len65-big-254",
+      "bits": "10000000000000000000000000000000000000000000000000000000000000000",
+      "endian": "big",
+      "nbits": 65,
+      "packed_hex": "800000000000000000",
+      "padbits": 7,
+      "framed_hex": "0000004100800000000000000000"
+    },
+    {
+      "id": "len65-little-255",
+      "bits": "10000000000000000000000000000000000000000000000000000000000000000",
+      "endian": "little",
+      "nbits": 65,
+      "packed_hex": "010000000000000000",
+      "padbits": 7,
+      "framed_hex": "0000004101010000000000000000"
+    },
+    {
+      "id": "len65-big-256",
+      "bits": "00000000000000000000000000000000000000000000000000000000000000001",
+      "endian": "big",
+      "nbits": 65,
+      "packed_hex": "000000000000000080",
+      "padbits": 7,
+      "framed_hex": "0000004100000000000000000080"
+    },
+    {
+      "id": "len65-little-257",
+      "bits": "00000000000000000000000000000000000000000000000000000000000000001",
+      "endian": "little",
+      "nbits": 65,
+      "packed_hex": "000000000000000001",
+      "padbits": 7,
+      "framed_hex": "0000004101000000000000000001"
+    },
+    {
+      "id": "len65-big-258",
+      "bits": "00000000000000000000000000000000100000000000000000000000000000000",
+      "endian": "big",
+      "nbits": 65,
+      "packed_hex": "000000008000000000",
+      "padbits": 7,
+      "framed_hex": "0000004100000000008000000000"
+    },
+    {
+      "id": "len65-little-259",
+      "bits": "00000000000000000000000000000000100000000000000000000000000000000",
+      "endian": "little",
+      "nbits": 65,
+      "packed_hex": "000000000100000000",
+      "padbits": 7,
+      "framed_hex": "0000004101000000000100000000"
+    },
+    {
+      "id": "len65-big-260",
+      "bits": "00000000000000000010000000000000000000000000000000100000000000000",
+      "endian": "big",
+      "nbits": 65,
+      "packed_hex": "000020000000200000",
+      "padbits": 7,
+      "framed_hex": "0000004100000020000000200000"
+    },
+    {
+      "id": "len65-little-261",
+      "bits": "00000000000000000010000000000000000000000000000000100000000000000",
+      "endian": "little",
+      "nbits": 65,
+      "packed_hex": "000004000000040000",
+      "padbits": 7,
+      "framed_hex": "0000004101000004000000040000"
+    },
+    {
+      "id": "len65-big-262",
+      "bits": "11111111111111111110111111111111111111111111111111111111111111011",
+      "endian": "big",
+      "nbits": 65,
+      "packed_hex": "ffffeffffffffffd80",
+      "padbits": 7,
+      "framed_hex": "0000004100ffffeffffffffffd80"
+    },
+    {
+      "id": "len65-little-263",
+      "bits": "11111111111111111110111111111111111111111111111111111111111111011",
+      "endian": "little",
+      "nbits": 65,
+      "packed_hex": "fffff7ffffffffbf01",
+      "padbits": 7,
+      "framed_hex": "0000004101fffff7ffffffffbf01"
+    },
+    {
+      "id": "len65-big-264",
+      "bits": "10000010111001000010111100101101101111010101011010110010010000100",
+      "endian": "big",
+      "nbits": 65,
+      "packed_hex": "82e42f2dbd56b24200",
+      "padbits": 7,
+      "framed_hex": "000000410082e42f2dbd56b24200"
+    },
+    {
+      "id": "len65-little-265",
+      "bits": "10000010111001000010111100101101101111010101011010110010010000100",
+      "endian": "little",
+      "nbits": 65,
+      "packed_hex": "4127f4b4bd6a4d4200",
+      "padbits": 7,
+      "framed_hex": "00000041014127f4b4bd6a4d4200"
+    }
+  ]
+}

@@ -925,6 +925,31 @@ struct BitArray(Sized):
         self.buffer = fresh.buffer.copy()
         self.length = fresh.length
 
+    def tobytes(self) -> List[UInt8]:
+        """Packed byte copy of the logical bit sequence.
+
+        Endianness selects the within-byte bit order (established
+        packing); padding bits are zero by invariant. The result is an
+        independent owned copy — mutating it never affects `self`.
+        """
+        return self.buffer.copy()
+
+    def frombytes(mut self, data: List[UInt8]) raises:
+        """Append whole bytes as 8 logical bits each, read in this
+        endianness, preserving all existing bits.
+
+        Matches the reference append (never replace) semantics, from any
+        starting alignment. Non-byte-like inputs cannot reach this
+        overload in Mojo (static equivalent of the reference `TypeError`).
+        """
+        for i in range(len(data)):
+            var b = data[i]
+            for k in range(8):
+                if self.big_endian:
+                    self.append(Int((b >> UInt8(7 - k)) & UInt8(1)))
+                else:
+                    self.append(Int((b >> UInt8(k)) & UInt8(1)))
+
     def _find_first(
         self, pat: BitArray, lo: Int, hi: Int, right: Bool
     ) raises -> Int:
