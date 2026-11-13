@@ -497,6 +497,147 @@ struct BitArray(Sized):
         """Lexicographic greater-than-or-equal on logical bits."""
         return self._compare(other) >= 0
 
+    # -- Phase 1D1: bitwise operations and shifts ---------------------------
+
+    def _check_compat(self, other: BitArray) raises:
+        """Validate binary operands: equal length first (the reference
+        reports length mismatches before endianness mismatches), then
+        equal endianness."""
+        if self.length != other.length:
+            raise Error("bitarrays of equal length expected")
+        if self.big_endian != other.big_endian:
+            raise Error("bitarrays of equal bit-endianness expected")
+
+    def __and__(self, other: BitArray) raises -> BitArray:
+        """Logical AND. Pad bits are zero in both inputs by invariant;
+        the result is normalized anyway for defense in depth."""
+        self._check_compat(other)
+        var out = List[UInt8](capacity=len(self.buffer))
+        for i in range(len(self.buffer)):
+            out.append(self.buffer[i] & other.buffer[i])
+        var result = BitArray(out^, self.length, self.big_endian)
+        result.normalize_padding()
+        return result^
+
+    def __or__(self, other: BitArray) raises -> BitArray:
+        """Logical OR (same padding argument as `__and__`)."""
+        self._check_compat(other)
+        var out = List[UInt8](capacity=len(self.buffer))
+        for i in range(len(self.buffer)):
+            out.append(self.buffer[i] | other.buffer[i])
+        var result = BitArray(out^, self.length, self.big_endian)
+        result.normalize_padding()
+        return result^
+
+    def __xor__(self, other: BitArray) raises -> BitArray:
+        """Logical XOR (same padding argument as `__and__`)."""
+        self._check_compat(other)
+        var out = List[UInt8](capacity=len(self.buffer))
+        for i in range(len(self.buffer)):
+            out.append(self.buffer[i] ^ other.buffer[i])
+        var result = BitArray(out^, self.length, self.big_endian)
+        result.normalize_padding()
+        return result^
+
+    def __invert__(self) raises -> BitArray:
+        """Logical NOT. `~` flips pad bits too, so the result must be
+        re-normalized (not optional here, unlike AND/OR/XOR)."""
+        var out = List[UInt8](capacity=len(self.buffer))
+        for i in range(len(self.buffer)):
+            out.append(~self.buffer[i])
+        var result = BitArray(out^, self.length, self.big_endian)
+        result.normalize_padding()
+        return result^
+
+    def __iand__(mut self, other: BitArray) raises:
+        """In-place AND; validated before any mutation (atomic)."""
+        self._check_compat(other)
+        for i in range(len(self.buffer)):
+            self.buffer[i] = self.buffer[i] & other.buffer[i]
+        self.normalize_padding()
+
+    def __ior__(mut self, other: BitArray) raises:
+        """In-place OR; validated before any mutation (atomic)."""
+        self._check_compat(other)
+        for i in range(len(self.buffer)):
+            self.buffer[i] = self.buffer[i] | other.buffer[i]
+        self.normalize_padding()
+
+    def __ixor__(mut self, other: BitArray) raises:
+        """In-place XOR; validated before any mutation (atomic)."""
+        self._check_compat(other)
+        for i in range(len(self.buffer)):
+            self.buffer[i] = self.buffer[i] ^ other.buffer[i]
+        self.normalize_padding()
+
+    def _shifted(self, k: Int, left: Bool) raises -> BitArray:
+        """Length-preserving shift with zero fill, packed byte-at-a-time.
+
+        Left: `new[i] = old[i + k]`; right: `new[i] = old[i - k]`;
+        out-of-range reads are zero. Whole bytes shift by `k // 8` with
+        an intra-byte carry of `k % 8`; the carry direction follows the
+        endianness (big-endian logical order is MSB-first, little-endian
+        is LSB-first). All shift amounts are in 0..7 by construction
+        (`bi == 0` takes a branch, so no shift ever reaches the width),
+        and padding is re-normalized afterwards.
+        """
+        if k < 0:
+            raise Error("negative shift count")
+        var nb = len(self.buffer)
+        var out = List[UInt8](capacity=nb)
+        for _ in range(nb):
+            out.append(UInt8(0))
+        var bo = k // 8
+        var bi = k % 8
+        for j in range(nb):
+            var acc: UInt8 = UInt8(0)
+            if left:
+                var s = j + bo
+                if s < nb:
+                    if self.big_endian:
+                        acc = self.buffer[s] << UInt8(bi)
+                        if bi != 0 and s + 1 < nb:
+                            acc = acc | (self.buffer[s + 1] >> UInt8(8 - bi))
+                    else:
+                        acc = self.buffer[s] >> UInt8(bi)
+                        if bi != 0 and s + 1 < nb:
+                            acc = acc | (self.buffer[s + 1] << UInt8(8 - bi))
+            else:
+                var s = j - bo
+                if s >= 0:
+                    if self.big_endian:
+                        acc = self.buffer[s] >> UInt8(bi)
+                        if bi != 0 and s - 1 >= 0:
+                            acc = acc | (self.buffer[s - 1] << UInt8(8 - bi))
+                    else:
+                        acc = self.buffer[s] << UInt8(bi)
+                        if bi != 0 and s - 1 >= 0:
+                            acc = acc | (self.buffer[s - 1] >> UInt8(8 - bi))
+            out[j] = acc
+        var result = BitArray(out^, self.length, self.big_endian)
+        result.normalize_padding()
+        return result^
+
+    def __lshift__(self, k: Int) raises -> BitArray:
+        """Length-preserving left shift with zero fill."""
+        return self._shifted(k, True)
+
+    def __rshift__(self, k: Int) raises -> BitArray:
+        """Length-preserving right shift with zero fill."""
+        return self._shifted(k, False)
+
+    def __ilshift__(mut self, k: Int) raises:
+        """In-place left shift (length unchanged)."""
+        var fresh = self._shifted(k, True)
+        self.buffer = fresh.buffer.copy()
+        self.length = fresh.length
+
+    def __irshift__(mut self, k: Int) raises:
+        """In-place right shift (length unchanged)."""
+        var fresh = self._shifted(k, False)
+        self.buffer = fresh.buffer.copy()
+        self.length = fresh.length
+
 
 def _check_bit(v: Int) raises:
     """Reject anything but 0/1 (reference: `ValueError`)."""

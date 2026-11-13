@@ -71,6 +71,7 @@ MOJO_SUITES = [
             "test_storage",
             "test_sequence",
             "test_mutation",
+            "test_bitwise",
         ],
     },
 ]
