@@ -110,7 +110,7 @@ How it is verified:
 
 - **266 golden test vectors**, generated deterministically from the pinned reference and drift-checked on every run, covering lengths 0–65, zeros/ones/alternating/single-bit/sparse/dense/random patterns in both endiannesses.
 - **74 native Mojo tests and 391 Python compatibility tests**, covering every operation above, error behavior, malformed frames, and randomized differentials.
-- **No benchmarks yet** — no performance claims are made for this port.
+- **Three-way benchmarks** (pure Python vs C-backed `bitarray` vs native Mojo) over 8 sizes, 6 distributions, and both endiannesses: Mojo beats pure Python everywhere measured (about 2x–205x; only full-length shifts tie near 1x, where both sides just zero-fill) and matches or beats C at 64-bit sizes (1.0x–10.5x), but trails C at scale — roughly 6x on bitwise ops, 2x on `count`, and 10x–75x on shifts at 1 Mibit — where the C extension's word-parallel kernels win over the port's byte-serial loops. Full tables, methodology, and limitations: [Bitarray benchmarks](libraries/bitarray/benchmarks/README.md).
 - **Documented deviations**: `search()` returns a materialized `List[Int]` instead of a lazy iterator; Mojo uses its general `Error` type with reference message text; direct self-aliasing (`a &= a`) needs an explicit snapshot; there is no `del a[i]` syntax (`delete(i)` carries the semantics); the payload carries the logical length explicitly.
 
 Details: [library README](libraries/bitarray/README.md) · [phase 1E probes](libraries/bitarray/docs/phase1e-reference-probes.md) · [API scope](libraries/bitarray/docs/api-scope.md)
