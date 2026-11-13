@@ -60,6 +60,17 @@ MOJO_SUITES = [
             "test_generated_vectors",
         ],
     },
+    {
+        "tests_dir": "libraries/bitarray/tests/mojo",
+        "includes": [
+            "libraries/bitarray/mojo",
+            "libraries/bitarray/tests/mojo",
+        ],
+        "prefix": "bitarray_",
+        "tests": [
+            "test_storage",
+        ],
+    },
 ]
 
 

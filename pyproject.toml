@@ -72,4 +72,5 @@ dev = [
     "mojo>=1.2.0",
     "msgpack==1.2.4",
     "rapidfuzz==3.14.6",
+    "bitarray==3.12.3",
 ]
