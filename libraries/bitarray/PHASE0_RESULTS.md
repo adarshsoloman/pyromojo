@@ -29,7 +29,7 @@ begins — same convention as the Levenshtein port).
 complete storage model: `ob_item` byte buffer, `allocated` bytes,
 `nbits` bits, endianness flag, `BYTES(bits) = (bits + 7) >> 3`,
 `PADBITS = (8 - nbits % 8) % 8`, and per-bit access as
-`buf[i >> 8]` with mask `1 << (i % 8)` (little-endian) or
+`buf[i >> 3]` with mask `1 << (i % 8)` (little-endian) or
 `1 << (7 - (i % 8))` (big-endian).
 
 **License decision (recorded): PSF-2.0 is permissive — no copyleft
