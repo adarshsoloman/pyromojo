@@ -32,7 +32,7 @@ def bytes_for_bits(n: Int) -> Int:
     return full
 
 
-struct BitArray:
+struct BitArray(Sized):
     var buffer: List[UInt8]
     var length: Int
     var big_endian: Bool
@@ -52,13 +52,21 @@ struct BitArray:
         self.big_endian = big_endian
         self.normalize_padding()
 
-    def byte_count(self) -> Int:
-        """Physical storage in bytes, derived from the logical length."""
+    def __len__(self) -> Int:
+        """Logical length in bits (the `len()` builtin works via `Sized`)."""
+        return self.length
+
+    def nbytes(self) -> Int:
+        """Physical storage in bytes: `ceil(length / 8)` (reference name)."""
         return bytes_for_bits(self.length)
 
-    def pad_count(self) -> Int:
+    def padbits(self) -> Int:
         """Unused trailing bits in the final byte (0 when byte-aligned)."""
         return (8 - self.length % 8) % 8
+
+    def endian(self) -> String:
+        """Bit-endianness as a string, matching the reference attribute."""
+        return String("big") if self.big_endian else String("little")
 
     def _check_index(self, i: Int) raises:
         if i < 0 or i >= self.length:
@@ -95,7 +103,7 @@ struct BitArray:
 
     def normalize_padding(mut self):
         """Zero out any padding bits in the final byte (idempotent)."""
-        var pad = self.pad_count()
+        var pad = self.padbits()
         if pad == 0 or len(self.buffer) == 0:
             return
         var last = len(self.buffer) - 1
@@ -106,3 +114,274 @@ struct BitArray:
             # Valid bits are the low (8 - pad) bits; zero the top `pad`.
             var keep = UInt8(8 - pad)
             self.buffer[last] = self.buffer[last] & (UInt8(1) << keep) - UInt8(1)
+
+    # -- Phase 1B: construction from logical sequences -------------------
+
+    def __init__(out self, s: String, big_endian: Bool) raises:
+        """Build from a `'0'`/`'1'` string.
+
+        ASCII whitespace and `'_'` are skipped, matching the reference;
+        any other character raises. Endianness selects the physical
+        layout; the logical sequence is identical either way.
+        """
+        var bits = List[Int]()
+        var n = s.byte_length()
+        for i in range(n):
+            var ch = s[byte=i]
+            if ch == "0":
+                bits.append(0)
+            elif ch == "1":
+                bits.append(1)
+            elif ch == " " or ch == "\t" or ch == "\n" or ch == "\r" or ch == "\f" or ch == "\v" or ch == "_":
+                continue
+            else:
+                raise Error("expected '0' or '1' (or whitespace or underscore)")
+        var fresh = _pack_bits(bits, big_endian)
+        self.length = fresh.length
+        self.big_endian = fresh.big_endian
+        self.buffer = fresh.buffer.copy()
+
+    def __init__(out self, items: List[Int], big_endian: Bool) raises:
+        """Build from an iterable of bit values; only 0/1 are accepted.
+
+        Anything else raises (reference: `ValueError`); floats, strings
+        and other types cannot reach this overload in Mojo, which is the
+        static equivalent of the reference `TypeError`.
+        """
+        var bits = List[Int](capacity=len(items))
+        for i in range(len(items)):
+            var v = items[i]
+            if v != 0 and v != 1:
+                raise Error("bit must be 0 or 1, got " + String(v))
+            bits.append(v)
+        var fresh = _pack_bits(bits, big_endian)
+        self.length = fresh.length
+        self.big_endian = fresh.big_endian
+        self.buffer = fresh.buffer.copy()
+
+    def __init__(out self, items: List[Bool], big_endian: Bool) raises:
+        """Build from booleans (`True` -> 1, `False` -> 0)."""
+        var bits = List[Int](capacity=len(items))
+        for i in range(len(items)):
+            bits.append(1 if items[i] else 0)
+        var fresh = _pack_bits(bits, big_endian)
+        self.length = fresh.length
+        self.big_endian = fresh.big_endian
+        self.buffer = fresh.buffer.copy()
+
+    # -- Phase 1B: indexing and assignment --------------------------------
+
+    def _resolve_index(self, i: Int, what: String) raises -> Int:
+        """Translate a logical index (negatives allowed) to [0, length)."""
+        var j = i + self.length if i < 0 else i
+        if j < 0 or j >= self.length:
+            raise Error(what)
+        return j
+
+    def __getitem__(self, i: Int) raises -> Int:
+        """Logical bit value (0/1) at `i`; negatives count from the end."""
+        return Int(self.read_bit(self._resolve_index(i, "bitarray index out of range")))
+
+    def __setitem__(mut self, i: Int, v: Int) raises:
+        """Set logical bit `i` to 0/1; anything else raises."""
+        if v != 0 and v != 1:
+            raise Error("bit must be 0 or 1, got " + String(v))
+        var j = self._resolve_index(i, "bitarray assignment index out of range")
+        if v == 1:
+            self.set_bit(j)
+        else:
+            self.clear_bit(j)
+
+    def __setitem__(mut self, i: Int, v: Bool) raises:
+        """Set logical bit `i` from a boolean (`True` -> 1)."""
+        self.__setitem__(i, 1 if v else 0)
+
+    # -- Phase 1B: slicing -------------------------------------------------
+
+    def _slice_step(self, sl: Slice) raises -> Int:
+        var step = 1
+        if sl.step is not None:
+            step = sl.step.value()
+        if step == 0:
+            raise Error("slice step cannot be zero")
+        return step
+
+    def _slice_indices(self, sl: Slice) raises -> List[Int]:
+        """Logical indices selected by `sl`, in iteration order.
+
+        Python sequence semantics: omitted bounds default per step sign,
+        negatives are relative to the end, out-of-range bounds clamp.
+        """
+        var step = self._slice_step(sl)
+        var n = self.length
+        var out = List[Int]()
+        if step > 0:
+            var lo = 0
+            if sl.start is not None:
+                var s = sl.start.value()
+                lo = s + n if s < 0 else s
+                lo = max(0, min(n, lo))
+            var hi = n
+            if sl.end is not None:
+                var e = sl.end.value()
+                hi = e + n if e < 0 else e
+                hi = max(0, min(n, hi))
+            var i = lo
+            while i < hi:
+                out.append(i)
+                i += step
+        else:
+            var lo = n - 1
+            if sl.start is not None:
+                var s = sl.start.value()
+                lo = s + n if s < 0 else s
+                lo = max(-1, min(n - 1, lo))
+            var hi = -1
+            if sl.end is not None:
+                var e = sl.end.value()
+                hi = e + n if e < 0 else e
+                hi = max(-1, min(n - 1, hi))
+            var i = lo
+            while i > hi:
+                out.append(i)
+                i += step
+        return out^
+
+    def _simple_bounds(self, sl: Slice) raises -> Tuple[Int, Int]:
+        """Contiguous `[lo, hi)` span for a step-1 slice (insertion point
+        when empty). Only valid when the step is 1."""
+        var n = self.length
+        var lo = 0
+        if sl.start is not None:
+            var s = sl.start.value()
+            lo = s + n if s < 0 else s
+            lo = max(0, min(n, lo))
+        var hi = n
+        if sl.end is not None:
+            var e = sl.end.value()
+            hi = e + n if e < 0 else e
+            hi = max(0, min(n, hi))
+        return (lo, hi)
+
+    def __getitem__(self, sl: Slice) raises -> BitArray:
+        """Slice with Python semantics; result keeps this endianness and
+        owns independent storage."""
+        var idx = self._slice_indices(sl)
+        var bits = List[Int](capacity=len(idx))
+        for i in range(len(idx)):
+            bits.append(Int(self.read_bit(idx[i])))
+        return _pack_bits(bits, self.big_endian)
+
+    def __setitem__(mut self, sl: Slice, v: BitArray) raises:
+        """Slice assignment. Step-1 slices resize (any replacement length
+        is legal, like `list`); stepped slices require an exact length
+        match and fail atomically.
+
+        Note: the value parameter must be named `v` — Mojo resolves the
+        `a[sl] = x` syntax against `__setitem__` overloads by that name
+        (verified by probe: any other name fails to resolve).
+        """
+        var step = self._slice_step(sl)
+        var idx = self._slice_indices(sl)
+        if step == 1:
+            var bounds = self._simple_bounds(sl)
+            var lo = bounds[0]
+            var hi = bounds[1]
+            var combo = List[Int](capacity=lo + len(v) + (self.length - hi))
+            for i in range(lo):
+                combo.append(Int(self.read_bit(i)))
+            for i in range(len(v)):
+                combo.append(Int(v.read_bit(i)))
+            for i in range(hi, self.length):
+                combo.append(Int(self.read_bit(i)))
+            var fresh = _pack_bits(combo, self.big_endian)
+            self.buffer = fresh.buffer.copy()
+            self.length = fresh.length
+        else:
+            if len(v) != len(idx):
+                raise Error(
+                    "attempt to assign sequence of size "
+                    + String(len(v))
+                    + " to extended slice of size "
+                    + String(len(idx))
+                )
+            # Snapshot first: `v` may alias `self`.
+            var rep = List[Int](capacity=len(idx))
+            for k in range(len(idx)):
+                rep.append(Int(v.read_bit(k)))
+            for k in range(len(idx)):
+                if rep[k] == 1:
+                    self.set_bit(idx[k])
+                else:
+                    self.clear_bit(idx[k])
+
+    def __setitem__(mut self, sl: Slice, v: Int) raises:
+        """Broadcast a single 0/1 across the selected positions (never
+        resizes; an empty selection is a no-op). Validated first, so a
+        bad value leaves the array untouched."""
+        if v != 0 and v != 1:
+            raise Error("bit must be 0 or 1, got " + String(v))
+        var idx = self._slice_indices(sl)
+        for k in range(len(idx)):
+            if v == 1:
+                self.set_bit(idx[k])
+            else:
+                self.clear_bit(idx[k])
+
+    def __setitem__(mut self, sl: Slice, v: Bool) raises:
+        """Broadcast a boolean across the selected positions."""
+        self.__setitem__(sl, 1 if v else 0)
+
+    # -- Phase 1B: conversion and iteration --------------------------------
+
+    def to01(self) raises -> String:
+        """Logical bit sequence as a `'0'`/`'1'` string (padding ignored)."""
+        var out = String("")
+        for i in range(self.length):
+            out += String("1") if self.read_bit(i) == UInt8(1) else String("0")
+        return out^
+
+    def tolist(self) raises -> List[Int]:
+        """Logical bits as a list of ints, matching the reference."""
+        var out = List[Int](capacity=self.length)
+        for i in range(self.length):
+            out.append(Int(self.read_bit(i)))
+        return out^
+
+    def __iter__(self) raises -> BitArrayIter:
+        """Logical iteration in sequence order (snapshot semantics)."""
+        return BitArrayIter(self)
+
+
+def _pack_bits(bits: List[Int], big_endian: Bool) raises -> BitArray:
+    """Pack caller-validated 0/1 values into an owned `BitArray`."""
+    var n = len(bits)
+    var buf = List[UInt8](capacity=bytes_for_bits(n))
+    for _ in range(bytes_for_bits(n)):
+        buf.append(UInt8(0))
+    var out = BitArray(buf^, n, big_endian)
+    for i in range(n):
+        if bits[i] == 1:
+            out.set_bit(i)
+    return out^
+
+
+struct BitArrayIter(Sized):
+    """Snapshot iterator over logical bits (yields `Int` 0/1)."""
+
+    var snap: BitArray
+    var pos: Int
+
+    def __init__(out self, src: BitArray) raises:
+        self.snap = BitArray(src.buffer.copy(), src.length, src.big_endian)
+        self.pos = 0
+
+    def __next__(mut self) raises -> Int:
+        if self.pos >= len(self.snap):
+            raise Error("iterator exhausted")
+        var v = Int(self.snap.read_bit(self.pos))
+        self.pos += 1
+        return v
+
+    def __len__(self) -> Int:
+        return len(self.snap) - self.pos

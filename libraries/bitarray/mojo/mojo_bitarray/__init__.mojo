@@ -1,3 +1,9 @@
-"""Native Mojo bitarray: packed-bit storage (Phase 1A: storage only)."""
+"""Native Mojo bitarray: packed-bit storage (1A) + sequence layer (1B)."""
 
-from mojo_bitarray.storage import BitArray, ENDIAN_BIG, ENDIAN_LITTLE, bytes_for_bits
+from mojo_bitarray.storage import (
+    BitArray,
+    BitArrayIter,
+    ENDIAN_BIG,
+    ENDIAN_LITTLE,
+    bytes_for_bits,
+)

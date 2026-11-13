@@ -26,7 +26,7 @@ def u8list2(a: UInt8, b: UInt8) -> List[UInt8]:
     return out^
 
 
-def test_byte_counts() raises:
+def test_nbytes() raises:
     assert_equal(bytes_for_bits(0), 0)
     assert_equal(bytes_for_bits(1), 1)
     assert_equal(bytes_for_bits(7), 1)
@@ -44,8 +44,8 @@ def test_empty_has_no_storage() raises:
     var a = BitArray(List[UInt8](), 0, ENDIAN_BIG)
     assert_equal(len(a.buffer), 0)
     assert_equal(a.length, 0)
-    assert_equal(a.byte_count(), 0)
-    assert_equal(a.pad_count(), 0)
+    assert_equal(a.nbytes(), 0)
+    assert_equal(a.padbits(), 0)
 
 
 def test_constructor_rejects_bad_shapes() raises:
@@ -127,8 +127,8 @@ def test_padding_bits_stay_zero() raises:
     var bits_le = BitArray(dirty_le^, 9, ENDIAN_LITTLE)
     assert_equal(bits_le.buffer[1], UInt8(0x01))
     # Padding introspection matches the reference formula.
-    assert_equal(BitArray(u8list(UInt8(0)), 1, ENDIAN_BIG).pad_count(), 7)
-    assert_equal(BitArray(u8list(UInt8(0)), 8, ENDIAN_BIG).pad_count(), 0)
+    assert_equal(BitArray(u8list(UInt8(0)), 1, ENDIAN_BIG).padbits(), 7)
+    assert_equal(BitArray(u8list(UInt8(0)), 8, ENDIAN_BIG).padbits(), 0)
 
 
 def test_copies_do_not_alias() raises:

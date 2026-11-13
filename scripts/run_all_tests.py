@@ -69,6 +69,7 @@ MOJO_SUITES = [
         "prefix": "bitarray_",
         "tests": [
             "test_storage",
+            "test_sequence",
         ],
     },
 ]
