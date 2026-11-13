@@ -1,0 +1,7 @@
+PASS List grows past initial capacity, indexing is exact
+PASS copied buffer is independent of the original
+PASS sub-range copy matches slice semantics
+PASS pack/unpack round-trips lengths 0..200 incl. partial bytes
+PASS imported bytes are owned (mutating copy is safe)
+PASS capacity does not affect length
+storage: all checks passed

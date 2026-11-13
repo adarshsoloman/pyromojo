@@ -1,0 +1,7 @@
+PASS packing matches reference bytes (big and little)
+PASS boundary lengths 0-8 packed like the reference
+PASS 63/64/65-bit lengths allocate ceil(n/8) bytes
+PASS bit extraction round-trips all positions (both endians)
+PASS set/clear preserves neighbouring bits
+PASS partial-byte pad region stays zero
+packing: all checks passed

@@ -1,0 +1,7 @@
+PASS and/or/xor/not match C truth tables
+PASS guarded shifts: sub-width exact, width+ saturates to 0
+INFO runtime 1<<64 folds to: 1 (target-defined; must never be relied on)
+PASS SWAR popcount matches nibble-table popcount
+PASS masks cover 0..64+ without width-edge shifts
+PASS multi-word popcount composes across words
+words: all checks passed

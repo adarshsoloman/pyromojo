@@ -1,0 +1,216 @@
+
+== environment ==
+python: 3.13.14 (cpython)
+bitarray.__version__: 3.12.3
+distribution version: 3.12.3
+bitarray module file: /media/sunny/New Volume1/ADARSH/7_Programming Files/4. my_projects/1_pyromojo/.venv/lib/python3.13/site-packages/bitarray/__init__.py
+default endian: big
+
+== endianness: logical bits vs physical bytes ==
+big: to01=11001010 tobytes=b'\xca'
+little: to01=11001010 tobytes=b'S'
+'1'/big: bytes=b'\x80' buffer_info=BufferInfo(address=125998451427744, nbytes=1, endian='big', padbits=7, alloc=1, readonly=False, imported=False, exports=0)
+'1'/little: bytes=b'\x01' buffer_info=BufferInfo(address=125998451427712, nbytes=1, endian='little', padbits=7, alloc=1, readonly=False, imported=False, exports=0)
+'10'/big: bytes=b'\x80' buffer_info=BufferInfo(address=125998451427744, nbytes=1, endian='big', padbits=6, alloc=1, readonly=False, imported=False, exports=0)
+'10'/little: bytes=b'\x01' buffer_info=BufferInfo(address=125998451427712, nbytes=1, endian='little', padbits=6, alloc=1, readonly=False, imported=False, exports=0)
+big==little (same logical bits): True
+big.tobytes vs little.tobytes: b'\xa0' vs b'\x05'
+big & little: RAISED ValueError: bitarrays of equal bit-endianness expected
+big == bytes: False
+big == bytearray of tobytes: True
+
+== memory representation and padding ==
+''/big: len=0 nbytes=0 padbits=0 tobytes=b''
+''/little: len=0 nbytes=0 padbits=0 tobytes=b''
+'1'/big: len=1 nbytes=1 padbits=7 tobytes=b'\x80'
+'1'/little: len=1 nbytes=1 padbits=7 tobytes=b'\x01'
+'1010101'/big: len=7 nbytes=1 padbits=1 tobytes=b'\xaa'
+'1010101'/little: len=7 nbytes=1 padbits=1 tobytes=b'U'
+'10101010'/big: len=8 nbytes=1 padbits=0 tobytes=b'\xaa'
+'10101010'/little: len=8 nbytes=1 padbits=0 tobytes=b'U'
+'101010101'/big: len=9 nbytes=2 padbits=7 tobytes=b'\xaa\x80'
+'101010101'/little: len=9 nbytes=2 padbits=7 tobytes=b'U\x01'
+empty buffer_info: BufferInfo(address=0, nbytes=0, endian='big', padbits=0, alloc=0, readonly=False, imported=False, exports=0)
+8-bit buffer_info: BufferInfo(address=125998451427712, nbytes=1, endian='big', padbits=0, alloc=1, readonly=False, imported=False, exports=0)
+9-bit buffer_info: BufferInfo(address=125998451427712, nbytes=2, endian='big', padbits=7, alloc=2, readonly=False, imported=False, exports=0)
+
+== tobytes/frombytes roundtrip and padding ==
+0b/big: roundtrip_equal=True restored_len=0
+0b/little: roundtrip_equal=True restored_len=0
+1b/big: roundtrip_equal=True restored_len=8
+1b/little: roundtrip_equal=True restored_len=8
+7b/big: roundtrip_equal=True restored_len=8
+7b/little: roundtrip_equal=True restored_len=8
+8b/big: roundtrip_equal=True restored_len=8
+8b/little: roundtrip_equal=True restored_len=8
+9b/big: roundtrip_equal=True restored_len=16
+9b/little: roundtrip_equal=True restored_len=16
+64b/big: roundtrip_equal=True restored_len=64
+64b/little: roundtrip_equal=True restored_len=64
+65b/big: roundtrip_equal=True restored_len=72
+65b/little: roundtrip_equal=True restored_len=72
+
+== core operations: indexing and assignment ==
+bits[0]=1 bits[-1]=0 bits[2:4]='11'
+index out of range: RAISED IndexError: bitarray index out of range
+negative out of range: RAISED IndexError: bitarray index out of range
+after item assignment: 00111
+assign bad value: RAISED ValueError: bit must be 0 or 1, got 2
+assign bad type: RAISED TypeError: 'str' object cannot be interpreted as an integer
+after slice assignment: 00011
+slice assign resizes shorter: 'ok'
+after short slice assign: '11' (resized like list)
+after long slice assign: '111101' (resized like list)
+step slice: '001'
+reversed slice: '11000'
+empty slice: ''
+
+== core operations: mutation ==
+append: 1010
+extend str: 1010110
+extend list: 101011010
+extend bitarray: 10101101011
+extend bad type: RAISED TypeError: 'int' object is not iterable
+insert at 0: 110101101011
+insert past end appends: 1101011010110
+insert bad index type: RAISED TypeError: 'str' object cannot be interpreted as an integer
+pop default: 1
+pop index 0: 1
+pop empty: RAISED IndexError: pop from empty bitarray
+remove first 0: 111
+remove missing: RAISED ValueError: 0 not in bitarray
+reverse odd: 101
+reverse even: 0101
+setall 0: 000
+setall True: 111
+setall bad: RAISED ValueError: bit must be 0 or 1, got 2
+del index: 11
+del slice: 11
+concat +=: 10101
+concat +: 1001
+repeat *: 101010
+repeat 0: 
+concat str of bits works: '1001'
+concat int errors: RAISED TypeError: 'int' object is not iterable
+
+== count, search, iteration, comparison ==
+count()=4 count(0)=2 count(1, 2, 4)=2
+count bad value: RAISED ValueError: bit must be 0 or 1, got 2
+find 1: 1 (expect 1)
+find missing: -1
+index 1: 0
+search: [0, 3]
+all: True False
+any: False True
+iter: [1, 0, 1]
+tolist: [1, 0, 1]
+to01: '101'
+eq: True
+ne: True
+lt: True
+lt prefix: True
+endian in comparison: True
+
+== bitwise operations ==
+and: 1000
+or: 1110
+xor: 0110
+invert: 0011
+iand: 1000
+ior: 1110
+ixor: 0110
+invert(): 0011
+invert(1): 0111
+empty and: ''
+empty invert: ''
+and unequal lengths: RAISED ValueError: bitarrays of equal length expected
+or unequal lengths: RAISED ValueError: bitarrays of equal length expected
+xor unequal lengths: RAISED ValueError: bitarrays of equal length expected
+and non-bitarray: RAISED TypeError: unsupported operand type(s) for &: 'bitarray.bitarray' and 'int'
+
+== shifts ==
+'10110011' << 0: '10110011'
+'10110011' >> 0: '10110011'
+'10110011' << 1: '01100110'
+'10110011' >> 1: '01011001'
+'10110011' << 7: '10000000'
+'10110011' >> 7: '00000001'
+'10110011' << 8: '00000000'
+'10110011' >> 8: '00000000'
+'10110011' << 9: '00000000'
+'10110011' >> 9: '00000000'
+'10110011' << 100: '00000000'
+'10110011' >> 100: '00000000'
+shift negative: RAISED ValueError: negative shift count
+shift non-int: RAISED TypeError: unsupported operand type(s) for <<: 'bitarray.bitarray' and 'float'
+ishift left: 00
+ishift right: 00
+empty shift: ''
+big-int shift: 10 bits long
+
+== copy, sort, rotate, pack, unpack, fill ==
+copy equal independent: True
+fill: 5
+fill pads to byte: 8 (extend does not auto-fill)
+sort mixed: [1, 0, 1, 1, 0]
+sort asc: 00111
+sort desc: 11100
+rotate +2: 11100
+rotate -2: 01110
+pack maps each byte to one bit: '011' (0x00->0, else 1)
+pack non-bytes: RAISED TypeError: a bytes-like object is required, not 'str'
+unpack default map: b'\x01\x00\x01'
+unpack custom map: b'BAB'
+unpack bad mapping: RAISED TypeError: unpack() argument 1 must be a byte string of length 1, not str
+tolist roundtrip: 101
+
+== frozenbitarray ==
+type: frozenbitarray hashable: True
+frozen == mutable equal: True
+frozen append: RAISED TypeError: frozenbitarray is immutable
+frozen item assign: RAISED TypeError: frozenbitarray is immutable
+frozen ops ok: count=2 to01='101'
+
+== constructor forms and errors ==
+from str: '101'
+from list: '101'
+from tuple: '10'
+from int repeat: '00000'
+bad char: RAISED ValueError: expected '0' or '1' (or whitespace or underscore), got '2' (0x32)
+from float: RAISED TypeError: 'float' object is not iterable
+from dict: RAISED TypeError: 'str' object cannot be interpreted as an integer
+endian kwarg only: 'little'
+bad endian: RAISED ValueError: bit-endianness must be either 'little' or 'big', not 'middle'
+default endian: 'big'
+buffer str: RAISED TypeError: a bytes-like object is required, not 'str'
+buffer bytes: '10100000'
+buffer bytearray: '10100000'
+buffer memoryview: '10100000'
+
+== file and buffer interop ==
+tofile bytes: b'\xaa\x80'
+fromfile len: 16 to01: '1010101010000000'
+real file roundtrip equal (trimmed): True
+bytereverse in place: '00000001'
+bytereverse keeps len: 3
+buffer protocol export: b'\xaa'
+buffer protocol import: '11110000'
+clear: 'cleared'
+after clear len: 0 nbytes: 0
+
+== util and bitfields modules ==
+util names: ['any_and', 'ba2base', 'ba2hex', 'ba2int', 'base2ba', 'bitarray', 'bits2bytes', 'byteswap', 'canonical_decode', 'canonical_huffman', 'correspond_all', 'count_and', 'count_n', 'count_or', 'count_xor', 'deserialize', 'frozenbitarray', 'gen_primes', 'hex2ba', 'huffman_code', 'int2ba', 'intervals', 'itertools', 'math', 'ones', 'operator', 'os', 'parity', 'pprint', 'random', 'random_k', 'random_p', 'rl_decode', 'rl_encode', 'sc_decode', 'sc_encode', 'sc_stat', 'serialize', 'strip', 'subset', 'sum_indices', 'sys', 'urandom', 'vl_decode', 'vl_encode', 'xor_indices', 'zeros']
+int2ba/ba2int roundtrip: 10
+hex2ba/ba2hex: 'ff'
+zeros/ones: '00000' '111'
+urandom len: 16
+serialize/deserialize: '10101'
+strip right/trailing: '000101'
+strip left/leading: '101000'
+subset bool: True
+parity: 0
+count_and: 1
+bitfields struct width: 8 packed: '10110111'
+bitfields unpack: (5, -3)
+bitfields module fns: '101011110' (10, -2)
+calcsize u3s5: 8

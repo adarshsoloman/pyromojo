@@ -1,0 +1,106 @@
+----------------------------------------------------------------------
+Ran 723 tests in 0.307s
+
+OK (skipped=5)
+
+== exports and defaults ==
+__all__: ['bitarray', 'frozenbitarray', 'decodetree', 'decodeiterator', 'bits2bytes']
+default endian kwarg omitted: 'big'
+frozen default endian: 'big'
+
+== cross-endianness rules ==
+mixed-endian eq: True
+mixed-endian ne: False
+mixed-endian lt: False
+mixed-endian concat: '101101'
+mixed-endian iadd: (bitarray('101101'), '101101')
+mixed-endian and: RAISED ValueError: bitarrays of equal bit-endianness expected
+mixed-endian or: RAISED ValueError: bitarrays of equal bit-endianness expected
+mixed-endian xor: RAISED ValueError: bitarrays of equal bit-endianness expected
+mixed-endian extend: (None, '101101')
+compare big vs str: False
+compare big vs int: False
+lt vs str: RAISED TypeError: '<' not supported between instances of 'bitarray.bitarray' and 'str'
+hash mutable: RAISED TypeError: unhashable type: 'bitarray.bitarray'
+frozen hash stable: True
+
+== truthiness and emptiness ==
+bool(empty)=False bool(all-zero)=True
+bool(nonempty)=True len(empty)=0
+
+== count variants ==
+count()=5 count(1)=5 count(True)=5
+count(0)=3 count(False)=3
+count(1,2)=4 count(1,2,6)=3
+count(1,0,-8)=0
+count step 0: RAISED ValueError: step cannot be zero
+count bad type: RAISED TypeError: sub_bitarray must be bitarray or int, not 'str'
+
+== find/index/search bounds ==
+find sub: 2
+find sub start=3: 5
+find sub start beyond: -1
+find empty pattern: 0
+find single int: 2
+find bad pattern: RAISED TypeError: sub_bitarray must be bitarray or int, not 'str'
+index stop hit: 2
+index stop miss: RAISED ValueError: 1 not in bitarray
+index missing in range: RAISED ValueError: 1 not in bitarray
+search all: [0, 3, 6]
+search start: [3, 6]
+index value 0: 1
+
+== extend/concat aliasing and types ==
+extend self: 1010
+mul: 101010
+mul negative: bitarray()
+imul 0: '' len=0
+iadd str: 101
+add str: RAISED TypeError: 'int' object is not iterable
+contains 1: True
+contains sub-bitarray: True
+contains str: RAISED TypeError: sub_bitarray must be bitarray or int, not 'str'
+
+== insert/pop/remove/rotate edges ==
+insert into empty: 1
+insert negative index: 1001
+pop negative: 1
+pop out of range: RAISED IndexError: pop index out of range
+remove returns: None
+rotate 0: 101
+rotate huge: 110
+rotate empty: ''
+clear returns: None
+
+== copy semantics and readonly ==
+copy independent: original=101 copy=001
+deepcopy: 101
+explicit copy ctor: 101
+readonly from bytes buffer: True
+readonly append: RAISED TypeError: cannot modify read-only memory
+readonly setitem: RAISED TypeError: cannot modify read-only memory
+readonly read ok: 10100000 len=8
+buffer_info readonly: True
+
+== shifts preserve length (bits fall off, zeros fill in) ==
+length preserved for len 8
+length preserved for len 64
+length preserved for len 65
+length preserved for len 300
+shift by len: '000'
+right shift by len: '000'
+huge shift all zeros: True
+big-endian shift left 2: 100
+little-endian shift left 2: 100
+
+== sort details ==
+sort empty: []
+sort single: [0]
+no byteswap method (util only): False
+util.byteswap in place: None -> '10101010'
+
+== __all__ and module surface ==
+module __all__: ['bitarray', 'frozenbitarray', 'decodetree', 'decodeiterator', 'bits2bytes']
+has BufferInfo: True
+has test: True
+call test(): <unittest.runner.TextTestResult run=723 errors=0 failures=0>
