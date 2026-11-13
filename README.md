@@ -11,7 +11,7 @@
   </p>
 </p>
 
-> **Status:** Two native ports are complete and tagged — **MessagePack `v0.1.0`** and **Levenshtein `v0.1.0`** (tagged `levenshtein-v0.1.0`). CI runs lint, formatting, and the Python test suite on every push.
+> **Status:** Two native ports are complete and tagged — **MessagePack `v0.1.0`** and **Levenshtein `v0.1.0`** (tagged `levenshtein-v0.1.0`) — and the **Bitarray** v0.1 implementation is complete through Phase 1E (untagged; release preparation is separate). CI runs lint, formatting, and the Python test suite on every push.
 
 ## Project overview
 
@@ -33,11 +33,11 @@ A port is considered complete when it reproduces the documented compatibility su
 |---|---|---|---|
 | [MessagePack](libraries/msgpack/) | Complete | `v0.1.0` | Native Mojo binary serialization codec |
 | [Levenshtein](libraries/levenshtein/) | Complete | `v0.1.0` | Native Mojo string distance and similarity algorithms |
-| [Bitarray](libraries/bitarray/) | Planned | — | Compact bit-level data structures and operations |
+| [Bitarray](libraries/bitarray/) | Implementation complete (Phases 1A–1E, untagged) | — | Native Mojo packed-bit arrays |
 | [Audioop](libraries/audioop/) | Planned | — | Digital audio processing |
 | [Resampy](libraries/resampy/) | Planned | — | Audio resampling |
 
-MessagePack was the first finished port and remains the reference project for the full workflow. Levenshtein is the second finished port. Bitarray, audioop, and resampy are scoped directories only — no implementation work has begun on them.
+MessagePack was the first finished port and remains the reference project for the full workflow. Levenshtein is the second finished port. Bitarray is the third port with its v0.1 implementation complete (release preparation is separate). Audioop and resampy remain scoped directories only — no implementation work has begun on them.
 
 ## MessagePack spotlight
 
@@ -77,6 +77,43 @@ How it is verified:
 Honest results, in brief: affix trimming makes identical 2048-char inputs ~28x faster than the untrimmed baseline; the blocked bit-parallel LCS makes ratio up to ~45x faster on random content and collapses identical inputs ~1000x (16.7 ms to ~15 µs); materialization-free hamming is ~2–5x faster on every measured workload. Native Mojo remains slower than optimized C++ on the reported workloads (roughly 2–9x on distance, up to ~250x on ratio at large sizes) — these are measured gaps with identified causes, not universal claims. Full tables, methodology, and limitations: [benchmark release `levenshtein-v0.1`](docs/benchmarks/releases/levenshtein-v0.1.md).
 
 Details: [library README](libraries/levenshtein/README.md) · [reference audit](libraries/levenshtein/docs/reference-audit.md) · [benchmark design](libraries/levenshtein/docs/benchmark-design.md)
+
+## Bitarray spotlight
+
+The third port: native Mojo packed-bit arrays, implementation-complete through Phase 1E (v0.1.0 release preparation is separate and untagged). The Python reference is [`bitarray==3.12.3`](https://github.com/ilanschnell/bitarray) (PSF-2.0).
+
+Public operations (mutable bit arrays, packed `UInt8` storage, big/little-endian bit ordering):
+
+- Construction from bit strings, int/bool iterables, and packed bytes; length and layout introspection (`len`, `nbytes`, `padbits`, `endian`).
+- Indexing, assignment (including negative indices and resizing slices), iteration, `to01()`/`tolist()`.
+- `append`, `extend`, `insert`, `delete`, concatenation (`+`/`+=`), and lexicographic comparison.
+- Bitwise AND, OR, XOR, and NOT with in-place forms (equal endianness, equal lengths required) and length-preserving shifts.
+- `count` (bit values and sub-patterns, bounds, steps), overlapping `search` with `right=`, and `find`/`index` with `-1`/`ValueError` miss behavior.
+- `reverse`, `copy`, `fill` (zero-pad to a multiple, returns pad count), `rotate`, and byte conversion (`tobytes`/`frombytes`).
+
+Deferred, as in the frozen scope: `frozenbitarray`, buffer-protocol interoperability, file operations, `pack()`/`unpack` utilities, sorting, `bitarray.util`, `bitarray.bitfields`, and prefix-code machinery.
+
+Serialization preserves the logical bit length explicitly — it is never inferred from packed bytes:
+
+```text
+uint32_be nbits | uint8 endian_id | packed bytes
+```
+
+`endian_id` is `0x00` (big) or `0x01` (little); exactly `ceil(nbits/8)` data bytes follow with zeroed padding, and the decoder rejects anything else. A length-prefixed batch CLI (`0x01` ping, `0x02` echo, `0x10` decode, `0x11` encode) exposes the same framing as the other ports:
+
+```bash
+.venv/bin/mojo build libraries/bitarray/mojo/cli.mojo \
+    -I libraries/bitarray/mojo -o build/bitarray_cli
+```
+
+How it is verified:
+
+- **266 golden test vectors**, generated deterministically from the pinned reference and drift-checked on every run, covering lengths 0–65, zeros/ones/alternating/single-bit/sparse/dense/random patterns in both endiannesses.
+- **74 native Mojo tests and 391 Python compatibility tests**, covering every operation above, error behavior, malformed frames, and randomized differentials.
+- **No benchmarks yet** — no performance claims are made for this port.
+- **Documented deviations**: `search()` returns a materialized `List[Int]` instead of a lazy iterator; Mojo uses its general `Error` type with reference message text; direct self-aliasing (`a &= a`) needs an explicit snapshot; there is no `del a[i]` syntax (`delete(i)` carries the semantics); the payload carries the logical length explicitly.
+
+Details: [library README](libraries/bitarray/README.md) · [phase 1E probes](libraries/bitarray/docs/phase1e-reference-probes.md) · [API scope](libraries/bitarray/docs/api-scope.md)
 
 ## Engineering methodology
 
@@ -122,7 +159,7 @@ flowchart LR
     class native,release out
 ```
 
-- **Pinned references.** Each port records the exact upstream version it is verified against (`msgpack==1.2.4`, `rapidfuzz==3.14.6`); upstream source is never vendored.
+- **Pinned references.** Each port records the exact upstream version it is verified against (`msgpack==1.2.4`, `rapidfuzz==3.14.6`, `bitarray==3.12.3`); upstream source is never vendored.
 - **Golden vectors.** Deterministic, human-inspectable, schema-validated inputs and expected outputs that both implementations must satisfy. Drift fails the suite.
 - **Cross-language correctness.** Python compatibility tests compare Mojo output against the reference, including error behaviour: malformed input must fail predictably, never silently.
 - **Native tests.** Mojo unit tests cover each type family, boundary values, nesting and depth limits, and invalid inputs.
@@ -150,7 +187,13 @@ pyromojo/
 │   │   ├── experiments/      # toolchain probes and raw outputs
 │   │   └── PHASE*.md         # per-phase reports
 │   ├── audioop/              # planned (scope stub)
-│   ├── bitarray/             # planned (scope stub, next port)
+│   ├── bitarray/             # v0.1 implemented (Phases 1A–1E, untagged)
+│   │   ├── mojo/             # native bitarray, batch CLI
+│   │   ├── python_reference/ # vector generator, pins
+│   │   ├── tests/            # mojo unit, python_compat, vectors
+│   │   ├── docs/             # reference audits, API scope, probes
+│   │   ├── experiments/      # toolchain probes and raw outputs
+│   │   └── PHASE0_RESULTS.md # frozen scope and readiness report
 │   └── resampy/              # planned (scope stub)
 ├── shared/
 │   ├── benchmark_utils/      # timing harness, statistics, environment capture
@@ -215,11 +258,11 @@ Run the Levenshtein benchmark suite:
 |---|---|---|
 | 1. Repository foundation | Maintainable project skeleton | Complete |
 | 2. MessagePack v0.1 | First complete port, exercising the entire workflow | Complete (`v0.1.0`) |
-| 3. First five verified ports | Prove the process generalises beyond one library | In progress (2 of 5: msgpack, levenshtein) |
+| 3. First five verified ports | Prove the process generalises beyond one library | In progress (3 of 5: msgpack, levenshtein, bitarray) |
 | 4. Expand toward 20 libraries | Broad, sustainable coverage | Planned |
 | 5. Performance analysis | Cross-library analysis and upstream contributions | Planned |
 
-Port sequence: **1. MessagePack — Complete (`v0.1.0`, tagged). 2. Levenshtein — Complete (`v0.1.0`, tagged as `levenshtein-v0.1.0`). 3. Bitarray — next.** Audioop and resampy remain planned scope stubs; no implementation work has started on any of the three, and Bitarray work begins only after this review.
+Port sequence: **1. MessagePack — Complete (`v0.1.0`, tagged). 2. Levenshtein — Complete (`v0.1.0`, tagged as `levenshtein-v0.1.0`). 3. Bitarray — implementation complete through Phase 1E (untagged; v0.1.0 release preparation is separate).** Audioop and resampy remain planned scope stubs; no implementation work has begun on them.
 
 Details, exit criteria, and deliberately omitted dates: [docs/roadmap.md](docs/roadmap.md).
 
