@@ -69,8 +69,8 @@ def sample_oracle():
             f"{REFERENCE_PYTHON.parent.parent}"
         )
 
-    def run(*, decode: list[dict] | None = None, encode: list[dict] | None = None) -> dict:
-        request = json.dumps({"decode": decode or [], "encode": encode or []})
+    def run(**operations: list[dict] | None) -> dict:
+        request = json.dumps({name: items or [] for name, items in operations.items()})
         result = subprocess.run(
             [str(REFERENCE_PYTHON), str(ORACLE_SCRIPT)],
             input=request,

@@ -934,6 +934,622 @@
         "error_type": "error",
         "error_message": "Size should be 1, 2, 3 or 4"
       }
+    },
+    {
+      "id": "p2-add-pos-pos",
+      "op": "add",
+      "width": 2,
+      "args": {
+        "fragment1_hex": "e803d007",
+        "fragment2_hex": "f4015802"
+      },
+      "expected": {
+        "result_hex": "dc05280a"
+      }
+    },
+    {
+      "id": "p2-add-neg-neg",
+      "op": "add",
+      "width": 2,
+      "args": {
+        "fragment1_hex": "18fc30f8",
+        "fragment2_hex": "0cfea8fd"
+      },
+      "expected": {
+        "result_hex": "24fad8f5"
+      }
+    },
+    {
+      "id": "p2-add-mixed",
+      "op": "add",
+      "width": 3,
+      "args": {
+        "fragment1_hex": "e8030030f8ff",
+        "fragment2_hex": "0cfeff580200"
+      },
+      "expected": {
+        "result_hex": "f4010088faff"
+      }
+    },
+    {
+      "id": "p2-add-w1-max-saturate",
+      "op": "add",
+      "width": 1,
+      "args": {
+        "fragment1_hex": "7f7e",
+        "fragment2_hex": "0102"
+      },
+      "expected": {
+        "result_hex": "7f7f"
+      },
+      "notes": "clamps at the 8-bit maximum"
+    },
+    {
+      "id": "p2-add-w1-min-saturate",
+      "op": "add",
+      "width": 1,
+      "args": {
+        "fragment1_hex": "8081",
+        "fragment2_hex": "fffe"
+      },
+      "expected": {
+        "result_hex": "8080"
+      },
+      "notes": "clamps at the 8-bit minimum"
+    },
+    {
+      "id": "p2-add-w4-saturate",
+      "op": "add",
+      "width": 4,
+      "args": {
+        "fragment1_hex": "ffffff7f00000080",
+        "fragment2_hex": "01000000ffffffff"
+      },
+      "expected": {
+        "result_hex": "ffffff7f00000080"
+      },
+      "notes": "32-bit addition saturates instead of wrapping"
+    },
+    {
+      "id": "p2-add-length-mismatch",
+      "op": "add",
+      "width": 2,
+      "args": {
+        "fragment1_hex": "01000200",
+        "fragment2_hex": "0300"
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Lengths should be the same"
+      },
+      "notes": "equal lengths are required"
+    },
+    {
+      "id": "p2-add-w3-mixed",
+      "op": "add",
+      "width": 3,
+      "args": {
+        "fragment1_hex": "000080ffff7f",
+        "fragment2_hex": "010000ffffff"
+      },
+      "expected": {
+        "result_hex": "010080feff7f"
+      }
+    },
+    {
+      "id": "p2-bias-zero",
+      "op": "bias",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e80318fc",
+        "bias": 0
+      },
+      "expected": {
+        "result_hex": "e80318fc"
+      }
+    },
+    {
+      "id": "p2-bias-positive",
+      "op": "bias",
+      "width": 1,
+      "args": {
+        "fragment_hex": "00647f",
+        "bias": 10
+      },
+      "expected": {
+        "result_hex": "0a6e89"
+      }
+    },
+    {
+      "id": "p2-bias-negative",
+      "op": "bias",
+      "width": 1,
+      "args": {
+        "fragment_hex": "ff6480",
+        "bias": -10
+      },
+      "expected": {
+        "result_hex": "f55a76"
+      }
+    },
+    {
+      "id": "p2-bias-max-overflow",
+      "op": "bias",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ff7f0a00",
+        "bias": 1
+      },
+      "expected": {
+        "result_hex": "00800b00"
+      },
+      "notes": "wraps, never clamps"
+    },
+    {
+      "id": "p2-bias-min-overflow",
+      "op": "bias",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0080f6ff",
+        "bias": -1
+      },
+      "expected": {
+        "result_hex": "ff7ff5ff"
+      },
+      "notes": "wraps, never clamps"
+    },
+    {
+      "id": "p2-bias-w4-wrap",
+      "op": "bias",
+      "width": 4,
+      "args": {
+        "fragment_hex": "ffffff7f",
+        "bias": 1
+      },
+      "expected": {
+        "result_hex": "00000080"
+      },
+      "notes": "wraps to the 32-bit minimum"
+    },
+    {
+      "id": "p2-bias-empty",
+      "op": "bias",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "bias": 100
+      },
+      "expected": {
+        "result_hex": ""
+      }
+    },
+    {
+      "id": "p2-bias-too-large",
+      "op": "bias",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0100",
+        "bias": 2147483648
+      },
+      "expected": {
+        "error_type": "OverflowError",
+        "error_message": "Python int too large to convert to C int"
+      },
+      "notes": "argument conversion rejects values outside the C int range"
+    },
+    {
+      "id": "p2-mul-zero",
+      "op": "mul",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e80318fc",
+        "factor": 0
+      },
+      "expected": {
+        "result_hex": "00000000"
+      }
+    },
+    {
+      "id": "p2-mul-one",
+      "op": "mul",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e80318fc",
+        "factor": 1
+      },
+      "expected": {
+        "result_hex": "e80318fc"
+      }
+    },
+    {
+      "id": "p2-mul-negative-one",
+      "op": "mul",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e80318fc",
+        "factor": -1
+      },
+      "expected": {
+        "result_hex": "18fce803"
+      }
+    },
+    {
+      "id": "p2-mul-negative-fraction",
+      "op": "mul",
+      "width": 2,
+      "args": {
+        "fragment_hex": "fdff0300ffff0100",
+        "factor": -0.5
+      },
+      "expected": {
+        "result_hex": "0100feff0000ffff"
+      },
+      "notes": "floor after clamp: 3*-0.5=-2, -3*-0.5=1"
+    },
+    {
+      "id": "p2-mul-greater",
+      "op": "mul",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e80318fc",
+        "factor": 2.5
+      },
+      "expected": {
+        "result_hex": "c4093cf6"
+      }
+    },
+    {
+      "id": "p2-mul-small",
+      "op": "mul",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e80318fc",
+        "factor": 0.001
+      },
+      "expected": {
+        "result_hex": "0100ffff"
+      }
+    },
+    {
+      "id": "p2-mul-boundary-saturate",
+      "op": "mul",
+      "width": 1,
+      "args": {
+        "fragment_hex": "7f80",
+        "factor": 100
+      },
+      "expected": {
+        "result_hex": "7f80"
+      },
+      "notes": "saturates at both 8-bit bounds"
+    },
+    {
+      "id": "p2-mul-empty",
+      "op": "mul",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "factor": 2.0
+      },
+      "expected": {
+        "result_hex": ""
+      }
+    },
+    {
+      "id": "p2-mul-neg-inf",
+      "op": "mul",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e80318fc",
+        "factor": "-inf"
+      },
+      "expected": {
+        "result_hex": "0080ff7f"
+      },
+      "notes": "infinities clamp through the defined comparisons"
+    },
+    {
+      "id": "p2-reverse-empty",
+      "op": "reverse",
+      "width": 2,
+      "args": {
+        "fragment_hex": ""
+      },
+      "expected": {
+        "result_hex": ""
+      }
+    },
+    {
+      "id": "p2-reverse-one",
+      "op": "reverse",
+      "width": 2,
+      "args": {
+        "fragment_hex": "d204"
+      },
+      "expected": {
+        "result_hex": "d204"
+      }
+    },
+    {
+      "id": "p2-reverse-two",
+      "op": "reverse",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0100feff"
+      },
+      "expected": {
+        "result_hex": "feff0100"
+      }
+    },
+    {
+      "id": "p2-reverse-w1",
+      "op": "reverse",
+      "width": 1,
+      "args": {
+        "fragment_hex": "01020304"
+      },
+      "expected": {
+        "result_hex": "04030201"
+      }
+    },
+    {
+      "id": "p2-reverse-w3",
+      "op": "reverse",
+      "width": 3,
+      "args": {
+        "fragment_hex": "ffffff000000ffff7f"
+      },
+      "expected": {
+        "result_hex": "ffff7f000000ffffff"
+      }
+    },
+    {
+      "id": "p2-reverse-w4",
+      "op": "reverse",
+      "width": 4,
+      "args": {
+        "fragment_hex": "ffffff7f00000080"
+      },
+      "expected": {
+        "result_hex": "00000080ffffff7f"
+      }
+    },
+    {
+      "id": "p2-byteswap-empty",
+      "op": "byteswap",
+      "width": 2,
+      "args": {
+        "fragment_hex": ""
+      },
+      "expected": {
+        "result_hex": ""
+      }
+    },
+    {
+      "id": "p2-byteswap-w1",
+      "op": "byteswap",
+      "width": 1,
+      "args": {
+        "fragment_hex": "010203"
+      },
+      "expected": {
+        "result_hex": "010203"
+      }
+    },
+    {
+      "id": "p2-byteswap-w3",
+      "op": "byteswap",
+      "width": 3,
+      "args": {
+        "fragment_hex": "010000feffff"
+      },
+      "expected": {
+        "result_hex": "000001fffffe"
+      }
+    },
+    {
+      "id": "p2-byteswap-w4",
+      "op": "byteswap",
+      "width": 4,
+      "args": {
+        "fragment_hex": "01000000feffffff"
+      },
+      "expected": {
+        "result_hex": "00000001fffffffe"
+      }
+    },
+    {
+      "id": "p2-byteswap-negative",
+      "op": "byteswap",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ffff00fffeff"
+      },
+      "expected": {
+        "result_hex": "ffffff00fffe"
+      },
+      "notes": "sample order is unchanged; only bytes within samples move"
+    },
+    {
+      "id": "p2-lin2lin-w1-to-w1",
+      "op": "lin2lin",
+      "width": 1,
+      "args": {
+        "fragment_hex": "807fff0001",
+        "new_width": 1
+      },
+      "expected": {
+        "result_hex": "807fff0001"
+      },
+      "notes": "signed boundaries, zero and +/-1"
+    },
+    {
+      "id": "p2-lin2lin-w1-to-w2",
+      "op": "lin2lin",
+      "width": 1,
+      "args": {
+        "fragment_hex": "807fff0001",
+        "new_width": 2
+      },
+      "expected": {
+        "result_hex": "0080007f00ff00000001"
+      },
+      "notes": "signed boundaries, zero and +/-1"
+    },
+    {
+      "id": "p2-lin2lin-w1-to-w4",
+      "op": "lin2lin",
+      "width": 1,
+      "args": {
+        "fragment_hex": "807fff0001",
+        "new_width": 4
+      },
+      "expected": {
+        "result_hex": "000000800000007f000000ff0000000000000001"
+      },
+      "notes": "signed boundaries, zero and +/-1"
+    },
+    {
+      "id": "p2-lin2lin-w2-to-w2",
+      "op": "lin2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0080ff7fffff00000100",
+        "new_width": 2
+      },
+      "expected": {
+        "result_hex": "0080ff7fffff00000100"
+      },
+      "notes": "signed boundaries, zero and +/-1"
+    },
+    {
+      "id": "p2-lin2lin-w2-to-w3",
+      "op": "lin2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0080ff7fffff00000100",
+        "new_width": 3
+      },
+      "expected": {
+        "result_hex": "00008000ff7f00ffff000000000100"
+      },
+      "notes": "signed boundaries, zero and +/-1"
+    },
+    {
+      "id": "p2-lin2lin-w2-to-w4",
+      "op": "lin2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0080ff7fffff00000100",
+        "new_width": 4
+      },
+      "expected": {
+        "result_hex": "000000800000ff7f0000ffff0000000000000100"
+      },
+      "notes": "signed boundaries, zero and +/-1"
+    },
+    {
+      "id": "p2-lin2lin-w3-to-w1",
+      "op": "lin2lin",
+      "width": 3,
+      "args": {
+        "fragment_hex": "000080ffff7fffffff000000010000",
+        "new_width": 1
+      },
+      "expected": {
+        "result_hex": "807fff0000"
+      },
+      "notes": "signed boundaries, zero and +/-1"
+    },
+    {
+      "id": "p2-lin2lin-w3-to-w2",
+      "op": "lin2lin",
+      "width": 3,
+      "args": {
+        "fragment_hex": "000080ffff7fffffff000000010000",
+        "new_width": 2
+      },
+      "expected": {
+        "result_hex": "0080ff7fffff00000000"
+      },
+      "notes": "signed boundaries, zero and +/-1"
+    },
+    {
+      "id": "p2-lin2lin-w3-to-w3",
+      "op": "lin2lin",
+      "width": 3,
+      "args": {
+        "fragment_hex": "000080ffff7fffffff000000010000",
+        "new_width": 3
+      },
+      "expected": {
+        "result_hex": "000080ffff7fffffff000000010000"
+      },
+      "notes": "signed boundaries, zero and +/-1"
+    },
+    {
+      "id": "p2-lin2lin-w3-to-w4",
+      "op": "lin2lin",
+      "width": 3,
+      "args": {
+        "fragment_hex": "000080ffff7fffffff000000010000",
+        "new_width": 4
+      },
+      "expected": {
+        "result_hex": "0000008000ffff7f00ffffff0000000000010000"
+      },
+      "notes": "signed boundaries, zero and +/-1"
+    },
+    {
+      "id": "p2-lin2lin-w4-to-w1",
+      "op": "lin2lin",
+      "width": 4,
+      "args": {
+        "fragment_hex": "00000080ffffff7fffffffff0000000001000000",
+        "new_width": 1
+      },
+      "expected": {
+        "result_hex": "807fff0000"
+      },
+      "notes": "signed boundaries, zero and +/-1"
+    },
+    {
+      "id": "p2-lin2lin-w4-to-w3",
+      "op": "lin2lin",
+      "width": 4,
+      "args": {
+        "fragment_hex": "00000080ffffff7fffffffff0000000001000000",
+        "new_width": 3
+      },
+      "expected": {
+        "result_hex": "000080ffff7fffffff000000000000"
+      },
+      "notes": "signed boundaries, zero and +/-1"
+    },
+    {
+      "id": "p2-lin2lin-w4-to-w4",
+      "op": "lin2lin",
+      "width": 4,
+      "args": {
+        "fragment_hex": "00000080ffffff7fffffffff0000000001000000",
+        "new_width": 4
+      },
+      "expected": {
+        "result_hex": "00000080ffffff7fffffffff0000000001000000"
+      },
+      "notes": "signed boundaries, zero and +/-1"
+    },
+    {
+      "id": "p2-lin2lin-empty",
+      "op": "lin2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "new_width": 3
+      },
+      "expected": {
+        "result_hex": ""
+      }
     }
   ]
 }

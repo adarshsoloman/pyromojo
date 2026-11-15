@@ -47,6 +47,10 @@ def pcm(*samples: int) -> bytes:
     return struct.pack(f"<{len(samples)}h", *samples)
 
 
+def pcm_w(width: int, *samples: int) -> bytes:
+    return b"".join(value.to_bytes(width, sys.byteorder, signed=True) for value in samples)
+
+
 def hexed(data: bytes) -> str:
     return data.hex()
 
@@ -668,10 +672,219 @@ def build_sample_cases(cases: list[dict[str, object]]) -> None:
     cases.append(sample_encode_case("sample-encode-width-5", 5, []))
 
 
+def build_phase2_cases(cases: list[dict[str, object]]) -> None:
+    """Coverage for the six Phase 2 operations; existing cases are untouched."""
+
+    def add_case(case_id, width, left, right, notes=None):
+        cases.append(
+            case(
+                case_id,
+                "add",
+                width=width,
+                args={"fragment1_hex": hexed(left), "fragment2_hex": hexed(right)},
+                call=lambda: audioop.add(left, right, width),
+                notes=notes,
+            )
+        )
+
+    add_case("p2-add-pos-pos", 2, pcm(1000, 2000), pcm(500, 600))
+    add_case("p2-add-neg-neg", 2, pcm(-1000, -2000), pcm(-500, -600))
+    add_case("p2-add-mixed", 3, pcm_w(3, 1000, -2000), pcm_w(3, -500, 600))
+    add_case(
+        "p2-add-w1-max-saturate",
+        1,
+        bytes([127, 126]),
+        bytes([1, 2]),
+        notes="clamps at the 8-bit maximum",
+    )
+    add_case(
+        "p2-add-w1-min-saturate",
+        1,
+        bytes([128, 129]),
+        bytes([255, 254]),
+        notes="clamps at the 8-bit minimum",
+    )
+    add_case(
+        "p2-add-w4-saturate",
+        4,
+        pcm_w(4, 2147483647, -2147483648),
+        pcm_w(4, 1, -1),
+        notes="32-bit addition saturates instead of wrapping",
+    )
+    add_case(
+        "p2-add-length-mismatch",
+        2,
+        pcm(1, 2),
+        pcm(3),
+        notes="equal lengths are required",
+    )
+    add_case("p2-add-w3-mixed", 3, pcm_w(3, -8388608, 8388607), pcm_w(3, 1, -1))
+
+    def bias_case(case_id, width, fragment, offset, notes=None):
+        cases.append(
+            case(
+                case_id,
+                "bias",
+                width=width,
+                args={"fragment_hex": hexed(fragment), "bias": offset},
+                call=lambda: audioop.bias(fragment, width, offset),
+                notes=notes,
+            )
+        )
+
+    bias_case("p2-bias-zero", 2, pcm(1000, -1000), 0)
+    bias_case("p2-bias-positive", 1, bytes([0, 100, 127]), 10)
+    bias_case("p2-bias-negative", 1, bytes([255, 100, 128]), -10)
+    bias_case("p2-bias-max-overflow", 2, pcm(32767, 10), 1, notes="wraps, never clamps")
+    bias_case("p2-bias-min-overflow", 2, pcm(-32768, -10), -1, notes="wraps, never clamps")
+    bias_case(
+        "p2-bias-w4-wrap",
+        4,
+        pcm_w(4, 2147483647),
+        1,
+        notes="wraps to the 32-bit minimum",
+    )
+    bias_case("p2-bias-empty", 2, b"", 100)
+    bias_case(
+        "p2-bias-too-large",
+        2,
+        pcm(1),
+        2147483648,
+        notes="argument conversion rejects values outside the C int range",
+    )
+
+    def mul_case(case_id, width, fragment, factor, notes=None):
+        cases.append(
+            case(
+                case_id,
+                "mul",
+                width=width,
+                args={"fragment_hex": hexed(fragment), "factor": factor},
+                call=lambda: audioop.mul(fragment, width, factor),
+                notes=notes,
+            )
+        )
+
+    mul_case("p2-mul-zero", 2, pcm(1000, -1000), 0)
+    mul_case("p2-mul-one", 2, pcm(1000, -1000), 1)
+    mul_case("p2-mul-negative-one", 2, pcm(1000, -1000), -1)
+    mul_case(
+        "p2-mul-negative-fraction",
+        2,
+        pcm(-3, 3, -1, 1),
+        -0.5,
+        notes="floor after clamp: 3*-0.5=-2, -3*-0.5=1",
+    )
+    mul_case("p2-mul-greater", 2, pcm(1000, -1000), 2.5)
+    mul_case("p2-mul-small", 2, pcm(1000, -1000), 0.001)
+    mul_case(
+        "p2-mul-boundary-saturate",
+        1,
+        bytes([127, 128]),
+        100,
+        notes="saturates at both 8-bit bounds",
+    )
+    mul_case("p2-mul-empty", 2, b"", 2.0)
+    cases.append(
+        case(
+            "p2-mul-neg-inf",
+            "mul",
+            width=2,
+            args={"fragment_hex": hexed(pcm(1000, -1000)), "factor": "-inf"},
+            call=lambda: audioop.mul(pcm(1000, -1000), 2, float("-inf")),
+            notes="infinities clamp through the defined comparisons",
+        )
+    )
+
+    def reverse_case(case_id, width, fragment, notes=None):
+        cases.append(
+            case(
+                case_id,
+                "reverse",
+                width=width,
+                args={"fragment_hex": hexed(fragment)},
+                call=lambda: audioop.reverse(fragment, width),
+                notes=notes,
+            )
+        )
+
+    reverse_case("p2-reverse-empty", 2, b"")
+    reverse_case("p2-reverse-one", 2, pcm(1234))
+    reverse_case("p2-reverse-two", 2, pcm(1, -2))
+    reverse_case("p2-reverse-w1", 1, bytes([1, 2, 3, 4]))
+    reverse_case("p2-reverse-w3", 3, pcm_w(3, -1, 0, 8388607))
+    reverse_case("p2-reverse-w4", 4, pcm_w(4, 2147483647, -2147483648))
+
+    def byteswap_case(case_id, width, fragment, notes=None):
+        cases.append(
+            case(
+                case_id,
+                "byteswap",
+                width=width,
+                args={"fragment_hex": hexed(fragment)},
+                call=lambda: audioop.byteswap(fragment, width),
+                notes=notes,
+            )
+        )
+
+    byteswap_case("p2-byteswap-empty", 2, b"")
+    byteswap_case("p2-byteswap-w1", 1, bytes([1, 2, 3]))
+    byteswap_case("p2-byteswap-w3", 3, pcm_w(3, 1, -2))
+    byteswap_case("p2-byteswap-w4", 4, pcm_w(4, 1, -2))
+    byteswap_case(
+        "p2-byteswap-negative",
+        2,
+        pcm(-1, -256, -2),
+        notes="sample order is unchanged; only bytes within samples move",
+    )
+
+    combos = [
+        (1, 1),
+        (1, 2),
+        (1, 4),
+        (2, 2),
+        (2, 3),
+        (2, 4),
+        (3, 1),
+        (3, 2),
+        (3, 3),
+        (3, 4),
+        (4, 1),
+        (4, 3),
+        (4, 4),
+    ]
+    for width, new_width in combos:
+        lo = -(1 << (width * 8 - 1))
+        hi = (1 << (width * 8 - 1)) - 1
+        fragment = pcm_w(width, lo, hi, -1, 0, 1)
+        cases.append(
+            case(
+                f"p2-lin2lin-w{width}-to-w{new_width}",
+                "lin2lin",
+                width=width,
+                args={"fragment_hex": hexed(fragment), "new_width": new_width},
+                call=lambda width=width, new_width=new_width, fragment=fragment: audioop.lin2lin(
+                    fragment, width, new_width
+                ),
+                notes="signed boundaries, zero and +/-1",
+            )
+        )
+    cases.append(
+        case(
+            "p2-lin2lin-empty",
+            "lin2lin",
+            width=2,
+            args={"fragment_hex": "", "new_width": 3},
+            call=lambda: audioop.lin2lin(b"", 2, 3),
+        )
+    )
+
+
 def main() -> int:
     check = "--check" in sys.argv[1:]
     cases = build_cases()
     build_sample_cases(cases)
+    build_phase2_cases(cases)
     payload = {
         "schema_version": SCHEMA_VERSION,
         "generator": {"name": "audioop_vectors", "version": SCHEMA_VERSION},

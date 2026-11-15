@@ -24,6 +24,12 @@ comptime OP_PING: UInt8 = 0x01
 comptime OP_ECHO: UInt8 = 0x02
 comptime OP_DECODE_FRAGMENT: UInt8 = 0x20
 comptime OP_ENCODE_FRAGMENT: UInt8 = 0x21
+comptime OP_ADD: UInt8 = 0x22
+comptime OP_BIAS: UInt8 = 0x23
+comptime OP_MUL: UInt8 = 0x24
+comptime OP_REVERSE: UInt8 = 0x25
+comptime OP_BYTESWAP: UInt8 = 0x26
+comptime OP_LIN2LIN: UInt8 = 0x27
 
 comptime STATUS_OK: UInt8 = 0
 comptime STATUS_ERROR: UInt8 = 1

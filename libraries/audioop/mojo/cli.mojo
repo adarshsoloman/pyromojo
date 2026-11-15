@@ -8,6 +8,12 @@ Operations (framed, see ``mojo_audioop/protocol.mojo``):
   space-separated ASCII signed samples (empty fragment -> empty payload).
 * ``0x21`` encode -> ``uint8 width | space-separated ASCII samples``;
   replies with the native-order fragment bytes.
+* ``0x22`` add -> ``uint8 width | uint32_be len1 | fragment1 | fragment2``.
+* ``0x23`` bias -> ``uint8 width | int64_be bias | fragment``.
+* ``0x24`` mul -> ``uint8 width | 8-byte IEEE-754 big-endian factor | fragment``.
+* ``0x25`` reverse -> ``uint8 width | fragment``.
+* ``0x26`` byteswap -> ``uint8 width | fragment``.
+* ``0x27`` lin2lin -> ``uint8 width | uint8 newwidth | fragment``.
 
 Malformed requests produce ``STATUS_ERROR`` frames; framing errors
 produce one error frame plus a non-zero exit, like the other CLIs.
@@ -16,18 +22,34 @@ produce one error frame plus a non-zero exit, like the other CLIs.
 from std.collections import List
 from std.io import RawFileDescriptor
 
+from mojo_audioop.arithmetic import (
+    add,
+    bias,
+    byteswap,
+    lin2lin,
+    mul,
+    reverse,
+)
 from mojo_audioop.protocol import (
+    OP_ADD,
+    OP_BIAS,
+    OP_BYTESWAP,
     OP_DECODE_FRAGMENT,
     OP_ECHO,
     OP_ENCODE_FRAGMENT,
+    OP_LIN2LIN,
+    OP_MUL,
     OP_PING,
+    OP_REVERSE,
     STATUS_ERROR,
     STATUS_OK,
     ascii_bytes,
+    decode_u32_be,
     read_frame,
     write_frame,
 )
 from mojo_audioop.samples import decode_fragment, encode_fragment
+from std.memory import bitcast
 
 
 def _reply_error(mut stdout: RawFileDescriptor, message: String) raises:
@@ -102,6 +124,75 @@ def _encode_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
     return encode_fragment(Span(samples), width)
 
 
+def _decode_u64_be(data: Span[UInt8, _]) -> UInt64:
+    """Big-endian 8-byte unsigned integer (IEEE-754 factor transport)."""
+    var value: UInt64 = 0
+    for index in range(8):
+        value = (value << 8) | UInt64(data[index])
+    return value
+
+
+def _decode_double_be(data: Span[UInt8, _]) -> Float64:
+    """Big-endian IEEE-754 double, bit-exact for nan/inf too."""
+    return bitcast[DType.float64, 1](_decode_u64_be(data))
+
+
+def _add_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 5:
+        raise Error("add request too short: need width and first length")
+    var width = Int(payload[0])
+    var length1 = Int(decode_u32_be(payload[1:5]))
+    var rest = payload[5:]
+    if length1 > len(rest):
+        raise Error("add request too short: first fragment is missing")
+    var second = List[UInt8](capacity=len(rest) - length1)
+    for index in range(length1, len(rest)):
+        second.append(rest[index])
+    return add(rest[:length1], Span(second), width)
+
+
+def _bias_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 9:
+        raise Error("bias request too short: need width and bias")
+    var width = Int(payload[0])
+    var value = _decode_i64_be(payload[1:9])
+    return bias(payload[9:], width, value)
+
+
+def _decode_i64_be(data: Span[UInt8, _]) -> Int64:
+    """Big-endian 8-byte two's-complement integer."""
+    var value: Int64 = 0
+    for index in range(8):
+        value = (value << 8) | Int64(data[index])
+    return value
+
+
+def _mul_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 9:
+        raise Error("mul request too short: need width and factor")
+    var width = Int(payload[0])
+    var factor = _decode_double_be(payload[1:9])
+    return mul(payload[9:], width, factor)
+
+
+def _reverse_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 1:
+        raise Error("reverse request too short: need a width byte")
+    return reverse(payload[1:], Int(payload[0]))
+
+
+def _byteswap_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 1:
+        raise Error("byteswap request too short: need a width byte")
+    return byteswap(payload[1:], Int(payload[0]))
+
+
+def _lin2lin_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 2:
+        raise Error("lin2lin request too short: need width and new width")
+    return lin2lin(payload[2:], Int(payload[0]), Int(payload[1]))
+
+
 def main() raises:
     var stdin = RawFileDescriptor(0)
     var stdout = RawFileDescriptor(1)
@@ -137,6 +228,42 @@ def main() raises:
             try:
                 var encoded = _encode_request(payload)
                 write_frame(stdout, STATUS_OK, Span(encoded))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_ADD:
+            try:
+                var added = _add_request(payload)
+                write_frame(stdout, STATUS_OK, Span(added))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_BIAS:
+            try:
+                var biased = _bias_request(payload)
+                write_frame(stdout, STATUS_OK, Span(biased))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_MUL:
+            try:
+                var scaled = _mul_request(payload)
+                write_frame(stdout, STATUS_OK, Span(scaled))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_REVERSE:
+            try:
+                var reversed_fragment = _reverse_request(payload)
+                write_frame(stdout, STATUS_OK, Span(reversed_fragment))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_BYTESWAP:
+            try:
+                var swapped = _byteswap_request(payload)
+                write_frame(stdout, STATUS_OK, Span(swapped))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_LIN2LIN:
+            try:
+                var converted = _lin2lin_request(payload)
+                write_frame(stdout, STATUS_OK, Span(converted))
             except error:
                 _reply_error(stdout, String(error))
         else:

@@ -12,6 +12,12 @@ OP_PING = 0x01
 OP_ECHO = 0x02
 OP_DECODE_FRAGMENT = 0x20
 OP_ENCODE_FRAGMENT = 0x21
+OP_ADD = 0x22
+OP_BIAS = 0x23
+OP_MUL = 0x24
+OP_REVERSE = 0x25
+OP_BYTESWAP = 0x26
+OP_LIN2LIN = 0x27
 
 
 def request(body: bytes) -> bytes:
@@ -63,3 +69,27 @@ def decode_values(payload: bytes) -> list[int]:
 
 def encode_values(values: list[int]) -> bytes:
     return " ".join(str(value) for value in values).encode("ascii")
+
+
+def add_body(width: int, fragment1: bytes, fragment2: bytes) -> bytes:
+    return bytes([OP_ADD, width]) + struct.pack(">I", len(fragment1)) + fragment1 + fragment2
+
+
+def bias_body(width: int, bias: int, fragment: bytes) -> bytes:
+    return bytes([OP_BIAS, width]) + struct.pack(">q", bias) + fragment
+
+
+def mul_body(width: int, factor: float, fragment: bytes) -> bytes:
+    return bytes([OP_MUL, width]) + struct.pack(">d", factor) + fragment
+
+
+def reverse_body(width: int, fragment: bytes) -> bytes:
+    return bytes([OP_REVERSE, width]) + fragment
+
+
+def byteswap_body(width: int, fragment: bytes) -> bytes:
+    return bytes([OP_BYTESWAP, width]) + fragment
+
+
+def lin2lin_body(width: int, new_width: int, fragment: bytes) -> bytes:
+    return bytes([OP_LIN2LIN, width, new_width]) + fragment

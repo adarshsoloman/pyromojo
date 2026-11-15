@@ -1,4 +1,4 @@
-"""Batch reference oracle for the Phase 1 sample representation layer.
+"""Batch reference oracle for the audioop sample and arithmetic layers.
 
 Reads one JSON request from stdin and writes JSON to stdout. Runs only on
 the pinned CPython 3.12 interpreter:
@@ -11,6 +11,11 @@ expectations are ``int.to_bytes(width, sys.byteorder, signed=True)`` and
 are validated by decoding every value back through ``getsample``. There is
 no reference encoder, so out-of-range values surface as ``OverflowError``
 and the port applies its documented range check.
+
+Phase 2 adds the six arithmetic/fragment operations. Every result is
+produced by the original CPython module, never by a local reimplementation.
+Floating-point factors accept JSON numbers or the strings ``nan``, ``inf``
+and ``-inf``.
 """
 
 from __future__ import annotations
@@ -58,11 +63,88 @@ def _encode_one(item: dict) -> dict:
     return {"result_hex": encoded.hex(), "values": decoded}
 
 
+def _result(value) -> dict:
+    if isinstance(value, (bytes, bytearray)):
+        return {"result_hex": bytes(value).hex()}
+    return {"value": value}
+
+
+def _call(function, *args) -> dict:
+    try:
+        return _result(function(*args))
+    except Exception as exc:  # the reference defines these messages
+        return {"error_type": type(exc).__name__, "error_message": str(exc)}
+
+
+def _factor(value) -> float:
+    if isinstance(value, str):
+        return float(value)
+    return float(value)
+
+
+def _add_one(item: dict) -> dict:
+    return _call(
+        audioop.add,
+        bytes.fromhex(item["fragment1_hex"]),
+        bytes.fromhex(item["fragment2_hex"]),
+        int(item["width"]),
+    )
+
+
+def _bias_one(item: dict) -> dict:
+    return _call(
+        audioop.bias,
+        bytes.fromhex(item["fragment_hex"]),
+        int(item["width"]),
+        int(item["bias"]),
+    )
+
+
+def _mul_one(item: dict) -> dict:
+    return _call(
+        audioop.mul,
+        bytes.fromhex(item["fragment_hex"]),
+        int(item["width"]),
+        _factor(item["factor"]),
+    )
+
+
+def _reverse_one(item: dict) -> dict:
+    return _call(
+        audioop.reverse,
+        bytes.fromhex(item["fragment_hex"]),
+        int(item["width"]),
+    )
+
+
+def _byteswap_one(item: dict) -> dict:
+    return _call(
+        audioop.byteswap,
+        bytes.fromhex(item["fragment_hex"]),
+        int(item["width"]),
+    )
+
+
+def _lin2lin_one(item: dict) -> dict:
+    return _call(
+        audioop.lin2lin,
+        bytes.fromhex(item["fragment_hex"]),
+        int(item["width"]),
+        int(item["new_width"]),
+    )
+
+
 def main() -> int:
     request = json.load(sys.stdin)
     response = {
         "decode": [_decode_one(item) for item in request.get("decode", [])],
         "encode": [_encode_one(item) for item in request.get("encode", [])],
+        "add": [_add_one(item) for item in request.get("add", [])],
+        "bias": [_bias_one(item) for item in request.get("bias", [])],
+        "mul": [_mul_one(item) for item in request.get("mul", [])],
+        "reverse": [_reverse_one(item) for item in request.get("reverse", [])],
+        "byteswap": [_byteswap_one(item) for item in request.get("byteswap", [])],
+        "lin2lin": [_lin2lin_one(item) for item in request.get("lin2lin", [])],
     }
     json.dump(response, sys.stdout)
     return 0
