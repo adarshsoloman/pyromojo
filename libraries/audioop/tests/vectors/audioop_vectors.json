@@ -1,0 +1,939 @@
+{
+  "schema_version": "1.0.0",
+  "generator": {
+    "name": "audioop_vectors",
+    "version": "1.0.0"
+  },
+  "reference": {
+    "package": "audioop",
+    "python_version": "3.12.3"
+  },
+  "host": {
+    "byte_order": "little"
+  },
+  "seed": 20260610,
+  "cases": [
+    {
+      "id": "add-w2",
+      "op": "add",
+      "width": 2,
+      "args": {
+        "fragment1_hex": "e80330f830750080",
+        "fragment2_hex": "f4010cfee803ffff"
+      },
+      "expected": {
+        "result_hex": "dc053cf618790080"
+      },
+      "notes": "clamps at both 16-bit extremes"
+    },
+    {
+      "id": "add-w1",
+      "op": "add",
+      "width": 1,
+      "args": {
+        "fragment1_hex": "7f80",
+        "fragment2_hex": "0101"
+      },
+      "expected": {
+        "result_hex": "7f81"
+      }
+    },
+    {
+      "id": "add-empty",
+      "op": "add",
+      "width": 2,
+      "args": {
+        "fragment1_hex": "",
+        "fragment2_hex": ""
+      },
+      "expected": {
+        "result_hex": ""
+      }
+    },
+    {
+      "id": "add-bad-width",
+      "op": "add",
+      "width": 5,
+      "args": {
+        "fragment1_hex": "",
+        "fragment2_hex": ""
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Size should be 1, 2, 3 or 4"
+      }
+    },
+    {
+      "id": "add-ragged",
+      "op": "add",
+      "width": 2,
+      "args": {
+        "fragment1_hex": "0102",
+        "fragment2_hex": "0102"
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "not a whole number of frames"
+      },
+      "notes": "three bytes at width two is not a whole number of frames"
+    },
+    {
+      "id": "bias-w2",
+      "op": "bias",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e80330f830750080",
+        "bias": 10000
+      },
+      "expected": {
+        "result_hex": "f82a401f409c10a7"
+      },
+      "notes": "wraps, it does not clamp"
+    },
+    {
+      "id": "mul-w2-fraction",
+      "op": "mul",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0300fdff01000200",
+        "factor": 0.5
+      },
+      "expected": {
+        "result_hex": "0100feff00000100"
+      },
+      "notes": "floor-then-clamp: 3*0.5=1, -3*0.5=-2"
+    },
+    {
+      "id": "mul-w2-nan",
+      "op": "mul",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0100ffff",
+        "factor": "nan"
+      },
+      "expected": {
+        "result_hex": "00000000"
+      },
+      "notes": "reference result is undefined behaviour; recorded as observed"
+    },
+    {
+      "id": "mul-w2-inf",
+      "op": "mul",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0100ffff0000",
+        "factor": "inf"
+      },
+      "expected": {
+        "result_hex": "ff7f00800000"
+      }
+    },
+    {
+      "id": "max-w2",
+      "op": "max",
+      "width": 2,
+      "args": {
+        "fragment_hex": "640038ff2c010080"
+      },
+      "expected": {
+        "value": 32768
+      }
+    },
+    {
+      "id": "avg-w2",
+      "op": "avg",
+      "width": 2,
+      "args": {
+        "fragment_hex": "640038ff2c010080"
+      },
+      "expected": {
+        "value": -8142
+      }
+    },
+    {
+      "id": "rms-w2",
+      "op": "rms",
+      "width": 2,
+      "args": {
+        "fragment_hex": "640038ff2c010080"
+      },
+      "expected": {
+        "value": 16385
+      }
+    },
+    {
+      "id": "avgpp-w2",
+      "op": "avgpp",
+      "width": 2,
+      "args": {
+        "fragment_hex": "640038ff2c010080"
+      },
+      "expected": {
+        "value": 500
+      }
+    },
+    {
+      "id": "maxpp-w2",
+      "op": "maxpp",
+      "width": 2,
+      "args": {
+        "fragment_hex": "640038ff2c010080"
+      },
+      "expected": {
+        "value": 500
+      }
+    },
+    {
+      "id": "minmax-empty",
+      "op": "minmax",
+      "width": 2,
+      "args": {
+        "fragment_hex": ""
+      },
+      "expected": {
+        "value": [
+          2147483647,
+          -2147483648
+        ]
+      },
+      "notes": "empty returns the sentinel pair from the reference"
+    },
+    {
+      "id": "minmax-w2",
+      "op": "minmax",
+      "width": 2,
+      "args": {
+        "fragment_hex": "640038ff2c010080"
+      },
+      "expected": {
+        "value": [
+          -32768,
+          300
+        ]
+      }
+    },
+    {
+      "id": "cross-w2",
+      "op": "cross",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0100ffff0100ffff"
+      },
+      "expected": {
+        "value": 3
+      },
+      "notes": "counts sign changes; starts at -1 so an all-positive run yields 0"
+    },
+    {
+      "id": "cross-empty",
+      "op": "cross",
+      "width": 2,
+      "args": {
+        "fragment_hex": ""
+      },
+      "expected": {
+        "value": -1
+      },
+      "notes": "empty input returns the -1 sentinel"
+    },
+    {
+      "id": "findfactor-w2",
+      "op": "findfactor",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e80330f8b80b",
+        "reference_hex": "f40118fcdc05"
+      },
+      "expected": {
+        "value": 2.0
+      }
+    },
+    {
+      "id": "findfactor-empty",
+      "op": "findfactor",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "reference_hex": ""
+      },
+      "expected": {
+        "value": "nan"
+      },
+      "notes": "fixed 16-bit; C double division by zero yields nan"
+    },
+    {
+      "id": "findfit-empty",
+      "op": "findfit",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "reference_hex": ""
+      },
+      "expected": {
+        "value": [
+          0,
+          "nan"
+        ]
+      },
+      "notes": "fixed 16-bit; factor is nan when both inputs are empty"
+    },
+    {
+      "id": "findfit-w2",
+      "op": "findfit",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e80330f8b80b60f0",
+        "reference_hex": "f40118fcdc0530f8"
+      },
+      "expected": {
+        "value": [
+          0,
+          2.0
+        ]
+      }
+    },
+    {
+      "id": "findmax-w2",
+      "op": "findmax",
+      "width": 2,
+      "args": {
+        "fragment_hex": "00006400c8002c01",
+        "length": 2
+      },
+      "expected": {
+        "value": 2
+      }
+    },
+    {
+      "id": "findmax-too-short",
+      "op": "findmax",
+      "width": 2,
+      "args": {
+        "fragment_hex": "00000100",
+        "length": 3
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Input sample should be longer"
+      },
+      "notes": "length is in 16-bit samples; fixed width, no width argument"
+    },
+    {
+      "id": "reverse-w2",
+      "op": "reverse",
+      "width": 2,
+      "args": {
+        "fragment_hex": "010002000300"
+      },
+      "expected": {
+        "result_hex": "030002000100"
+      }
+    },
+    {
+      "id": "getsample-w2",
+      "op": "getsample",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e803d007b80ba00f",
+        "index": 2
+      },
+      "expected": {
+        "value": 3000
+      }
+    },
+    {
+      "id": "getsample-out-of-range",
+      "op": "getsample",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e803d007b80ba00f",
+        "index": 4
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Index out of range"
+      }
+    },
+    {
+      "id": "byteswap-w2",
+      "op": "byteswap",
+      "width": 2,
+      "args": {
+        "fragment_hex": "01000001feff"
+      },
+      "expected": {
+        "result_hex": "00010100fffe"
+      }
+    },
+    {
+      "id": "lin2lin-w2-to-w1",
+      "op": "lin2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0001ff0000ff01ff",
+        "new_width": 1
+      },
+      "expected": {
+        "result_hex": "0100ffff"
+      },
+      "notes": "down-conversion truncates via arithmetic shift"
+    },
+    {
+      "id": "lin2lin-w1-to-w3",
+      "op": "lin2lin",
+      "width": 1,
+      "args": {
+        "fragment_hex": "7f80ff00",
+        "new_width": 3
+      },
+      "expected": {
+        "result_hex": "00007f0000800000ff000000"
+      }
+    },
+    {
+      "id": "lin2lin-w4-to-w2",
+      "op": "lin2lin",
+      "width": 4,
+      "args": {
+        "fragment_hex": "00800000ff7fffff",
+        "new_width": 2
+      },
+      "expected": {
+        "result_hex": "0000ffff"
+      }
+    },
+    {
+      "id": "lin2ulaw-w2",
+      "op": "lin2ulaw",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0000e80318fcff7f0080"
+      },
+      "expected": {
+        "result_hex": "ffce4e8000"
+      }
+    },
+    {
+      "id": "ulaw2lin-w2",
+      "op": "ulaw2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ffce4e8000",
+        "new_width": 2
+      },
+      "expected": {
+        "result_hex": "0000dc0324fc7c7d8482"
+      }
+    },
+    {
+      "id": "lin2alaw-w2",
+      "op": "lin2alaw",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0000e80318fcff7f0080"
+      },
+      "expected": {
+        "result_hex": "d5fa7aaa2a"
+      }
+    },
+    {
+      "id": "alaw2lin-w2",
+      "op": "alaw2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "d5fa7aaa2a",
+        "new_width": 2
+      },
+      "expected": {
+        "result_hex": "0800f00310fc007e0082"
+      }
+    },
+    {
+      "id": "lin2adpcm-w2",
+      "op": "lin2adpcm",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0000e803d007b80ba00f",
+        "state": null
+      },
+      "expected": {
+        "result_hex": "0777",
+        "state": [
+          240,
+          32
+        ]
+      },
+      "notes": "returns (encoded bytes, state tuple)"
+    },
+    {
+      "id": "lin2adpcm-odd-sample",
+      "op": "lin2adpcm",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0000e803d007",
+        "state": null
+      },
+      "expected": {
+        "result_hex": "07",
+        "state": [
+          41,
+          16
+        ]
+      },
+      "notes": "trailing odd sample is dropped by the reference"
+    },
+    {
+      "id": "adpcm2lin-w2",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0777",
+        "new_width": 2,
+        "state": null
+      },
+      "expected": {
+        "result_hex": "00000b0029006800",
+        "state": [
+          104,
+          24
+        ]
+      }
+    },
+    {
+      "id": "ratecv-upsample",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "00000100020003000400050006000700080009000a000b000c000d000e000f001000110012001300",
+        "nchannels": 1,
+        "inrate": 8000,
+        "outrate": 16000,
+        "state": null
+      },
+      "expected": {
+        "result_hex": "000000000100010002000200030003000400040005000500060006000700070008000800090009000a000a000b000b000c000c000d000d000e000e000f000f001000100011001100120012001300",
+        "state": [
+          -1,
+          [
+            [
+              1179648,
+              1245184
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "ratecv-downsample",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "00000100020003000400050006000700080009000a000b000c000d000e000f001000110012001300",
+        "nchannels": 1,
+        "inrate": 16000,
+        "outrate": 8000,
+        "state": null
+      },
+      "expected": {
+        "result_hex": "000002000400060008000a000c000e0010001200",
+        "state": [
+          -1,
+          [
+            [
+              1179648,
+              1245184
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "tomono-w2",
+      "op": "tomono",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e803d007b80ba00f",
+        "lfactor": 0.5,
+        "rfactor": 0.5
+      },
+      "expected": {
+        "result_hex": "dc05ac0d"
+      }
+    },
+    {
+      "id": "tostereo-w2",
+      "op": "tostereo",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e80318fc",
+        "lfactor": 0.5,
+        "rfactor": 0.25
+      },
+      "expected": {
+        "result_hex": "f401fa000cfe06ff"
+      }
+    },
+    {
+      "id": "sample-decode-w1",
+      "op": "sample_decode",
+      "width": 1,
+      "args": {
+        "fragment_hex": "807f00ff01"
+      },
+      "expected": {
+        "values": [
+          -128,
+          127,
+          0,
+          -1,
+          1
+        ]
+      },
+      "notes": "signed boundaries, zero and +/-1"
+    },
+    {
+      "id": "sample-encode-w1",
+      "op": "sample_encode",
+      "width": 1,
+      "args": {
+        "values": [
+          -128,
+          127,
+          0,
+          -1,
+          1
+        ]
+      },
+      "expected": {
+        "result_hex": "807f00ff01"
+      },
+      "notes": "signed boundaries, zero and +/-1"
+    },
+    {
+      "id": "sample-encode-w1-underflow",
+      "op": "sample_encode",
+      "width": 1,
+      "args": {
+        "values": [
+          -129
+        ]
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "sample value -129 out of range for width 1"
+      },
+      "notes": "port range check (no reference encoder)"
+    },
+    {
+      "id": "sample-encode-w1-overflow",
+      "op": "sample_encode",
+      "width": 1,
+      "args": {
+        "values": [
+          128
+        ]
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "sample value 128 out of range for width 1"
+      },
+      "notes": "port range check (no reference encoder)"
+    },
+    {
+      "id": "sample-decode-w2",
+      "op": "sample_decode",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0080ff7f0000ffff0100"
+      },
+      "expected": {
+        "values": [
+          -32768,
+          32767,
+          0,
+          -1,
+          1
+        ]
+      },
+      "notes": "signed boundaries, zero and +/-1"
+    },
+    {
+      "id": "sample-encode-w2",
+      "op": "sample_encode",
+      "width": 2,
+      "args": {
+        "values": [
+          -32768,
+          32767,
+          0,
+          -1,
+          1
+        ]
+      },
+      "expected": {
+        "result_hex": "0080ff7f0000ffff0100"
+      },
+      "notes": "signed boundaries, zero and +/-1"
+    },
+    {
+      "id": "sample-encode-w2-underflow",
+      "op": "sample_encode",
+      "width": 2,
+      "args": {
+        "values": [
+          -32769
+        ]
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "sample value -32769 out of range for width 2"
+      },
+      "notes": "port range check (no reference encoder)"
+    },
+    {
+      "id": "sample-encode-w2-overflow",
+      "op": "sample_encode",
+      "width": 2,
+      "args": {
+        "values": [
+          32768
+        ]
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "sample value 32768 out of range for width 2"
+      },
+      "notes": "port range check (no reference encoder)"
+    },
+    {
+      "id": "sample-decode-w3",
+      "op": "sample_decode",
+      "width": 3,
+      "args": {
+        "fragment_hex": "000080ffff7f000000ffffff010000"
+      },
+      "expected": {
+        "values": [
+          -8388608,
+          8388607,
+          0,
+          -1,
+          1
+        ]
+      },
+      "notes": "signed boundaries, zero and +/-1"
+    },
+    {
+      "id": "sample-encode-w3",
+      "op": "sample_encode",
+      "width": 3,
+      "args": {
+        "values": [
+          -8388608,
+          8388607,
+          0,
+          -1,
+          1
+        ]
+      },
+      "expected": {
+        "result_hex": "000080ffff7f000000ffffff010000"
+      },
+      "notes": "signed boundaries, zero and +/-1"
+    },
+    {
+      "id": "sample-encode-w3-underflow",
+      "op": "sample_encode",
+      "width": 3,
+      "args": {
+        "values": [
+          -8388609
+        ]
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "sample value -8388609 out of range for width 3"
+      },
+      "notes": "port range check (no reference encoder)"
+    },
+    {
+      "id": "sample-encode-w3-overflow",
+      "op": "sample_encode",
+      "width": 3,
+      "args": {
+        "values": [
+          8388608
+        ]
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "sample value 8388608 out of range for width 3"
+      },
+      "notes": "port range check (no reference encoder)"
+    },
+    {
+      "id": "sample-decode-w4",
+      "op": "sample_decode",
+      "width": 4,
+      "args": {
+        "fragment_hex": "00000080ffffff7f00000000ffffffff01000000"
+      },
+      "expected": {
+        "values": [
+          -2147483648,
+          2147483647,
+          0,
+          -1,
+          1
+        ]
+      },
+      "notes": "signed boundaries, zero and +/-1"
+    },
+    {
+      "id": "sample-encode-w4",
+      "op": "sample_encode",
+      "width": 4,
+      "args": {
+        "values": [
+          -2147483648,
+          2147483647,
+          0,
+          -1,
+          1
+        ]
+      },
+      "expected": {
+        "result_hex": "00000080ffffff7f00000000ffffffff01000000"
+      },
+      "notes": "signed boundaries, zero and +/-1"
+    },
+    {
+      "id": "sample-encode-w4-underflow",
+      "op": "sample_encode",
+      "width": 4,
+      "args": {
+        "values": [
+          -2147483649
+        ]
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "sample value -2147483649 out of range for width 4"
+      },
+      "notes": "port range check (no reference encoder)"
+    },
+    {
+      "id": "sample-encode-w4-overflow",
+      "op": "sample_encode",
+      "width": 4,
+      "args": {
+        "values": [
+          2147483648
+        ]
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "sample value 2147483648 out of range for width 4"
+      },
+      "notes": "port range check (no reference encoder)"
+    },
+    {
+      "id": "sample-decode-empty-w2",
+      "op": "sample_decode",
+      "width": 2,
+      "args": {
+        "fragment_hex": ""
+      },
+      "expected": {
+        "values": []
+      },
+      "notes": "valid empty fragment"
+    },
+    {
+      "id": "sample-decode-partial-w2",
+      "op": "sample_decode",
+      "width": 2,
+      "args": {
+        "fragment_hex": "010203"
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "not a whole number of frames"
+      },
+      "notes": "incomplete trailing sample"
+    },
+    {
+      "id": "sample-decode-partial-w3",
+      "op": "sample_decode",
+      "width": 3,
+      "args": {
+        "fragment_hex": "0102030405"
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "not a whole number of frames"
+      },
+      "notes": "incomplete trailing sample"
+    },
+    {
+      "id": "sample-decode-width-0",
+      "op": "sample_decode",
+      "width": 0,
+      "args": {
+        "fragment_hex": ""
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Size should be 1, 2, 3 or 4"
+      }
+    },
+    {
+      "id": "sample-decode-width-5",
+      "op": "sample_decode",
+      "width": 5,
+      "args": {
+        "fragment_hex": ""
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Size should be 1, 2, 3 or 4"
+      }
+    },
+    {
+      "id": "sample-encode-empty-w2",
+      "op": "sample_encode",
+      "width": 2,
+      "args": {
+        "values": []
+      },
+      "expected": {
+        "result_hex": ""
+      },
+      "notes": "empty samples"
+    },
+    {
+      "id": "sample-encode-width-0",
+      "op": "sample_encode",
+      "width": 0,
+      "args": {
+        "values": []
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Size should be 1, 2, 3 or 4"
+      }
+    },
+    {
+      "id": "sample-encode-width-5",
+      "op": "sample_encode",
+      "width": 5,
+      "args": {
+        "values": []
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Size should be 1, 2, 3 or 4"
+      }
+    }
+  ]
+}

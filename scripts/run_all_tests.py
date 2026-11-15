@@ -77,6 +77,15 @@ MOJO_SUITES = [
             "test_serialization",
         ],
     },
+    {
+        "tests_dir": "libraries/audioop/tests/mojo",
+        "includes": [
+            "libraries/audioop/mojo",
+            "libraries/audioop/tests/mojo",
+        ],
+        "prefix": "audioop_",
+        "tests": ["test_samples"],
+    },
 ]
 
 
@@ -87,6 +96,17 @@ def _resolve_tool(name: str) -> list[str]:
     if shutil.which("uv") is not None:
         return ["uv", "run", name]
     sys.exit(f"run_all_tests: cannot find {name} (.venv/bin/{name} or uv)")
+
+
+def _audioop_reference_python() -> list[str]:
+    """The audioop vectors require the pinned CPython 3.12 reference venv."""
+    venv_python = ROOT / "libraries/audioop/python_reference/.venv/bin/python"
+    if not venv_python.exists():
+        sys.exit(
+            "run_all_tests: audioop vector drift check needs the isolated "
+            f"CPython 3.12 reference venv at {venv_python}"
+        )
+    return [str(venv_python)]
 
 
 def _check_mojo(mojo: list[str]) -> None:
@@ -131,6 +151,14 @@ def main() -> int:
     _run(
         "bitarray vector drift check",
         [*python, "libraries/bitarray/python_reference/generate_vectors.py", "--check"],
+    )
+    _run(
+        "audioop vector drift check",
+        [
+            *_audioop_reference_python(),
+            "libraries/audioop/python_reference/generate_audioop_vectors.py",
+            "--check",
+        ],
     )
     _run("pytest", [*pytest, "-q"])
 
