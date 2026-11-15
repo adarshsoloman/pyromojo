@@ -1524,6 +1524,250 @@ def build_phase5_cases(cases: list[dict[str, object]]) -> None:
     )
 
 
+def build_phase6_cases(cases: list[dict[str, object]]) -> None:
+    """Coverage for the Phase 6 stateful ratecv operation."""
+
+    def ratecv_case(
+        case_id,
+        width,
+        nchannels,
+        inrate,
+        outrate,
+        fragment,
+        state=None,
+        weightA=1,
+        weightB=0,
+        notes=None,
+    ):
+        args = {
+            "fragment_hex": hexed(fragment),
+            "width": width,
+            "nchannels": nchannels,
+            "inrate": inrate,
+            "outrate": outrate,
+            "weightA": weightA,
+            "weightB": weightB,
+        }
+        if state is not None:
+            args["state"] = {
+                "d": state[0],
+                "channels": [list(pair) for pair in state[1]],
+            }
+
+        def call():
+            state_arg = None
+            if state is not None:
+                state_arg = (
+                    state[0],
+                    tuple(tuple(pair) for pair in state[1]),
+                )
+            return audioop.ratecv(
+                fragment, width, nchannels, inrate, outrate, state_arg, weightA, weightB
+            )
+
+        cases.append(
+            case(
+                case_id,
+                "ratecv",
+                width=width,
+                args=args,
+                call=call,
+                notes=notes,
+            )
+        )
+
+    # fresh-state basics for every width
+    for width in range(1, 5):
+        lo = -(1 << (width * 8 - 1))
+        hi = (1 << (width * 8 - 1)) - 1
+        fragment = pcm_w(width, lo, hi, -1, 1)
+        ratecv_case(
+            f"p6-ratecv-w{width}",
+            width,
+            1,
+            8000,
+            8000,
+            fragment,
+            notes="equal rates, boundaries at every width",
+        )
+    ratecv_case(
+        "p6-ratecv-empty",
+        2,
+        1,
+        8000,
+        16000,
+        b"",
+        notes="empty input returns the initial phase in the state",
+    )
+    ratecv_case("p6-ratecv-one-sample", 2, 1, 8000, 8000, pcm(1000))
+    ratecv_case("p6-ratecv-equal-rates", 2, 1, 3, 3, pcm(1000, 2000, 3000))
+    ratecv_case(
+        "p6-ratecv-upsample",
+        2,
+        1,
+        8000,
+        16000,
+        pcm(-10, -9, -8, -7, -6),
+    )
+    ratecv_case(
+        "p6-ratecv-downsample",
+        2,
+        1,
+        16000,
+        8000,
+        pcm(-10, -9, -8, -7, -6),
+    )
+    ratecv_case(
+        "p6-ratecv-non-integer-ratio",
+        2,
+        1,
+        8000,
+        44100,
+        pcm(1000, 2000, 3000, 4000, 5000),
+        notes="outrate not a multiple of inrate",
+    )
+    ratecv_case(
+        "p6-ratecv-2ch-upsample",
+        2,
+        2,
+        8000,
+        16000,
+        pcm(1, 2, 3, 4),
+        notes="channels interleaved in input and output",
+    )
+    ratecv_case(
+        "p6-ratecv-4ch-equal",
+        2,
+        4,
+        8000,
+        8000,
+        pcm(1, 2, 3, 4, 5, 6, 7, 8),
+    )
+    ratecv_case(
+        "p6-ratecv-w4-upsample",
+        4,
+        1,
+        8000,
+        16000,
+        pcm_w(4, 2147483647, -2147483648, 0, 1),
+        notes="32-bit samples are used unshifted",
+    )
+    ratecv_case(
+        "p6-ratecv-w3-upsample",
+        3,
+        1,
+        8000,
+        16000,
+        pcm_w(3, -1, 1, 0, 5),
+    )
+    ratecv_case(
+        "p6-ratecv-weights-2-1",
+        2,
+        1,
+        8000,
+        8000,
+        pcm(1000, -1000, 1000, -1000),
+        weightA=2,
+        weightB=1,
+    )
+    ratecv_case(
+        "p6-ratecv-weights-3-2",
+        2,
+        1,
+        8000,
+        8000,
+        pcm(1000, -1000),
+        weightA=3,
+        weightB=2,
+    )
+    ratecv_case(
+        "p6-ratecv-weights-5-0",
+        2,
+        1,
+        8000,
+        8000,
+        pcm(1000, -1000),
+        weightA=5,
+        weightB=0,
+        notes="gcd reduction turns (5, 0) into (1, 0)",
+    )
+    ratecv_case(
+        "p6-ratecv-negative-extrema",
+        2,
+        1,
+        8000,
+        16000,
+        pcm(-32768, 32767),
+    )
+    ratecv_case(
+        "p6-ratecv-alternating",
+        2,
+        1,
+        8000,
+        16000,
+        pcm(1, -1, 1, -1, 1, -1),
+    )
+
+    # continued state: derive the state from a deterministic reference call
+    seed_out, seed_state = audioop.ratecv(pcm(-10, -9, -8, -7), 2, 1, 8000, 16000, None)
+    ratecv_case(
+        "p6-ratecv-continued-state",
+        2,
+        1,
+        8000,
+        16000,
+        pcm(-6, -5, -4, -3),
+        state=seed_state,
+        notes="state captured from a deterministic previous reference call",
+    )
+    seed_out2, seed_state2 = audioop.ratecv(pcm(1, 2, 3, 4), 2, 2, 8000, 16000, None)
+    ratecv_case(
+        "p6-ratecv-continued-2ch",
+        2,
+        2,
+        8000,
+        16000,
+        pcm(5, 6, 7, 8),
+        state=seed_state2,
+    )
+
+    # error cases
+    ratecv_case("p6-ratecv-width-zero", 0, 1, 1, 1, b"")
+    ratecv_case("p6-ratecv-channels-zero", 2, 0, 1, 1, b"")
+    ratecv_case("p6-ratecv-misaligned", 2, 1, 1, 1, b"\x01")
+    ratecv_case("p6-ratecv-inrate-zero", 2, 1, 0, 1, b"")
+    ratecv_case("p6-ratecv-outrate-zero", 2, 1, 1, 0, b"")
+    ratecv_case("p6-ratecv-weightA-zero", 2, 1, 1, 1, b"", weightA=0)
+    ratecv_case("p6-ratecv-weightB-negative", 2, 1, 1, 1, b"", weightB=-1)
+    ratecv_case(
+        "p6-ratecv-huge-rate",
+        2,
+        1,
+        2**40,
+        1,
+        b"",
+        notes="argument conversion precedes body validation",
+    )
+    ratecv_case(
+        "p6-ratecv-huge-channels",
+        2,
+        2**40,
+        1,
+        1,
+        b"",
+        notes="argument conversion precedes body validation",
+    )
+    ratecv_case(
+        "p6-ratecv-width-times-channels-too-big",
+        4,
+        2**30,
+        1,
+        1,
+        b"",
+        notes="width * nchannels exceeds a C int",
+    )
+
+
 def main() -> int:
     check = "--check" in sys.argv[1:]
     cases = build_cases()
@@ -1532,6 +1776,7 @@ def main() -> int:
     build_phase3_cases(cases)
     build_phase4_cases(cases)
     build_phase5_cases(cases)
+    build_phase6_cases(cases)
     payload = {
         "schema_version": SCHEMA_VERSION,
         "generator": {"name": "audioop_vectors", "version": SCHEMA_VERSION},

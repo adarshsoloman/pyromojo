@@ -3527,6 +3527,787 @@
         "result_hex": "0000000000000100"
       },
       "notes": "reference UB; observed result equals the port's NaN->0 policy"
+    },
+    {
+      "id": "p6-ratecv-w1",
+      "op": "ratecv",
+      "width": 1,
+      "args": {
+        "fragment_hex": "807fff01",
+        "width": 1,
+        "nchannels": 1,
+        "inrate": 8000,
+        "outrate": 8000,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "result_hex": "807fff01",
+        "state": [
+          -1,
+          [
+            [
+              -16777216,
+              16777216
+            ]
+          ]
+        ]
+      },
+      "notes": "equal rates, boundaries at every width"
+    },
+    {
+      "id": "p6-ratecv-w2",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0080ff7fffff0100",
+        "width": 2,
+        "nchannels": 1,
+        "inrate": 8000,
+        "outrate": 8000,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "result_hex": "0080ff7fffff0100",
+        "state": [
+          -1,
+          [
+            [
+              -65536,
+              65536
+            ]
+          ]
+        ]
+      },
+      "notes": "equal rates, boundaries at every width"
+    },
+    {
+      "id": "p6-ratecv-w3",
+      "op": "ratecv",
+      "width": 3,
+      "args": {
+        "fragment_hex": "000080ffff7fffffff010000",
+        "width": 3,
+        "nchannels": 1,
+        "inrate": 8000,
+        "outrate": 8000,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "result_hex": "000080ffff7fffffff010000",
+        "state": [
+          -1,
+          [
+            [
+              -256,
+              256
+            ]
+          ]
+        ]
+      },
+      "notes": "equal rates, boundaries at every width"
+    },
+    {
+      "id": "p6-ratecv-w4",
+      "op": "ratecv",
+      "width": 4,
+      "args": {
+        "fragment_hex": "00000080ffffff7fffffffff01000000",
+        "width": 4,
+        "nchannels": 1,
+        "inrate": 8000,
+        "outrate": 8000,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "result_hex": "00000080ffffff7fffffffff01000000",
+        "state": [
+          -1,
+          [
+            [
+              -1,
+              1
+            ]
+          ]
+        ]
+      },
+      "notes": "equal rates, boundaries at every width"
+    },
+    {
+      "id": "p6-ratecv-empty",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "width": 2,
+        "nchannels": 1,
+        "inrate": 8000,
+        "outrate": 16000,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "result_hex": "",
+        "state": [
+          -2,
+          [
+            [
+              0,
+              0
+            ]
+          ]
+        ]
+      },
+      "notes": "empty input returns the initial phase in the state"
+    },
+    {
+      "id": "p6-ratecv-one-sample",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e803",
+        "width": 2,
+        "nchannels": 1,
+        "inrate": 8000,
+        "outrate": 8000,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "result_hex": "e803",
+        "state": [
+          -1,
+          [
+            [
+              0,
+              65536000
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "p6-ratecv-equal-rates",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e803d007b80b",
+        "width": 2,
+        "nchannels": 1,
+        "inrate": 3,
+        "outrate": 3,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "result_hex": "e803d007b80b",
+        "state": [
+          -1,
+          [
+            [
+              131072000,
+              196608000
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "p6-ratecv-upsample",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "f6fff7fff8fff9fffaff",
+        "width": 2,
+        "nchannels": 1,
+        "inrate": 8000,
+        "outrate": 16000,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "result_hex": "f6fff6fff7fff7fff8fff8fff9fff9fffaff",
+        "state": [
+          -1,
+          [
+            [
+              -458752,
+              -393216
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "p6-ratecv-downsample",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "f6fff7fff8fff9fffaff",
+        "width": 2,
+        "nchannels": 1,
+        "inrate": 16000,
+        "outrate": 8000,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "result_hex": "f6fff8fffaff",
+        "state": [
+          -2,
+          [
+            [
+              -458752,
+              -393216
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "p6-ratecv-non-integer-ratio",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e803d007b80ba00f8813",
+        "width": 2,
+        "nchannels": 1,
+        "inrate": 8000,
+        "outrate": 44100,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "result_hex": "e8039d0452050806bd0673072808dd089309480afe0ab30b680c1e0dd30d890e3e0ff30fa9105e111412c9127e13",
+        "state": [
+          -76,
+          [
+            [
+              262144000,
+              327680000
+            ]
+          ]
+        ]
+      },
+      "notes": "outrate not a multiple of inrate"
+    },
+    {
+      "id": "p6-ratecv-2ch-upsample",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0100020003000400",
+        "width": 2,
+        "nchannels": 2,
+        "inrate": 8000,
+        "outrate": 16000,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "result_hex": "010002000200030003000400",
+        "state": [
+          -1,
+          [
+            [
+              65536,
+              196608
+            ],
+            [
+              131072,
+              262144
+            ]
+          ]
+        ]
+      },
+      "notes": "channels interleaved in input and output"
+    },
+    {
+      "id": "p6-ratecv-4ch-equal",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "01000200030004000500060007000800",
+        "width": 2,
+        "nchannels": 4,
+        "inrate": 8000,
+        "outrate": 8000,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "result_hex": "01000200030004000500060007000800",
+        "state": [
+          -1,
+          [
+            [
+              65536,
+              327680
+            ],
+            [
+              131072,
+              393216
+            ],
+            [
+              196608,
+              458752
+            ],
+            [
+              262144,
+              524288
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "p6-ratecv-w4-upsample",
+      "op": "ratecv",
+      "width": 4,
+      "args": {
+        "fragment_hex": "ffffff7f000000800000000001000000",
+        "width": 4,
+        "nchannels": 1,
+        "inrate": 8000,
+        "outrate": 16000,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "result_hex": "ffffff7f0000000000000080000000c0000000000000000001000000",
+        "state": [
+          -1,
+          [
+            [
+              0,
+              1
+            ]
+          ]
+        ]
+      },
+      "notes": "32-bit samples are used unshifted"
+    },
+    {
+      "id": "p6-ratecv-w3-upsample",
+      "op": "ratecv",
+      "width": 3,
+      "args": {
+        "fragment_hex": "ffffff010000000000050000",
+        "width": 3,
+        "nchannels": 1,
+        "inrate": 8000,
+        "outrate": 16000,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "result_hex": "ffffff000000010000000000000000020000050000",
+        "state": [
+          -1,
+          [
+            [
+              0,
+              1280
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "p6-ratecv-weights-2-1",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e80318fce80318fc",
+        "width": 2,
+        "nchannels": 1,
+        "inrate": 8000,
+        "outrate": 8000,
+        "weightA": 2,
+        "weightB": 1
+      },
+      "expected": {
+        "result_hex": "9a0243fe060212fe",
+        "state": [
+          -1,
+          [
+            [
+              33981629,
+              -32363457
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "p6-ratecv-weights-3-2",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e80318fc",
+        "width": 2,
+        "nchannels": 1,
+        "inrate": 8000,
+        "outrate": 8000,
+        "weightA": 3,
+        "weightB": 2
+      },
+      "expected": {
+        "result_hex": "580298fe",
+        "state": [
+          -1,
+          [
+            [
+              39321600,
+              -23592960
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "p6-ratecv-weights-5-0",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e80318fc",
+        "width": 2,
+        "nchannels": 1,
+        "inrate": 8000,
+        "outrate": 8000,
+        "weightA": 5,
+        "weightB": 0
+      },
+      "expected": {
+        "result_hex": "e80318fc",
+        "state": [
+          -1,
+          [
+            [
+              65536000,
+              -65536000
+            ]
+          ]
+        ]
+      },
+      "notes": "gcd reduction turns (5, 0) into (1, 0)"
+    },
+    {
+      "id": "p6-ratecv-negative-extrema",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0080ff7f",
+        "width": 2,
+        "nchannels": 1,
+        "inrate": 8000,
+        "outrate": 16000,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "result_hex": "0080ffffff7f",
+        "state": [
+          -1,
+          [
+            [
+              -2147483648,
+              2147418112
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "p6-ratecv-alternating",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0100ffff0100ffff0100ffff",
+        "width": 2,
+        "nchannels": 1,
+        "inrate": 8000,
+        "outrate": 16000,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "result_hex": "01000000ffff000001000000ffff000001000000ffff",
+        "state": [
+          -1,
+          [
+            [
+              65536,
+              -65536
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "p6-ratecv-continued-state",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "fafffbfffcfffdff",
+        "width": 2,
+        "nchannels": 1,
+        "inrate": 8000,
+        "outrate": 16000,
+        "weightA": 1,
+        "weightB": 0,
+        "state": {
+          "d": -1,
+          "channels": [
+            [
+              -524288,
+              -458752
+            ]
+          ]
+        }
+      },
+      "expected": {
+        "result_hex": "f9fffafffafffbfffbfffcfffcfffdff",
+        "state": [
+          -1,
+          [
+            [
+              -262144,
+              -196608
+            ]
+          ]
+        ]
+      },
+      "notes": "state captured from a deterministic previous reference call"
+    },
+    {
+      "id": "p6-ratecv-continued-2ch",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0500060007000800",
+        "width": 2,
+        "nchannels": 2,
+        "inrate": 8000,
+        "outrate": 16000,
+        "weightA": 1,
+        "weightB": 0,
+        "state": {
+          "d": -1,
+          "channels": [
+            [
+              65536,
+              196608
+            ],
+            [
+              131072,
+              262144
+            ]
+          ]
+        }
+      },
+      "expected": {
+        "result_hex": "04000500050006000600070007000800",
+        "state": [
+          -1,
+          [
+            [
+              327680,
+              458752
+            ],
+            [
+              393216,
+              524288
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "p6-ratecv-width-zero",
+      "op": "ratecv",
+      "width": 0,
+      "args": {
+        "fragment_hex": "",
+        "width": 0,
+        "nchannels": 1,
+        "inrate": 1,
+        "outrate": 1,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Size should be 1, 2, 3 or 4"
+      }
+    },
+    {
+      "id": "p6-ratecv-channels-zero",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "width": 2,
+        "nchannels": 0,
+        "inrate": 1,
+        "outrate": 1,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "# of channels should be >= 1"
+      }
+    },
+    {
+      "id": "p6-ratecv-misaligned",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "01",
+        "width": 2,
+        "nchannels": 1,
+        "inrate": 1,
+        "outrate": 1,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "not a whole number of frames"
+      }
+    },
+    {
+      "id": "p6-ratecv-inrate-zero",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "width": 2,
+        "nchannels": 1,
+        "inrate": 0,
+        "outrate": 1,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "sampling rate not > 0"
+      }
+    },
+    {
+      "id": "p6-ratecv-outrate-zero",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "width": 2,
+        "nchannels": 1,
+        "inrate": 1,
+        "outrate": 0,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "sampling rate not > 0"
+      }
+    },
+    {
+      "id": "p6-ratecv-weightA-zero",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "width": 2,
+        "nchannels": 1,
+        "inrate": 1,
+        "outrate": 1,
+        "weightA": 0,
+        "weightB": 0
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "weightA should be >= 1, weightB should be >= 0"
+      }
+    },
+    {
+      "id": "p6-ratecv-weightB-negative",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "width": 2,
+        "nchannels": 1,
+        "inrate": 1,
+        "outrate": 1,
+        "weightA": 1,
+        "weightB": -1
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "weightA should be >= 1, weightB should be >= 0"
+      }
+    },
+    {
+      "id": "p6-ratecv-huge-rate",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "width": 2,
+        "nchannels": 1,
+        "inrate": 1099511627776,
+        "outrate": 1,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "error_type": "OverflowError",
+        "error_message": "Python int too large to convert to C int"
+      },
+      "notes": "argument conversion precedes body validation"
+    },
+    {
+      "id": "p6-ratecv-huge-channels",
+      "op": "ratecv",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "width": 2,
+        "nchannels": 1099511627776,
+        "inrate": 1,
+        "outrate": 1,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "error_type": "OverflowError",
+        "error_message": "Python int too large to convert to C int"
+      },
+      "notes": "argument conversion precedes body validation"
+    },
+    {
+      "id": "p6-ratecv-width-times-channels-too-big",
+      "op": "ratecv",
+      "width": 4,
+      "args": {
+        "fragment_hex": "",
+        "width": 4,
+        "nchannels": 1073741824,
+        "inrate": 1,
+        "outrate": 1,
+        "weightA": 1,
+        "weightB": 0
+      },
+      "expected": {
+        "error_type": "OverflowError",
+        "error_message": "width * nchannels too big for a C int"
+      },
+      "notes": "width * nchannels exceeds a C int"
     }
   ]
 }

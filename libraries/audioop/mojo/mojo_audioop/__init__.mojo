@@ -1,4 +1,4 @@
-"""Native Mojo audioop: sample, arithmetic, statistics, peak and channel layers."""
+"""Native Mojo audioop: sample, arithmetic, statistics, peak, channel and ratecv layers."""
 
 from mojo_audioop.arithmetic import (
     add,
@@ -16,6 +16,7 @@ from mojo_audioop.peak_analysis import (
     maxpp,
 )
 from mojo_audioop.channels import tomono, tostereo
+from mojo_audioop.ratecv import RatecvResult, RatecvState, ratecv, ratecv_continue
 from mojo_audioop.statistics import (
     avg,
     cross,

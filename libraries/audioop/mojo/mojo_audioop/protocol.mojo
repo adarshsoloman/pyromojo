@@ -43,6 +43,7 @@ comptime OP_FINDFACTOR: UInt8 = 0x31
 comptime OP_FINDFIT: UInt8 = 0x32
 comptime OP_TOMONO: UInt8 = 0x33
 comptime OP_TOSTEREO: UInt8 = 0x34
+comptime OP_RATECV: UInt8 = 0x35
 
 comptime STATUS_OK: UInt8 = 0
 comptime STATUS_ERROR: UInt8 = 1

@@ -243,6 +243,39 @@ def _tostereo_one(item: dict) -> dict:
     )
 
 
+def _ratecv_one(item: dict) -> dict:
+    """Call the reference ratecv; state may be null (fresh) or structured."""
+    state = item.get("state")
+    if state is None:
+        state_tuple = None
+    else:
+        # JSON round-trips tuples as lists; the reference requires tuples
+        state_tuple = (
+            int(state["d"]),
+            tuple(tuple(int(value) for value in pair) for pair in state["channels"]),
+        )
+    try:
+        out, returned = audioop.ratecv(
+            bytes.fromhex(item["fragment_hex"]),
+            int(item["width"]),
+            int(item["nchannels"]),
+            int(item["inrate"]),
+            int(item["outrate"]),
+            state_tuple,
+            int(item.get("weightA", 1)),
+            int(item.get("weightB", 0)),
+        )
+    except Exception as exc:  # the reference defines these messages
+        return {"error_type": type(exc).__name__, "error_message": str(exc)}
+    return {
+        "result_hex": out.hex(),
+        "state": {
+            "d": returned[0],
+            "channels": [[prev, cur] for prev, cur in returned[1]],
+        },
+    }
+
+
 def main() -> int:
     request = json.load(sys.stdin)
     response = {
@@ -267,6 +300,7 @@ def main() -> int:
         "findfit": [_findfit_one(item) for item in request.get("findfit", [])],
         "tomono": [_tomono_one(item) for item in request.get("tomono", [])],
         "tostereo": [_tostereo_one(item) for item in request.get("tostereo", [])],
+        "ratecv": [_ratecv_one(item) for item in request.get("ratecv", [])],
     }
     json.dump(response, sys.stdout)
     return 0

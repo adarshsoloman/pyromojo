@@ -31,6 +31,7 @@ OP_FINDFACTOR = 0x31
 OP_FINDFIT = 0x32
 OP_TOMONO = 0x33
 OP_TOSTEREO = 0x34
+OP_RATECV = 0x35
 
 
 def request(body: bytes) -> bytes:
@@ -182,3 +183,45 @@ def tomono_body(width: int, lfactor: float, rfactor: float, fragment: bytes) -> 
 
 def tostereo_body(width: int, lfactor: float, rfactor: float, fragment: bytes) -> bytes:
     return channel_body(OP_TOSTEREO, width, lfactor, rfactor, fragment)
+
+
+def ratecv_body(
+    width: int,
+    nchannels: int,
+    inrate: int,
+    outrate: int,
+    weight_a: int,
+    weight_b: int,
+    state: tuple[int, tuple[tuple[int, int], ...]] | None,
+    fragment: bytes,
+) -> bytes:
+    body = (
+        bytes([OP_RATECV, width])
+        + struct.pack(">q", nchannels)
+        + struct.pack(">q", inrate)
+        + struct.pack(">q", outrate)
+        + struct.pack(">q", weight_a)
+        + struct.pack(">q", weight_b)
+    )
+    if state is None:
+        body += b"\x00"
+    else:
+        d, channels = state
+        body += b"\x01" + struct.pack(">q", d)
+        for prev, cur in channels:
+            body += struct.pack(">q", prev) + struct.pack(">q", cur)
+    return body + fragment
+
+
+def parse_ratecv_response(payload: bytes, nchannels: int):
+    out_len = struct.unpack(">I", payload[:4])[0]
+    output = payload[4 : 4 + out_len]
+    rest = payload[4 + out_len :]
+    d = struct.unpack(">q", rest[:8])[0]
+    channels = []
+    for index in range(nchannels):
+        base = 8 + 16 * index
+        prev = struct.unpack(">q", rest[base : base + 8])[0]
+        cur = struct.unpack(">q", rest[base + 8 : base + 16])[0]
+        channels.append((prev, cur))
+    return output, (d, tuple(channels))

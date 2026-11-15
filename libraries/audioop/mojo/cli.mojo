@@ -43,6 +43,14 @@ Operations (framed, see ``mojo_audioop/protocol.mojo``):
   fragment bytes.
 * ``0x34`` tostereo -> same payload as tomono; replies with the stereo
   fragment bytes (left sample first per input sample).
+* ``0x35`` ratecv -> ``uint8 width | int64_be nchannels | int64_be
+  inrate | int64_be outrate | int64_be weightA | int64_be weightB |
+  uint8 has_state | [int64_be d | nchannels x (int64_be prev |
+  int64_be cur)] | fragment``; replies with ``uint32_be out_len |
+  output bytes | int64_be d | nchannels x (int64_be prev | int64_be
+  cur)`` so the state can be fed into the next request. The channel
+  count is 8 bytes so argument-conversion errors are reachable.
+
 
 Malformed requests produce ``STATUS_ERROR`` frames; framing errors
 produce one error frame plus a non-zero exit, like the other CLIs.
@@ -80,11 +88,13 @@ from mojo_audioop.protocol import (
     OP_MUL,
     OP_PING,
     OP_REVERSE,
+    OP_RATECV,
     OP_RMS,
     OP_TOMONO,
     OP_TOSTEREO,
     STATUS_ERROR,
     STATUS_OK,
+    append_u32_be,
     ascii_bytes,
     decode_u32_be,
     read_frame,
@@ -93,6 +103,7 @@ from mojo_audioop.protocol import (
 from mojo_audioop.samples import decode_fragment, encode_fragment
 from mojo_audioop.channels import tomono, tostereo
 from mojo_audioop.peak_analysis import avgpp, findfactor, findfit, findmax, maxpp
+from mojo_audioop.ratecv import RatecvState, ratecv, ratecv_continue
 from mojo_audioop.statistics import avg, cross, getsample, max, minmax, rms
 from std.memory import bitcast
 
@@ -379,6 +390,92 @@ def _tostereo_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
     return tostereo(payload[17:], width, left, right)
 
 
+def _encode_i64_be(value: Int64) -> List[UInt8]:
+    """Big-endian 8-byte two's-complement integer."""
+    var out = List[UInt8](capacity=8)
+    for shift in range(56, -8, -8):
+        out.append(UInt8((UInt64(value) >> UInt64(shift)) & 0xFF))
+    return out^
+
+
+def _encode_ratecv_state(state: RatecvState, chans: Int) raises -> List[UInt8]:
+    var out = _encode_i64_be(state.d)
+    for chan in range(chans):
+        var prev_bytes = _encode_i64_be(state.prev_i[chan])
+        for byte in prev_bytes:
+            out.append(byte)
+        var cur_bytes = _encode_i64_be(state.cur_i[chan])
+        for byte in cur_bytes:
+            out.append(byte)
+    return out^
+
+
+def _parse_ratecv_state(
+    payload: Span[UInt8, _], offset: Int, chans: Int
+) raises -> RatecvState:
+    if len(payload) < offset + 1:
+        raise Error("ratecv request too short: need the state flag")
+    var has_state = payload[offset] != 0
+    var cursor = offset + 1
+    if not has_state:
+        var prev = List[Int64](capacity=chans)
+        var cur = List[Int64](capacity=chans)
+        for _ in range(chans):
+            prev.append(0)
+            cur.append(0)
+        return RatecvState(0, prev^, cur^)
+    if len(payload) < cursor + 8 + 16 * chans:
+        raise Error("ratecv request too short: need the full state")
+    var d = _decode_i64_be(payload[cursor : cursor + 8])
+    cursor += 8
+    var prev = List[Int64](capacity=chans)
+    var cur = List[Int64](capacity=chans)
+    for _ in range(chans):
+        prev.append(_decode_i64_be(payload[cursor : cursor + 8]))
+        cursor += 8
+        cur.append(_decode_i64_be(payload[cursor : cursor + 8]))
+        cursor += 8
+    return RatecvState(d, prev^, cur^)
+
+
+def _ratecv_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 1 + 8 + 32:
+        raise Error("ratecv request too short: need width, channels, rates and weights")
+    var width = Int(payload[0])
+    var nchannels = _decode_i64_be(payload[1:9])
+    var inrate = _decode_i64_be(payload[9:17])
+    var outrate = _decode_i64_be(payload[17:25])
+    var weight_a = _decode_i64_be(payload[25:33])
+    var weight_b = _decode_i64_be(payload[33:41])
+    # the channel count for the state block comes from the request; a
+    # nonsensical count fails inside ratecv before any state is touched,
+    # but the state block itself needs a sane bound here
+    var chans_for_state = nchannels
+    if nchannels < 0 or nchannels > 65536:
+        chans_for_state = 0
+    var state = _parse_ratecv_state(payload, 41, Int(chans_for_state))
+    var continued = len(payload) > 41 and payload[41] != 0
+    var state_size = 8 + 16 * Int(chans_for_state)
+    var fragment_offset = 42 + (state_size if continued else 0)
+    if len(payload) < fragment_offset:
+        raise Error("ratecv request too short: fragment is missing")
+    var result = ratecv_continue(
+        payload[fragment_offset:], width, nchannels, inrate, outrate, state^,
+        weight_a, weight_b,
+    ) if continued else ratecv(
+        payload[fragment_offset:], width, nchannels, inrate, outrate,
+        weight_a, weight_b,
+    )
+    var out = List[UInt8]()
+    append_u32_be(out, UInt32(len(result.output)))
+    for byte in result.output:
+        out.append(byte)
+    var state_bytes = _encode_ratecv_state(result.state, Int(chans_for_state))
+    for byte in state_bytes:
+        out.append(byte)
+    return out^
+
+
 def main() raises:
     var stdin = RawFileDescriptor(0)
     var stdout = RawFileDescriptor(1)
@@ -528,6 +625,12 @@ def main() raises:
             try:
                 var stereo_fragment = _tostereo_request(payload)
                 write_frame(stdout, STATUS_OK, Span(stereo_fragment))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_RATECV:
+            try:
+                var ratecv_result = _ratecv_request(payload)
+                write_frame(stdout, STATUS_OK, Span(ratecv_result))
             except error:
                 _reply_error(stdout, String(error))
         else:
