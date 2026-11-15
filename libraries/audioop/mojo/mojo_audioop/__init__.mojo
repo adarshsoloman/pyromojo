@@ -1,4 +1,4 @@
-"""Native Mojo audioop: sample representation and Phase 2 arithmetic."""
+"""Native Mojo audioop: sample, arithmetic and statistics layers."""
 
 from mojo_audioop.arithmetic import (
     add,
@@ -7,6 +7,14 @@ from mojo_audioop.arithmetic import (
     lin2lin,
     mul,
     reverse,
+)
+from mojo_audioop.statistics import (
+    avg,
+    cross,
+    getsample,
+    max,
+    minmax,
+    rms,
 )
 from mojo_audioop.protocol import (
     OP_DECODE_FRAGMENT,

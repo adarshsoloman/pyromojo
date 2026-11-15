@@ -1550,6 +1550,834 @@
       "expected": {
         "result_hex": ""
       }
+    },
+    {
+      "id": "p3-getsample-w1-first",
+      "op": "getsample",
+      "width": 1,
+      "args": {
+        "fragment_hex": "807f00ff01",
+        "index": 0
+      },
+      "expected": {
+        "value": -128
+      }
+    },
+    {
+      "id": "p3-getsample-w1-last",
+      "op": "getsample",
+      "width": 1,
+      "args": {
+        "fragment_hex": "807f00ff01",
+        "index": 4
+      },
+      "expected": {
+        "value": 1
+      }
+    },
+    {
+      "id": "p3-getsample-w2-first",
+      "op": "getsample",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0080ff7f0000ffff0100",
+        "index": 0
+      },
+      "expected": {
+        "value": -32768
+      }
+    },
+    {
+      "id": "p3-getsample-w2-last",
+      "op": "getsample",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0080ff7f0000ffff0100",
+        "index": 4
+      },
+      "expected": {
+        "value": 1
+      }
+    },
+    {
+      "id": "p3-getsample-w3-first",
+      "op": "getsample",
+      "width": 3,
+      "args": {
+        "fragment_hex": "000080ffff7f000000ffffff010000",
+        "index": 0
+      },
+      "expected": {
+        "value": -8388608
+      }
+    },
+    {
+      "id": "p3-getsample-w3-last",
+      "op": "getsample",
+      "width": 3,
+      "args": {
+        "fragment_hex": "000080ffff7f000000ffffff010000",
+        "index": 4
+      },
+      "expected": {
+        "value": 1
+      }
+    },
+    {
+      "id": "p3-getsample-w4-first",
+      "op": "getsample",
+      "width": 4,
+      "args": {
+        "fragment_hex": "00000080ffffff7f00000000ffffffff01000000",
+        "index": 0
+      },
+      "expected": {
+        "value": -2147483648
+      }
+    },
+    {
+      "id": "p3-getsample-w4-last",
+      "op": "getsample",
+      "width": 4,
+      "args": {
+        "fragment_hex": "00000080ffffff7f00000000ffffffff01000000",
+        "index": 4
+      },
+      "expected": {
+        "value": 1
+      }
+    },
+    {
+      "id": "p3-getsample-negative-index",
+      "op": "getsample",
+      "width": 2,
+      "args": {
+        "fragment_hex": "010002000300",
+        "index": -1
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Index out of range"
+      },
+      "notes": "negative indices are not Python-style"
+    },
+    {
+      "id": "p3-getsample-index-equals-count",
+      "op": "getsample",
+      "width": 2,
+      "args": {
+        "fragment_hex": "010002000300",
+        "index": 3
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Index out of range"
+      }
+    },
+    {
+      "id": "p3-getsample-empty",
+      "op": "getsample",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "index": 0
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Index out of range"
+      },
+      "notes": "empty fragment has no samples"
+    },
+    {
+      "id": "p3-getsample-misaligned",
+      "op": "getsample",
+      "width": 2,
+      "args": {
+        "fragment_hex": "010203",
+        "index": 0
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "not a whole number of frames"
+      }
+    },
+    {
+      "id": "p3-getsample-width-zero",
+      "op": "getsample",
+      "width": 0,
+      "args": {
+        "fragment_hex": "",
+        "index": 0
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Size should be 1, 2, 3 or 4"
+      }
+    },
+    {
+      "id": "p3-max-w1",
+      "op": "max",
+      "width": 1,
+      "args": {
+        "fragment_hex": "807f00ff01"
+      },
+      "expected": {
+        "value": 128
+      }
+    },
+    {
+      "id": "p3-max-w2",
+      "op": "max",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0080ff7f0000ffff0100"
+      },
+      "expected": {
+        "value": 32768
+      }
+    },
+    {
+      "id": "p3-max-w3",
+      "op": "max",
+      "width": 3,
+      "args": {
+        "fragment_hex": "000080ffff7f000000ffffff010000"
+      },
+      "expected": {
+        "value": 8388608
+      }
+    },
+    {
+      "id": "p3-max-w4",
+      "op": "max",
+      "width": 4,
+      "args": {
+        "fragment_hex": "00000080ffffff7f00000000ffffffff01000000"
+      },
+      "expected": {
+        "value": 2147483648
+      }
+    },
+    {
+      "id": "p3-max-w4-int-min-only",
+      "op": "max",
+      "width": 4,
+      "args": {
+        "fragment_hex": "00000080"
+      },
+      "expected": {
+        "value": 2147483648
+      },
+      "notes": "unsigned absolute value: 2147483648"
+    },
+    {
+      "id": "p3-max-negative-only",
+      "op": "max",
+      "width": 2,
+      "args": {
+        "fragment_hex": "fffff7fffdff"
+      },
+      "expected": {
+        "value": 9
+      },
+      "notes": "magnitude of the most negative sample"
+    },
+    {
+      "id": "p3-max-empty",
+      "op": "max",
+      "width": 2,
+      "args": {
+        "fragment_hex": ""
+      },
+      "expected": {
+        "value": 0
+      }
+    },
+    {
+      "id": "p3-max-w1-boundaries",
+      "op": "max",
+      "width": 1,
+      "args": {
+        "fragment_hex": "7f80"
+      },
+      "expected": {
+        "value": 128
+      },
+      "notes": "128 -> absolute 128"
+    },
+    {
+      "id": "p3-minmax-w1",
+      "op": "minmax",
+      "width": 1,
+      "args": {
+        "fragment_hex": "807f00ff01"
+      },
+      "expected": {
+        "value": [
+          -128,
+          127
+        ]
+      }
+    },
+    {
+      "id": "p3-minmax-w2",
+      "op": "minmax",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0080ff7f0000ffff0100"
+      },
+      "expected": {
+        "value": [
+          -32768,
+          32767
+        ]
+      }
+    },
+    {
+      "id": "p3-minmax-w3",
+      "op": "minmax",
+      "width": 3,
+      "args": {
+        "fragment_hex": "000080ffff7f000000ffffff010000"
+      },
+      "expected": {
+        "value": [
+          -8388608,
+          8388607
+        ]
+      }
+    },
+    {
+      "id": "p3-minmax-w4",
+      "op": "minmax",
+      "width": 4,
+      "args": {
+        "fragment_hex": "00000080ffffff7f00000000ffffffff01000000"
+      },
+      "expected": {
+        "value": [
+          -2147483648,
+          2147483647
+        ]
+      }
+    },
+    {
+      "id": "p3-minmax-empty",
+      "op": "minmax",
+      "width": 2,
+      "args": {
+        "fragment_hex": ""
+      },
+      "expected": {
+        "value": [
+          2147483647,
+          -2147483648
+        ]
+      },
+      "notes": "sentinel pair (2147483647, -2147483648)"
+    },
+    {
+      "id": "p3-minmax-w4-int-min-only",
+      "op": "minmax",
+      "width": 4,
+      "args": {
+        "fragment_hex": "00000080"
+      },
+      "expected": {
+        "value": [
+          -2147483648,
+          -2147483648
+        ]
+      },
+      "notes": "both bounds are the same sample"
+    },
+    {
+      "id": "p3-minmax-single",
+      "op": "minmax",
+      "width": 1,
+      "args": {
+        "fragment_hex": "05"
+      },
+      "expected": {
+        "value": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "id": "p3-minmax-negative-only",
+      "op": "minmax",
+      "width": 2,
+      "args": {
+        "fragment_hex": "f7fffdff"
+      },
+      "expected": {
+        "value": [
+          -9,
+          -3
+        ]
+      }
+    },
+    {
+      "id": "p3-avg-w2-floor-negative",
+      "op": "avg",
+      "width": 2,
+      "args": {
+        "fragment_hex": "fffffeff"
+      },
+      "expected": {
+        "value": -2
+      },
+      "notes": "floor(-1.5) = -2, not truncation (-1)"
+    },
+    {
+      "id": "p3-avg-w2-floor-negative-3",
+      "op": "avg",
+      "width": 2,
+      "args": {
+        "fragment_hex": "fffffefffcff"
+      },
+      "expected": {
+        "value": -3
+      },
+      "notes": "floor(-7/3) = -3, not truncation (-2)"
+    },
+    {
+      "id": "p3-avg-w2-floor-positive",
+      "op": "avg",
+      "width": 2,
+      "args": {
+        "fragment_hex": "010002000400"
+      },
+      "expected": {
+        "value": 2
+      },
+      "notes": "floor(7/3) = 2"
+    },
+    {
+      "id": "p3-avg-w2-exact",
+      "op": "avg",
+      "width": 2,
+      "args": {
+        "fragment_hex": "fdff"
+      },
+      "expected": {
+        "value": -3
+      }
+    },
+    {
+      "id": "p3-avg-empty",
+      "op": "avg",
+      "width": 2,
+      "args": {
+        "fragment_hex": ""
+      },
+      "expected": {
+        "value": 0
+      }
+    },
+    {
+      "id": "p3-avg-w4-all-int-min",
+      "op": "avg",
+      "width": 4,
+      "args": {
+        "fragment_hex": "000000800000008000000080"
+      },
+      "expected": {
+        "value": -2147483648
+      },
+      "notes": "mean of the 32-bit minimum is exactly representable"
+    },
+    {
+      "id": "p3-avg-w4-mixed",
+      "op": "avg",
+      "width": 4,
+      "args": {
+        "fragment_hex": "ffffff7f00000080"
+      },
+      "expected": {
+        "value": -1
+      },
+      "notes": "floor(-0.5) = -1"
+    },
+    {
+      "id": "p3-avg-w1",
+      "op": "avg",
+      "width": 1,
+      "args": {
+        "fragment_hex": "807f00ff01"
+      },
+      "expected": {
+        "value": -1
+      }
+    },
+    {
+      "id": "p3-avg-w2",
+      "op": "avg",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0080ff7f0000ffff0100"
+      },
+      "expected": {
+        "value": -1
+      }
+    },
+    {
+      "id": "p3-avg-w3",
+      "op": "avg",
+      "width": 3,
+      "args": {
+        "fragment_hex": "000080ffff7f000000ffffff010000"
+      },
+      "expected": {
+        "value": -1
+      }
+    },
+    {
+      "id": "p3-avg-w4",
+      "op": "avg",
+      "width": 4,
+      "args": {
+        "fragment_hex": "00000080ffffff7f00000000ffffffff01000000"
+      },
+      "expected": {
+        "value": -1
+      }
+    },
+    {
+      "id": "p3-rms-w2-trunc",
+      "op": "rms",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0200feff0200fdff"
+      },
+      "expected": {
+        "value": 2
+      },
+      "notes": "sqrt(17/4) = 2.06 -> 2 (truncated)"
+    },
+    {
+      "id": "p3-rms-w2-trunc-2",
+      "op": "rms",
+      "width": 2,
+      "args": {
+        "fragment_hex": "01000200"
+      },
+      "expected": {
+        "value": 1
+      },
+      "notes": "sqrt(2.5) = 1.58 -> 1"
+    },
+    {
+      "id": "p3-rms-w2-single",
+      "op": "rms",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0300"
+      },
+      "expected": {
+        "value": 3
+      }
+    },
+    {
+      "id": "p3-rms-empty",
+      "op": "rms",
+      "width": 2,
+      "args": {
+        "fragment_hex": ""
+      },
+      "expected": {
+        "value": 0
+      }
+    },
+    {
+      "id": "p3-rms-w4-all-int-min",
+      "op": "rms",
+      "width": 4,
+      "args": {
+        "fragment_hex": "0000008000000080"
+      },
+      "expected": {
+        "value": 2147483648
+      },
+      "notes": "unsigned result exceeds the signed 32-bit range"
+    },
+    {
+      "id": "p3-rms-zeros",
+      "op": "rms",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0000000000000000"
+      },
+      "expected": {
+        "value": 0
+      }
+    },
+    {
+      "id": "p3-rms-w1",
+      "op": "rms",
+      "width": 1,
+      "args": {
+        "fragment_hex": "807fff01"
+      },
+      "expected": {
+        "value": 90
+      }
+    },
+    {
+      "id": "p3-rms-w2",
+      "op": "rms",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0080ff7fffff0100"
+      },
+      "expected": {
+        "value": 23170
+      }
+    },
+    {
+      "id": "p3-rms-w3",
+      "op": "rms",
+      "width": 3,
+      "args": {
+        "fragment_hex": "000080ffff7fffffff010000"
+      },
+      "expected": {
+        "value": 5931641
+      }
+    },
+    {
+      "id": "p3-rms-w4",
+      "op": "rms",
+      "width": 4,
+      "args": {
+        "fragment_hex": "00000080ffffff7fffffffff01000000"
+      },
+      "expected": {
+        "value": 1518500249
+      }
+    },
+    {
+      "id": "p3-cross-empty",
+      "op": "cross",
+      "width": 2,
+      "args": {
+        "fragment_hex": ""
+      },
+      "expected": {
+        "value": -1
+      },
+      "notes": "sentinel -1"
+    },
+    {
+      "id": "p3-cross-single",
+      "op": "cross",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0500"
+      },
+      "expected": {
+        "value": 0
+      },
+      "notes": "first sample always transitions"
+    },
+    {
+      "id": "p3-cross-zeros-only",
+      "op": "cross",
+      "width": 2,
+      "args": {
+        "fragment_hex": "000000000000"
+      },
+      "expected": {
+        "value": 0
+      },
+      "notes": "zero behaves like positive"
+    },
+    {
+      "id": "p3-cross-pos-neg",
+      "op": "cross",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0100ffff"
+      },
+      "expected": {
+        "value": 1
+      }
+    },
+    {
+      "id": "p3-cross-zero-between",
+      "op": "cross",
+      "width": 2,
+      "args": {
+        "fragment_hex": "01000000ffff"
+      },
+      "expected": {
+        "value": 1
+      },
+      "notes": "zero is in the non-negative class; one transition"
+    },
+    {
+      "id": "p3-cross-neg-zero-pos",
+      "op": "cross",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ffff00000100"
+      },
+      "expected": {
+        "value": 1
+      }
+    },
+    {
+      "id": "p3-cross-alternating",
+      "op": "cross",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0100ffff0100"
+      },
+      "expected": {
+        "value": 2
+      },
+      "notes": "two transitions"
+    },
+    {
+      "id": "p3-cross-zero-then-pos",
+      "op": "cross",
+      "width": 2,
+      "args": {
+        "fragment_hex": "00000100"
+      },
+      "expected": {
+        "value": 0
+      },
+      "notes": "same class: zero crossings"
+    },
+    {
+      "id": "p3-cross-negative-only",
+      "op": "cross",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ffffffff"
+      },
+      "expected": {
+        "value": 0
+      }
+    },
+    {
+      "id": "p3-cross-w4-int-min",
+      "op": "cross",
+      "width": 4,
+      "args": {
+        "fragment_hex": "0000008001000000"
+      },
+      "expected": {
+        "value": 1
+      },
+      "notes": "the 32-bit minimum is negative"
+    },
+    {
+      "id": "p3-cross-w1",
+      "op": "cross",
+      "width": 1,
+      "args": {
+        "fragment_hex": "01ff01ff"
+      },
+      "expected": {
+        "value": 3
+      }
+    },
+    {
+      "id": "p3-cross-w2",
+      "op": "cross",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0100ffff0100ffff"
+      },
+      "expected": {
+        "value": 3
+      }
+    },
+    {
+      "id": "p3-cross-w3",
+      "op": "cross",
+      "width": 3,
+      "args": {
+        "fragment_hex": "010000ffffff010000ffffff"
+      },
+      "expected": {
+        "value": 3
+      }
+    },
+    {
+      "id": "p3-cross-w4",
+      "op": "cross",
+      "width": 4,
+      "args": {
+        "fragment_hex": "01000000ffffffff01000000ffffffff"
+      },
+      "expected": {
+        "value": 3
+      }
+    },
+    {
+      "id": "p3-max-width-zero",
+      "op": "max",
+      "width": 0,
+      "args": {
+        "fragment_hex": ""
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Size should be 1, 2, 3 or 4"
+      }
+    },
+    {
+      "id": "p3-minmax-misaligned",
+      "op": "minmax",
+      "width": 2,
+      "args": {
+        "fragment_hex": "010203"
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "not a whole number of frames"
+      }
+    },
+    {
+      "id": "p3-avg-width-zero",
+      "op": "avg",
+      "width": 0,
+      "args": {
+        "fragment_hex": ""
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Size should be 1, 2, 3 or 4"
+      }
+    },
+    {
+      "id": "p3-rms-misaligned",
+      "op": "rms",
+      "width": 2,
+      "args": {
+        "fragment_hex": "010203"
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "not a whole number of frames"
+      }
+    },
+    {
+      "id": "p3-cross-width-zero",
+      "op": "cross",
+      "width": 0,
+      "args": {
+        "fragment_hex": ""
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Size should be 1, 2, 3 or 4"
+      }
     }
   ]
 }

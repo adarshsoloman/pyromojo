@@ -14,6 +14,18 @@ Operations (framed, see ``mojo_audioop/protocol.mojo``):
 * ``0x25`` reverse -> ``uint8 width | fragment``.
 * ``0x26`` byteswap -> ``uint8 width | fragment``.
 * ``0x27`` lin2lin -> ``uint8 width | uint8 newwidth | fragment``.
+* ``0x28`` getsample -> ``uint8 width | int64_be index | fragment``;
+  replies with one ASCII decimal sample.
+* ``0x29`` max -> ``uint8 width | fragment``; replies with one ASCII
+  decimal (the absolute maximum; may exceed the signed range).
+* ``0x2A`` minmax -> ``uint8 width | fragment``; replies with two
+  space-separated ASCII decimals (minimum, maximum).
+* ``0x2B`` avg -> ``uint8 width | fragment``; replies with one ASCII
+  decimal (floor of the mean).
+* ``0x2C`` rms -> ``uint8 width | fragment``; replies with one ASCII
+  decimal (truncated sqrt of the mean square).
+* ``0x2D`` cross -> ``uint8 width | fragment``; replies with one ASCII
+  decimal (zero-class transition count).
 
 Malformed requests produce ``STATUS_ERROR`` frames; framing errors
 produce one error frame plus a non-zero exit, like the other CLIs.
@@ -32,15 +44,21 @@ from mojo_audioop.arithmetic import (
 )
 from mojo_audioop.protocol import (
     OP_ADD,
+    OP_AVG,
     OP_BIAS,
     OP_BYTESWAP,
+    OP_CROSS,
     OP_DECODE_FRAGMENT,
     OP_ECHO,
     OP_ENCODE_FRAGMENT,
+    OP_GETSAMPLE,
     OP_LIN2LIN,
+    OP_MAX,
+    OP_MINMAX,
     OP_MUL,
     OP_PING,
     OP_REVERSE,
+    OP_RMS,
     STATUS_ERROR,
     STATUS_OK,
     ascii_bytes,
@@ -49,6 +67,7 @@ from mojo_audioop.protocol import (
     write_frame,
 )
 from mojo_audioop.samples import decode_fragment, encode_fragment
+from mojo_audioop.statistics import avg, cross, getsample, max, minmax, rms
 from std.memory import bitcast
 
 
@@ -193,6 +212,63 @@ def _lin2lin_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
     return lin2lin(payload[2:], Int(payload[0]), Int(payload[1]))
 
 
+def _format_scalar(value: Int64) -> List[UInt8]:
+    var text = String(value)
+    var out = List[UInt8](capacity=text.byte_length())
+    for byte in text.as_bytes():
+        out.append(byte)
+    return out^
+
+
+def _format_pair(first: Int64, second: Int64) -> List[UInt8]:
+    var out = _format_scalar(first)
+    out.append(32)
+    var second_text = _format_scalar(second)
+    for byte in second_text:
+        out.append(byte)
+    return out^
+
+
+def _getsample_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 9:
+        raise Error("getsample request too short: need width and index")
+    var width = Int(payload[0])
+    var index = _decode_i64_be(payload[1:9])
+    var value = getsample(payload[9:], width, index)
+    return _format_scalar(Int64(value))
+
+
+def _max_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 1:
+        raise Error("max request too short: need a width byte")
+    return _format_scalar(max(payload[1:], Int(payload[0])))
+
+
+def _minmax_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 1:
+        raise Error("minmax request too short: need a width byte")
+    var pair = minmax(payload[1:], Int(payload[0]))
+    return _format_pair(Int64(pair[0]), Int64(pair[1]))
+
+
+def _avg_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 1:
+        raise Error("avg request too short: need a width byte")
+    return _format_scalar(avg(payload[1:], Int(payload[0])))
+
+
+def _rms_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 1:
+        raise Error("rms request too short: need a width byte")
+    return _format_scalar(rms(payload[1:], Int(payload[0])))
+
+
+def _cross_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 1:
+        raise Error("cross request too short: need a width byte")
+    return _format_scalar(cross(payload[1:], Int(payload[0])))
+
+
 def main() raises:
     var stdin = RawFileDescriptor(0)
     var stdout = RawFileDescriptor(1)
@@ -264,6 +340,42 @@ def main() raises:
             try:
                 var converted = _lin2lin_request(payload)
                 write_frame(stdout, STATUS_OK, Span(converted))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_GETSAMPLE:
+            try:
+                var sampled = _getsample_request(payload)
+                write_frame(stdout, STATUS_OK, Span(sampled))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_MAX:
+            try:
+                var peak = _max_request(payload)
+                write_frame(stdout, STATUS_OK, Span(peak))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_MINMAX:
+            try:
+                var pair = _minmax_request(payload)
+                write_frame(stdout, STATUS_OK, Span(pair))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_AVG:
+            try:
+                var mean = _avg_request(payload)
+                write_frame(stdout, STATUS_OK, Span(mean))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_RMS:
+            try:
+                var square_mean = _rms_request(payload)
+                write_frame(stdout, STATUS_OK, Span(square_mean))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_CROSS:
+            try:
+                var crossings = _cross_request(payload)
+                write_frame(stdout, STATUS_OK, Span(crossings))
             except error:
                 _reply_error(stdout, String(error))
         else:

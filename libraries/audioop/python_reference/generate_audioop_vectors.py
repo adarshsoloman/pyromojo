@@ -880,11 +880,238 @@ def build_phase2_cases(cases: list[dict[str, object]]) -> None:
     )
 
 
+def build_phase3_cases(cases: list[dict[str, object]]) -> None:
+    """Coverage for the six Phase 3 statistics operations."""
+
+    def stat_case(case_id, op, width, fragment, *, index=None, notes=None):
+        args = {"fragment_hex": hexed(fragment)}
+        if index is not None:
+            args["index"] = index
+            cases.append(
+                case(
+                    case_id,
+                    op,
+                    width=width,
+                    args=args,
+                    call=lambda f=fragment, w=width, i=index: audioop.getsample(f, w, i),
+                    notes=notes,
+                )
+            )
+        else:
+            cases.append(
+                case(
+                    case_id,
+                    op,
+                    width=width,
+                    args=args,
+                    call=lambda op=op, f=fragment, w=width: getattr(audioop, op)(f, w),
+                    notes=notes,
+                )
+            )
+
+    # --- getsample --------------------------------------------------------
+    for width in range(1, 5):
+        fragment = pcm_w(width, -(1 << (width * 8 - 1)), (1 << (width * 8 - 1)) - 1, 0, -1, 1)
+        stat_case(f"p3-getsample-w{width}-first", "getsample", width, fragment, index=0)
+        stat_case(f"p3-getsample-w{width}-last", "getsample", width, fragment, index=4)
+    stat_case(
+        "p3-getsample-negative-index",
+        "getsample",
+        2,
+        pcm(1, 2, 3),
+        index=-1,
+        notes="negative indices are not Python-style",
+    )
+    stat_case(
+        "p3-getsample-index-equals-count",
+        "getsample",
+        2,
+        pcm(1, 2, 3),
+        index=3,
+    )
+    stat_case(
+        "p3-getsample-empty",
+        "getsample",
+        2,
+        b"",
+        index=0,
+        notes="empty fragment has no samples",
+    )
+    stat_case(
+        "p3-getsample-misaligned",
+        "getsample",
+        2,
+        b"\x01\x02\x03",
+        index=0,
+    )
+    stat_case(
+        "p3-getsample-width-zero",
+        "getsample",
+        0,
+        b"",
+        index=0,
+    )
+
+    # --- max --------------------------------------------------------------
+    for width in range(1, 5):
+        fragment = pcm_w(width, -(1 << (width * 8 - 1)), (1 << (width * 8 - 1)) - 1, 0, -1, 1)
+        stat_case(f"p3-max-w{width}", "max", width, fragment)
+    stat_case(
+        "p3-max-w4-int-min-only",
+        "max",
+        4,
+        struct.pack("<i", -2147483648),
+        notes="unsigned absolute value: 2147483648",
+    )
+    stat_case(
+        "p3-max-negative-only",
+        "max",
+        2,
+        pcm(-1, -9, -3),
+        notes="magnitude of the most negative sample",
+    )
+    stat_case("p3-max-empty", "max", 2, b"")
+    stat_case(
+        "p3-max-w1-boundaries",
+        "max",
+        1,
+        bytes([127, 128]),
+        notes="128 -> absolute 128",
+    )
+
+    # --- minmax -----------------------------------------------------------
+    for width in range(1, 5):
+        fragment = pcm_w(width, -(1 << (width * 8 - 1)), (1 << (width * 8 - 1)) - 1, 0, -1, 1)
+        stat_case(f"p3-minmax-w{width}", "minmax", width, fragment)
+    stat_case(
+        "p3-minmax-empty",
+        "minmax",
+        2,
+        b"",
+        notes="sentinel pair (2147483647, -2147483648)",
+    )
+    stat_case(
+        "p3-minmax-w4-int-min-only",
+        "minmax",
+        4,
+        struct.pack("<i", -2147483648),
+        notes="both bounds are the same sample",
+    )
+    stat_case("p3-minmax-single", "minmax", 1, bytes([5]))
+    stat_case("p3-minmax-negative-only", "minmax", 2, pcm(-9, -3))
+
+    # --- avg --------------------------------------------------------------
+    stat_case(
+        "p3-avg-w2-floor-negative",
+        "avg",
+        2,
+        pcm(-1, -2),
+        notes="floor(-1.5) = -2, not truncation (-1)",
+    )
+    stat_case(
+        "p3-avg-w2-floor-negative-3",
+        "avg",
+        2,
+        pcm(-1, -2, -4),
+        notes="floor(-7/3) = -3, not truncation (-2)",
+    )
+    stat_case(
+        "p3-avg-w2-floor-positive",
+        "avg",
+        2,
+        pcm(1, 2, 4),
+        notes="floor(7/3) = 2",
+    )
+    stat_case("p3-avg-w2-exact", "avg", 2, pcm(-3))
+    stat_case("p3-avg-empty", "avg", 2, b"")
+    stat_case(
+        "p3-avg-w4-all-int-min",
+        "avg",
+        4,
+        struct.pack("<3i", -2147483648, -2147483648, -2147483648),
+        notes="mean of the 32-bit minimum is exactly representable",
+    )
+    stat_case(
+        "p3-avg-w4-mixed",
+        "avg",
+        4,
+        struct.pack("<2i", 2147483647, -2147483648),
+        notes="floor(-0.5) = -1",
+    )
+    for width in range(1, 5):
+        fragment = pcm_w(width, -(1 << (width * 8 - 1)), (1 << (width * 8 - 1)) - 1, 0, -1, 1)
+        stat_case(f"p3-avg-w{width}", "avg", width, fragment)
+
+    # --- rms --------------------------------------------------------------
+    stat_case(
+        "p3-rms-w2-trunc",
+        "rms",
+        2,
+        pcm(2, -2, 2, -3),
+        notes="sqrt(17/4) = 2.06 -> 2 (truncated)",
+    )
+    stat_case(
+        "p3-rms-w2-trunc-2",
+        "rms",
+        2,
+        pcm(1, 2),
+        notes="sqrt(2.5) = 1.58 -> 1",
+    )
+    stat_case("p3-rms-w2-single", "rms", 2, pcm(3))
+    stat_case("p3-rms-empty", "rms", 2, b"")
+    stat_case(
+        "p3-rms-w4-all-int-min",
+        "rms",
+        4,
+        struct.pack("<2i", -2147483648, -2147483648),
+        notes="unsigned result exceeds the signed 32-bit range",
+    )
+    stat_case("p3-rms-zeros", "rms", 2, pcm(0, 0, 0, 0))
+    for width in range(1, 5):
+        fragment = pcm_w(width, -(1 << (width * 8 - 1)), (1 << (width * 8 - 1)) - 1, -1, 1)
+        stat_case(f"p3-rms-w{width}", "rms", width, fragment)
+
+    # --- cross ------------------------------------------------------------
+    stat_case("p3-cross-empty", "cross", 2, b"", notes="sentinel -1")
+    stat_case("p3-cross-single", "cross", 2, pcm(5), notes="first sample always transitions")
+    stat_case("p3-cross-zeros-only", "cross", 2, pcm(0, 0, 0), notes="zero behaves like positive")
+    stat_case("p3-cross-pos-neg", "cross", 2, pcm(1, -1))
+    stat_case(
+        "p3-cross-zero-between",
+        "cross",
+        2,
+        pcm(1, 0, -1),
+        notes="zero is in the non-negative class; one transition",
+    )
+    stat_case("p3-cross-neg-zero-pos", "cross", 2, pcm(-1, 0, 1))
+    stat_case("p3-cross-alternating", "cross", 2, pcm(1, -1, 1), notes="two transitions")
+    stat_case("p3-cross-zero-then-pos", "cross", 2, pcm(0, 1), notes="same class: zero crossings")
+    stat_case("p3-cross-negative-only", "cross", 2, pcm(-1, -1))
+    stat_case(
+        "p3-cross-w4-int-min",
+        "cross",
+        4,
+        struct.pack("<2i", -2147483648, 1),
+        notes="the 32-bit minimum is negative",
+    )
+    for width in range(1, 5):
+        fragment = pcm_w(width, 1, -1, 1, -1)
+        stat_case(f"p3-cross-w{width}", "cross", width, fragment)
+
+    # --- error cases for the remaining operations -------------------------
+    stat_case("p3-max-width-zero", "max", 0, b"")
+    stat_case("p3-minmax-misaligned", "minmax", 2, b"\x01\x02\x03")
+    stat_case("p3-avg-width-zero", "avg", 0, b"")
+    stat_case("p3-rms-misaligned", "rms", 2, b"\x01\x02\x03")
+    stat_case("p3-cross-width-zero", "cross", 0, b"")
+
+
 def main() -> int:
     check = "--check" in sys.argv[1:]
     cases = build_cases()
     build_sample_cases(cases)
     build_phase2_cases(cases)
+    build_phase3_cases(cases)
     payload = {
         "schema_version": SCHEMA_VERSION,
         "generator": {"name": "audioop_vectors", "version": SCHEMA_VERSION},

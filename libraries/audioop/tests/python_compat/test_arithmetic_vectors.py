@@ -56,12 +56,14 @@ def test_phase2_case_counts(vectors_bundle: dict) -> None:
     cases = vectors_bundle["cases"]
     ids = [case["id"] for case in cases]
     assert len(ids) == len(set(ids))
-    assert len(cases) == 116
+    assert len(cases) == 185
     sample = [case for case in cases if case["op"].startswith("sample_")]
     phase2 = [case for case in cases if case["id"].startswith("p2-")]
-    remainder = len(cases) - len(sample) - len(phase2)
+    phase3 = [case for case in cases if case["id"].startswith("p3-")]
+    remainder = len(cases) - len(sample) - len(phase2) - len(phase3)
     assert len(sample) == 24
     assert len(phase2) == 50
+    assert len(phase3) == 69
     assert remainder == 42
 
 

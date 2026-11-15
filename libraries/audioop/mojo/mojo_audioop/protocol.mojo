@@ -30,6 +30,12 @@ comptime OP_MUL: UInt8 = 0x24
 comptime OP_REVERSE: UInt8 = 0x25
 comptime OP_BYTESWAP: UInt8 = 0x26
 comptime OP_LIN2LIN: UInt8 = 0x27
+comptime OP_GETSAMPLE: UInt8 = 0x28
+comptime OP_MAX: UInt8 = 0x29
+comptime OP_MINMAX: UInt8 = 0x2A
+comptime OP_AVG: UInt8 = 0x2B
+comptime OP_RMS: UInt8 = 0x2C
+comptime OP_CROSS: UInt8 = 0x2D
 
 comptime STATUS_OK: UInt8 = 0
 comptime STATUS_ERROR: UInt8 = 1

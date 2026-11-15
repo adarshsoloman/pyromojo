@@ -134,6 +134,55 @@ def _lin2lin_one(item: dict) -> dict:
     )
 
 
+def _getsample_one(item: dict) -> dict:
+    return _call(
+        audioop.getsample,
+        bytes.fromhex(item["fragment_hex"]),
+        int(item["width"]),
+        int(item["index"]),
+    )
+
+
+def _max_one(item: dict) -> dict:
+    return _call(
+        audioop.max,
+        bytes.fromhex(item["fragment_hex"]),
+        int(item["width"]),
+    )
+
+
+def _minmax_one(item: dict) -> dict:
+    return _call(
+        audioop.minmax,
+        bytes.fromhex(item["fragment_hex"]),
+        int(item["width"]),
+    )
+
+
+def _avg_one(item: dict) -> dict:
+    return _call(
+        audioop.avg,
+        bytes.fromhex(item["fragment_hex"]),
+        int(item["width"]),
+    )
+
+
+def _rms_one(item: dict) -> dict:
+    return _call(
+        audioop.rms,
+        bytes.fromhex(item["fragment_hex"]),
+        int(item["width"]),
+    )
+
+
+def _cross_one(item: dict) -> dict:
+    return _call(
+        audioop.cross,
+        bytes.fromhex(item["fragment_hex"]),
+        int(item["width"]),
+    )
+
+
 def main() -> int:
     request = json.load(sys.stdin)
     response = {
@@ -145,6 +194,12 @@ def main() -> int:
         "reverse": [_reverse_one(item) for item in request.get("reverse", [])],
         "byteswap": [_byteswap_one(item) for item in request.get("byteswap", [])],
         "lin2lin": [_lin2lin_one(item) for item in request.get("lin2lin", [])],
+        "getsample": [_getsample_one(item) for item in request.get("getsample", [])],
+        "max": [_max_one(item) for item in request.get("max", [])],
+        "minmax": [_minmax_one(item) for item in request.get("minmax", [])],
+        "avg": [_avg_one(item) for item in request.get("avg", [])],
+        "rms": [_rms_one(item) for item in request.get("rms", [])],
+        "cross": [_cross_one(item) for item in request.get("cross", [])],
     }
     json.dump(response, sys.stdout)
     return 0

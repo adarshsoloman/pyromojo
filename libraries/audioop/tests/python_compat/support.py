@@ -18,6 +18,12 @@ OP_MUL = 0x24
 OP_REVERSE = 0x25
 OP_BYTESWAP = 0x26
 OP_LIN2LIN = 0x27
+OP_GETSAMPLE = 0x28
+OP_MAX = 0x29
+OP_MINMAX = 0x2A
+OP_AVG = 0x2B
+OP_RMS = 0x2C
+OP_CROSS = 0x2D
 
 
 def request(body: bytes) -> bytes:
@@ -93,3 +99,36 @@ def byteswap_body(width: int, fragment: bytes) -> bytes:
 
 def lin2lin_body(width: int, new_width: int, fragment: bytes) -> bytes:
     return bytes([OP_LIN2LIN, width, new_width]) + fragment
+
+
+def getsample_body(width: int, index: int, fragment: bytes) -> bytes:
+    return bytes([OP_GETSAMPLE, width]) + struct.pack(">q", index) + fragment
+
+
+def max_body(width: int, fragment: bytes) -> bytes:
+    return bytes([OP_MAX, width]) + fragment
+
+
+def minmax_body(width: int, fragment: bytes) -> bytes:
+    return bytes([OP_MINMAX, width]) + fragment
+
+
+def avg_body(width: int, fragment: bytes) -> bytes:
+    return bytes([OP_AVG, width]) + fragment
+
+
+def rms_body(width: int, fragment: bytes) -> bytes:
+    return bytes([OP_RMS, width]) + fragment
+
+
+def cross_body(width: int, fragment: bytes) -> bytes:
+    return bytes([OP_CROSS, width]) + fragment
+
+
+def parse_scalar(payload: bytes) -> int:
+    return int(payload.decode("ascii"))
+
+
+def parse_pair(payload: bytes) -> tuple[int, int]:
+    first, second = payload.decode("ascii").split()
+    return int(first), int(second)
