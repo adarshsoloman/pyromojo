@@ -1106,12 +1106,193 @@ def build_phase3_cases(cases: list[dict[str, object]]) -> None:
     stat_case("p3-cross-width-zero", "cross", 0, b"")
 
 
+def build_phase4_cases(cases: list[dict[str, object]]) -> None:
+    """Coverage for the five Phase 4 peak-analysis/matching operations."""
+
+    def pp_case(case_id, op, width, fragment, notes=None):
+        cases.append(
+            case(
+                case_id,
+                op,
+                width=width,
+                args={"fragment_hex": hexed(fragment)},
+                call=lambda op=op, f=fragment, w=width: getattr(audioop, op)(f, w),
+                notes=notes,
+            )
+        )
+
+    # --- avgpp / maxpp ----------------------------------------------------
+    for width in range(1, 5):
+        fragment = pcm_w(width, 1, 3, 1, 3)
+        pp_case(f"p4-avgpp-w{width}", "avgpp", width, fragment)
+        pp_case(f"p4-maxpp-w{width}", "maxpp", width, fragment)
+    pp_case(
+        "p4-avgpp-monotonic",
+        "avgpp",
+        2,
+        pcm(1, 2, 3, 2, 1),
+        notes="single peak: first direction is the baseline, so 0",
+    )
+    pp_case(
+        "p4-maxpp-monotonic", "maxpp", 2, pcm(1, 2, 3, 2, 1), notes="single peak never forms a pair"
+    )
+    pp_case(
+        "p4-avgpp-plateau",
+        "avgpp",
+        2,
+        pcm(1, 3, 3, 1, 3, 3, 1),
+        notes="equal adjacent samples are skipped entirely",
+    )
+    pp_case("p4-maxpp-plateau", "maxpp", 2, pcm(1, 3, 3, 1, 3, 3, 1))
+    pp_case("p4-avgpp-truncation", "avgpp", 2, pcm(0, 3, 0, 1, 0), notes="mean 7/3 truncates to 2")
+    pp_case("p4-avgpp-constant", "avgpp", 2, pcm(5, 5, 5))
+    pp_case("p4-maxpp-constant", "maxpp", 2, pcm(5, 5, 5))
+    pp_case("p4-avgpp-single", "avgpp", 2, pcm(5), notes="single sample -> 0")
+    pp_case("p4-maxpp-single", "maxpp", 2, pcm(5))
+    pp_case("p4-avgpp-empty", "avgpp", 2, b"")
+    pp_case("p4-maxpp-empty", "maxpp", 2, b"")
+    pp_case(
+        "p4-avgpp-w4-unsigned-wrap",
+        "avgpp",
+        4,
+        pcm_w(4, 2147483647, -2147483648, 2147483647, -2147483648, 2147483647),
+        notes="unsigned 32-bit diff of INT_MAX/INT_MIN pair is 4294967295",
+    )
+    pp_case(
+        "p4-maxpp-w4-unsigned-wrap",
+        "maxpp",
+        4,
+        pcm_w(4, 2147483647, -2147483648, 2147483647, -2147483648, 2147483647),
+    )
+    pp_case(
+        "p4-avgpp-single-v",
+        "avgpp",
+        2,
+        pcm(32767, -32768, 32767),
+        notes="one direction change: no pair yet, 0",
+    )
+    pp_case("p4-maxpp-single-v", "maxpp", 2, pcm(32767, -32768, 32767))
+    pp_case(
+        "p4-avgpp-misaligned",
+        "avgpp",
+        2,
+        b"\x01\x02\x03",
+        notes="alignment error",
+    )
+    pp_case("p4-maxpp-width-zero", "maxpp", 0, b"")
+
+    # --- findmax (fixed 16-bit, no width argument) -------------------------
+    def findmax_case(case_id, fragment, length, notes=None):
+        cases.append(
+            case(
+                case_id,
+                "findmax",
+                args={"fragment_hex": hexed(fragment), "length": length},
+                call=lambda f=fragment, n=length: audioop.findmax(f, n),
+                notes=notes,
+            )
+        )
+
+    findmax_case("p4-findmax-basic", pcm(0, 100, 200, 300), 2)
+    findmax_case(
+        "p4-findmax-tie",
+        pcm(1, 2, 1, 2),
+        2,
+        notes="equal energies keep the first window (strict >)",
+    )
+    findmax_case("p4-findmax-last-window", pcm(0, 0, 5, 5), 2)
+    findmax_case("p4-findmax-length-equals-count", pcm(1, 2, 3), 3)
+    findmax_case("p4-findmax-length-one", pcm(5, -3, 2), 1)
+    findmax_case("p4-findmax-length-zero", pcm(1, 2), 0)
+    findmax_case("p4-findmax-empty-length-zero", b"", 0)
+    findmax_case("p4-findmax-too-long", pcm(0, 1), 3, notes="length larger than the sample count")
+    findmax_case("p4-findmax-negative", pcm(0, 1), -1)
+    findmax_case("p4-findmax-odd-bytes", b"\x01\x02\x03", 1)
+    findmax_case("p4-findmax-zero-heavy", pcm(0, 0, 0, 7), 2)
+    findmax_case(
+        "p4-findmax-interprets-w4-as-16bit",
+        struct.pack("<3i", 1, 2, 3),
+        3,
+        notes="fixed 16-bit: 12 bytes are six int16 samples",
+    )
+
+    # --- findfactor (fixed 16-bit) -----------------------------------------
+    def ff_case(case_id, fragment, reference, notes=None):
+        cases.append(
+            case(
+                case_id,
+                "findfactor",
+                args={"fragment_hex": hexed(fragment), "reference_hex": hexed(reference)},
+                call=lambda f=fragment, r=reference: audioop.findfactor(f, r),
+                notes=notes,
+            )
+        )
+
+    ff_case("p4-findfactor-identical", pcm(1, 2, 3), pcm(1, 2, 3), notes="factor 1.0")
+    ff_case("p4-findfactor-scaled", pcm(2, 4, 6), pcm(1, 2, 3), notes="factor 2.0")
+    ff_case("p4-findfactor-negative", pcm(-1, -2), pcm(1, 2), notes="factor -1.0")
+    ff_case("p4-findfactor-zero-reference", pcm(1, 2), pcm(0, 0), notes="0/0 division: nan")
+    ff_case("p4-findfactor-empty", b"", b"", notes="empty: nan")
+    ff_case("p4-findfactor-fragment-zero", pcm(0, 0), pcm(1, 2), notes="0/sum(r^2) = 0.0")
+    ff_case("p4-findfactor-mismatched", pcm(1, 2), pcm(1, 2, 3))
+    ff_case("p4-findfactor-odd", b"\x01\x02\x03", b"\x01\x02\x03\x04")
+    ff_case("p4-findfactor-large", pcm(30000, 30000), pcm(1, 1), notes="30000.0")
+    ff_case(
+        "p4-findfactor-reads-w4-as-16bit",
+        struct.pack("<2i", 65536, 1),
+        struct.pack("<2i", 32768, 1),
+        notes="fixed 16-bit: the int16 halves are compared",
+    )
+
+    # --- findfit (fixed 16-bit) ---------------------------------------------
+    def fit_case(case_id, fragment, reference, notes=None):
+        cases.append(
+            case(
+                case_id,
+                "findfit",
+                args={"fragment_hex": hexed(fragment), "reference_hex": hexed(reference)},
+                call=lambda f=fragment, r=reference: audioop.findfit(f, r),
+                notes=notes,
+            )
+        )
+
+    fit_case("p4-findfit-exact-at-zero", pcm(1, 2, 3, 4), pcm(1, 2, 3), notes="window at index 0")
+    fit_case("p4-findfit-shifted", pcm(9, 1, 2, 3), pcm(1, 2, 3), notes="window at index 1")
+    fit_case("p4-findfit-equal-length", pcm(1, 2), pcm(1, 2))
+    fit_case("p4-findfit-reference-longer", pcm(1), pcm(1, 2))
+    fit_case("p4-findfit-empty-both", b"", b"", notes="(0, nan)")
+    fit_case(
+        "p4-findfit-zero-window", pcm(0, 0, 5, 6), pcm(0, 0), notes="zero-energy window: nan factor"
+    )
+    fit_case(
+        "p4-findfit-tie",
+        pcm(1, 2, 1, 2),
+        pcm(1, 2),
+        notes="equal errors keep the first window (strict <)",
+    )
+    fit_case("p4-findfit-scaled", pcm(2, 4, 6, 8), pcm(1, 2, 3), notes="factor 2.0")
+    fit_case(
+        "p4-findfit-negative-window",
+        pcm(1, 2, -1, -2),
+        pcm(1, 2),
+        notes="negative window loses on strict <",
+    )
+    fit_case(
+        "p4-findfit-zero-mid-search",
+        pcm(5, 6, 0, 0, 0, 0),
+        pcm(1, 2),
+        notes="nan candidate windows never beat a finite best",
+    )
+    fit_case("p4-findfit-odd", b"\x01\x02\x03", b"\x01\x02")
+
+
 def main() -> int:
     check = "--check" in sys.argv[1:]
     cases = build_cases()
     build_sample_cases(cases)
     build_phase2_cases(cases)
     build_phase3_cases(cases)
+    build_phase4_cases(cases)
     payload = {
         "schema_version": SCHEMA_VERSION,
         "generator": {"name": "audioop_vectors", "version": SCHEMA_VERSION},

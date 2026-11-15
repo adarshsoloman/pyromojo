@@ -1,4 +1,4 @@
-"""Native Mojo audioop: sample, arithmetic and statistics layers."""
+"""Native Mojo audioop: sample, arithmetic, statistics and peak layers."""
 
 from mojo_audioop.arithmetic import (
     add,
@@ -7,6 +7,13 @@ from mojo_audioop.arithmetic import (
     lin2lin,
     mul,
     reverse,
+)
+from mojo_audioop.peak_analysis import (
+    avgpp,
+    findfactor,
+    findfit,
+    findmax,
+    maxpp,
 )
 from mojo_audioop.statistics import (
     avg,

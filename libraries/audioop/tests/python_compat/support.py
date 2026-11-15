@@ -24,6 +24,11 @@ OP_MINMAX = 0x2A
 OP_AVG = 0x2B
 OP_RMS = 0x2C
 OP_CROSS = 0x2D
+OP_AVGPP = 0x2E
+OP_MAXPP = 0x2F
+OP_FINDMAX = 0x30
+OP_FINDFACTOR = 0x31
+OP_FINDFIT = 0x32
 
 
 def request(body: bytes) -> bytes:
@@ -132,3 +137,32 @@ def parse_scalar(payload: bytes) -> int:
 def parse_pair(payload: bytes) -> tuple[int, int]:
     first, second = payload.decode("ascii").split()
     return int(first), int(second)
+
+
+def avgpp_body(width: int, fragment: bytes) -> bytes:
+    return bytes([OP_AVGPP, width]) + fragment
+
+
+def maxpp_body(width: int, fragment: bytes) -> bytes:
+    return bytes([OP_MAXPP, width]) + fragment
+
+
+def findmax_body(length: int, fragment: bytes) -> bytes:
+    return bytes([OP_FINDMAX]) + struct.pack(">q", length) + fragment
+
+
+def findfactor_body(fragment: bytes, reference: bytes) -> bytes:
+    return bytes([OP_FINDFACTOR]) + struct.pack(">I", len(fragment)) + fragment + reference
+
+
+def findfit_body(fragment: bytes, reference: bytes) -> bytes:
+    return bytes([OP_FINDFIT]) + struct.pack(">I", len(fragment)) + fragment + reference
+
+
+def parse_double_bits(payload: bytes) -> float:
+    return struct.unpack(">d", payload)[0]
+
+
+def parse_fit(payload: bytes) -> tuple[int, float]:
+    index_text, _, factor_bytes = payload.partition(b" ")
+    return int(index_text.decode("ascii")), struct.unpack(">d", factor_bytes)[0]

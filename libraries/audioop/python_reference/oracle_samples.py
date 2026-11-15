@@ -183,6 +183,46 @@ def _cross_one(item: dict) -> dict:
     )
 
 
+def _avgpp_one(item: dict) -> dict:
+    return _call(
+        audioop.avgpp,
+        bytes.fromhex(item["fragment_hex"]),
+        int(item["width"]),
+    )
+
+
+def _maxpp_one(item: dict) -> dict:
+    return _call(
+        audioop.maxpp,
+        bytes.fromhex(item["fragment_hex"]),
+        int(item["width"]),
+    )
+
+
+def _findmax_one(item: dict) -> dict:
+    return _call(
+        audioop.findmax,
+        bytes.fromhex(item["fragment_hex"]),
+        int(item["length"]),
+    )
+
+
+def _findfactor_one(item: dict) -> dict:
+    return _call(
+        audioop.findfactor,
+        bytes.fromhex(item["fragment_hex"]),
+        bytes.fromhex(item["reference_hex"]),
+    )
+
+
+def _findfit_one(item: dict) -> dict:
+    return _call(
+        audioop.findfit,
+        bytes.fromhex(item["fragment_hex"]),
+        bytes.fromhex(item["reference_hex"]),
+    )
+
+
 def main() -> int:
     request = json.load(sys.stdin)
     response = {
@@ -200,6 +240,11 @@ def main() -> int:
         "avg": [_avg_one(item) for item in request.get("avg", [])],
         "rms": [_rms_one(item) for item in request.get("rms", [])],
         "cross": [_cross_one(item) for item in request.get("cross", [])],
+        "avgpp": [_avgpp_one(item) for item in request.get("avgpp", [])],
+        "maxpp": [_maxpp_one(item) for item in request.get("maxpp", [])],
+        "findmax": [_findmax_one(item) for item in request.get("findmax", [])],
+        "findfactor": [_findfactor_one(item) for item in request.get("findfactor", [])],
+        "findfit": [_findfit_one(item) for item in request.get("findfit", [])],
     }
     json.dump(response, sys.stdout)
     return 0

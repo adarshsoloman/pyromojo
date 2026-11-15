@@ -2378,6 +2378,707 @@
         "error_type": "error",
         "error_message": "Size should be 1, 2, 3 or 4"
       }
+    },
+    {
+      "id": "p4-avgpp-w1",
+      "op": "avgpp",
+      "width": 1,
+      "args": {
+        "fragment_hex": "01030103"
+      },
+      "expected": {
+        "value": 2
+      }
+    },
+    {
+      "id": "p4-maxpp-w1",
+      "op": "maxpp",
+      "width": 1,
+      "args": {
+        "fragment_hex": "01030103"
+      },
+      "expected": {
+        "value": 2
+      }
+    },
+    {
+      "id": "p4-avgpp-w2",
+      "op": "avgpp",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0100030001000300"
+      },
+      "expected": {
+        "value": 2
+      }
+    },
+    {
+      "id": "p4-maxpp-w2",
+      "op": "maxpp",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0100030001000300"
+      },
+      "expected": {
+        "value": 2
+      }
+    },
+    {
+      "id": "p4-avgpp-w3",
+      "op": "avgpp",
+      "width": 3,
+      "args": {
+        "fragment_hex": "010000030000010000030000"
+      },
+      "expected": {
+        "value": 2
+      }
+    },
+    {
+      "id": "p4-maxpp-w3",
+      "op": "maxpp",
+      "width": 3,
+      "args": {
+        "fragment_hex": "010000030000010000030000"
+      },
+      "expected": {
+        "value": 2
+      }
+    },
+    {
+      "id": "p4-avgpp-w4",
+      "op": "avgpp",
+      "width": 4,
+      "args": {
+        "fragment_hex": "01000000030000000100000003000000"
+      },
+      "expected": {
+        "value": 2
+      }
+    },
+    {
+      "id": "p4-maxpp-w4",
+      "op": "maxpp",
+      "width": 4,
+      "args": {
+        "fragment_hex": "01000000030000000100000003000000"
+      },
+      "expected": {
+        "value": 2
+      }
+    },
+    {
+      "id": "p4-avgpp-monotonic",
+      "op": "avgpp",
+      "width": 2,
+      "args": {
+        "fragment_hex": "01000200030002000100"
+      },
+      "expected": {
+        "value": 0
+      },
+      "notes": "single peak: first direction is the baseline, so 0"
+    },
+    {
+      "id": "p4-maxpp-monotonic",
+      "op": "maxpp",
+      "width": 2,
+      "args": {
+        "fragment_hex": "01000200030002000100"
+      },
+      "expected": {
+        "value": 0
+      },
+      "notes": "single peak never forms a pair"
+    },
+    {
+      "id": "p4-avgpp-plateau",
+      "op": "avgpp",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0100030003000100030003000100"
+      },
+      "expected": {
+        "value": 2
+      },
+      "notes": "equal adjacent samples are skipped entirely"
+    },
+    {
+      "id": "p4-maxpp-plateau",
+      "op": "maxpp",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0100030003000100030003000100"
+      },
+      "expected": {
+        "value": 2
+      }
+    },
+    {
+      "id": "p4-avgpp-truncation",
+      "op": "avgpp",
+      "width": 2,
+      "args": {
+        "fragment_hex": "00000300000001000000"
+      },
+      "expected": {
+        "value": 2
+      },
+      "notes": "mean 7/3 truncates to 2"
+    },
+    {
+      "id": "p4-avgpp-constant",
+      "op": "avgpp",
+      "width": 2,
+      "args": {
+        "fragment_hex": "050005000500"
+      },
+      "expected": {
+        "value": 0
+      }
+    },
+    {
+      "id": "p4-maxpp-constant",
+      "op": "maxpp",
+      "width": 2,
+      "args": {
+        "fragment_hex": "050005000500"
+      },
+      "expected": {
+        "value": 0
+      }
+    },
+    {
+      "id": "p4-avgpp-single",
+      "op": "avgpp",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0500"
+      },
+      "expected": {
+        "value": 0
+      },
+      "notes": "single sample -> 0"
+    },
+    {
+      "id": "p4-maxpp-single",
+      "op": "maxpp",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0500"
+      },
+      "expected": {
+        "value": 0
+      }
+    },
+    {
+      "id": "p4-avgpp-empty",
+      "op": "avgpp",
+      "width": 2,
+      "args": {
+        "fragment_hex": ""
+      },
+      "expected": {
+        "value": 0
+      }
+    },
+    {
+      "id": "p4-maxpp-empty",
+      "op": "maxpp",
+      "width": 2,
+      "args": {
+        "fragment_hex": ""
+      },
+      "expected": {
+        "value": 0
+      }
+    },
+    {
+      "id": "p4-avgpp-w4-unsigned-wrap",
+      "op": "avgpp",
+      "width": 4,
+      "args": {
+        "fragment_hex": "ffffff7f00000080ffffff7f00000080ffffff7f"
+      },
+      "expected": {
+        "value": 4294967295
+      },
+      "notes": "unsigned 32-bit diff of INT_MAX/INT_MIN pair is 4294967295"
+    },
+    {
+      "id": "p4-maxpp-w4-unsigned-wrap",
+      "op": "maxpp",
+      "width": 4,
+      "args": {
+        "fragment_hex": "ffffff7f00000080ffffff7f00000080ffffff7f"
+      },
+      "expected": {
+        "value": 4294967295
+      }
+    },
+    {
+      "id": "p4-avgpp-single-v",
+      "op": "avgpp",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ff7f0080ff7f"
+      },
+      "expected": {
+        "value": 0
+      },
+      "notes": "one direction change: no pair yet, 0"
+    },
+    {
+      "id": "p4-maxpp-single-v",
+      "op": "maxpp",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ff7f0080ff7f"
+      },
+      "expected": {
+        "value": 0
+      }
+    },
+    {
+      "id": "p4-avgpp-misaligned",
+      "op": "avgpp",
+      "width": 2,
+      "args": {
+        "fragment_hex": "010203"
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "not a whole number of frames"
+      },
+      "notes": "alignment error"
+    },
+    {
+      "id": "p4-maxpp-width-zero",
+      "op": "maxpp",
+      "width": 0,
+      "args": {
+        "fragment_hex": ""
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Size should be 1, 2, 3 or 4"
+      }
+    },
+    {
+      "id": "p4-findmax-basic",
+      "op": "findmax",
+      "args": {
+        "fragment_hex": "00006400c8002c01",
+        "length": 2
+      },
+      "expected": {
+        "value": 2
+      }
+    },
+    {
+      "id": "p4-findmax-tie",
+      "op": "findmax",
+      "args": {
+        "fragment_hex": "0100020001000200",
+        "length": 2
+      },
+      "expected": {
+        "value": 0
+      },
+      "notes": "equal energies keep the first window (strict >)"
+    },
+    {
+      "id": "p4-findmax-last-window",
+      "op": "findmax",
+      "args": {
+        "fragment_hex": "0000000005000500",
+        "length": 2
+      },
+      "expected": {
+        "value": 2
+      }
+    },
+    {
+      "id": "p4-findmax-length-equals-count",
+      "op": "findmax",
+      "args": {
+        "fragment_hex": "010002000300",
+        "length": 3
+      },
+      "expected": {
+        "value": 0
+      }
+    },
+    {
+      "id": "p4-findmax-length-one",
+      "op": "findmax",
+      "args": {
+        "fragment_hex": "0500fdff0200",
+        "length": 1
+      },
+      "expected": {
+        "value": 0
+      }
+    },
+    {
+      "id": "p4-findmax-length-zero",
+      "op": "findmax",
+      "args": {
+        "fragment_hex": "01000200",
+        "length": 0
+      },
+      "expected": {
+        "value": 0
+      }
+    },
+    {
+      "id": "p4-findmax-empty-length-zero",
+      "op": "findmax",
+      "args": {
+        "fragment_hex": "",
+        "length": 0
+      },
+      "expected": {
+        "value": 0
+      }
+    },
+    {
+      "id": "p4-findmax-too-long",
+      "op": "findmax",
+      "args": {
+        "fragment_hex": "00000100",
+        "length": 3
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Input sample should be longer"
+      },
+      "notes": "length larger than the sample count"
+    },
+    {
+      "id": "p4-findmax-negative",
+      "op": "findmax",
+      "args": {
+        "fragment_hex": "00000100",
+        "length": -1
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Input sample should be longer"
+      }
+    },
+    {
+      "id": "p4-findmax-odd-bytes",
+      "op": "findmax",
+      "args": {
+        "fragment_hex": "010203",
+        "length": 1
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Strings should be even-sized"
+      }
+    },
+    {
+      "id": "p4-findmax-zero-heavy",
+      "op": "findmax",
+      "args": {
+        "fragment_hex": "0000000000000700",
+        "length": 2
+      },
+      "expected": {
+        "value": 2
+      }
+    },
+    {
+      "id": "p4-findmax-interprets-w4-as-16bit",
+      "op": "findmax",
+      "args": {
+        "fragment_hex": "010000000200000003000000",
+        "length": 3
+      },
+      "expected": {
+        "value": 2
+      },
+      "notes": "fixed 16-bit: 12 bytes are six int16 samples"
+    },
+    {
+      "id": "p4-findfactor-identical",
+      "op": "findfactor",
+      "args": {
+        "fragment_hex": "010002000300",
+        "reference_hex": "010002000300"
+      },
+      "expected": {
+        "value": 1.0
+      },
+      "notes": "factor 1.0"
+    },
+    {
+      "id": "p4-findfactor-scaled",
+      "op": "findfactor",
+      "args": {
+        "fragment_hex": "020004000600",
+        "reference_hex": "010002000300"
+      },
+      "expected": {
+        "value": 2.0
+      },
+      "notes": "factor 2.0"
+    },
+    {
+      "id": "p4-findfactor-negative",
+      "op": "findfactor",
+      "args": {
+        "fragment_hex": "fffffeff",
+        "reference_hex": "01000200"
+      },
+      "expected": {
+        "value": -1.0
+      },
+      "notes": "factor -1.0"
+    },
+    {
+      "id": "p4-findfactor-zero-reference",
+      "op": "findfactor",
+      "args": {
+        "fragment_hex": "01000200",
+        "reference_hex": "00000000"
+      },
+      "expected": {
+        "value": "nan"
+      },
+      "notes": "0/0 division: nan"
+    },
+    {
+      "id": "p4-findfactor-empty",
+      "op": "findfactor",
+      "args": {
+        "fragment_hex": "",
+        "reference_hex": ""
+      },
+      "expected": {
+        "value": "nan"
+      },
+      "notes": "empty: nan"
+    },
+    {
+      "id": "p4-findfactor-fragment-zero",
+      "op": "findfactor",
+      "args": {
+        "fragment_hex": "00000000",
+        "reference_hex": "01000200"
+      },
+      "expected": {
+        "value": 0.0
+      },
+      "notes": "0/sum(r^2) = 0.0"
+    },
+    {
+      "id": "p4-findfactor-mismatched",
+      "op": "findfactor",
+      "args": {
+        "fragment_hex": "01000200",
+        "reference_hex": "010002000300"
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Samples should be same size"
+      }
+    },
+    {
+      "id": "p4-findfactor-odd",
+      "op": "findfactor",
+      "args": {
+        "fragment_hex": "010203",
+        "reference_hex": "01020304"
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Strings should be even-sized"
+      }
+    },
+    {
+      "id": "p4-findfactor-large",
+      "op": "findfactor",
+      "args": {
+        "fragment_hex": "30753075",
+        "reference_hex": "01000100"
+      },
+      "expected": {
+        "value": 30000.0
+      },
+      "notes": "30000.0"
+    },
+    {
+      "id": "p4-findfactor-reads-w4-as-16bit",
+      "op": "findfactor",
+      "args": {
+        "fragment_hex": "0000010001000000",
+        "reference_hex": "0080000001000000"
+      },
+      "expected": {
+        "value": 9.313225737481168e-10
+      },
+      "notes": "fixed 16-bit: the int16 halves are compared"
+    },
+    {
+      "id": "p4-findfit-exact-at-zero",
+      "op": "findfit",
+      "args": {
+        "fragment_hex": "0100020003000400",
+        "reference_hex": "010002000300"
+      },
+      "expected": {
+        "value": [
+          0,
+          1.0
+        ]
+      },
+      "notes": "window at index 0"
+    },
+    {
+      "id": "p4-findfit-shifted",
+      "op": "findfit",
+      "args": {
+        "fragment_hex": "0900010002000300",
+        "reference_hex": "010002000300"
+      },
+      "expected": {
+        "value": [
+          1,
+          1.0
+        ]
+      },
+      "notes": "window at index 1"
+    },
+    {
+      "id": "p4-findfit-equal-length",
+      "op": "findfit",
+      "args": {
+        "fragment_hex": "01000200",
+        "reference_hex": "01000200"
+      },
+      "expected": {
+        "value": [
+          0,
+          1.0
+        ]
+      }
+    },
+    {
+      "id": "p4-findfit-reference-longer",
+      "op": "findfit",
+      "args": {
+        "fragment_hex": "0100",
+        "reference_hex": "01000200"
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "First sample should be longer"
+      }
+    },
+    {
+      "id": "p4-findfit-empty-both",
+      "op": "findfit",
+      "args": {
+        "fragment_hex": "",
+        "reference_hex": ""
+      },
+      "expected": {
+        "value": [
+          0,
+          "nan"
+        ]
+      },
+      "notes": "(0, nan)"
+    },
+    {
+      "id": "p4-findfit-zero-window",
+      "op": "findfit",
+      "args": {
+        "fragment_hex": "0000000005000600",
+        "reference_hex": "00000000"
+      },
+      "expected": {
+        "value": [
+          0,
+          "nan"
+        ]
+      },
+      "notes": "zero-energy window: nan factor"
+    },
+    {
+      "id": "p4-findfit-tie",
+      "op": "findfit",
+      "args": {
+        "fragment_hex": "0100020001000200",
+        "reference_hex": "01000200"
+      },
+      "expected": {
+        "value": [
+          0,
+          1.0
+        ]
+      },
+      "notes": "equal errors keep the first window (strict <)"
+    },
+    {
+      "id": "p4-findfit-scaled",
+      "op": "findfit",
+      "args": {
+        "fragment_hex": "0200040006000800",
+        "reference_hex": "010002000300"
+      },
+      "expected": {
+        "value": [
+          0,
+          2.0
+        ]
+      },
+      "notes": "factor 2.0"
+    },
+    {
+      "id": "p4-findfit-negative-window",
+      "op": "findfit",
+      "args": {
+        "fragment_hex": "01000200fffffeff",
+        "reference_hex": "01000200"
+      },
+      "expected": {
+        "value": [
+          0,
+          1.0
+        ]
+      },
+      "notes": "negative window loses on strict <"
+    },
+    {
+      "id": "p4-findfit-zero-mid-search",
+      "op": "findfit",
+      "args": {
+        "fragment_hex": "050006000000000000000000",
+        "reference_hex": "01000200"
+      },
+      "expected": {
+        "value": [
+          0,
+          3.4
+        ]
+      },
+      "notes": "nan candidate windows never beat a finite best"
+    },
+    {
+      "id": "p4-findfit-odd",
+      "op": "findfit",
+      "args": {
+        "fragment_hex": "010203",
+        "reference_hex": "0102"
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Strings should be even-sized"
+      }
     }
   ]
 }

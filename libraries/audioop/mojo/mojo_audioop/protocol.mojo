@@ -36,6 +36,11 @@ comptime OP_MINMAX: UInt8 = 0x2A
 comptime OP_AVG: UInt8 = 0x2B
 comptime OP_RMS: UInt8 = 0x2C
 comptime OP_CROSS: UInt8 = 0x2D
+comptime OP_AVGPP: UInt8 = 0x2E
+comptime OP_MAXPP: UInt8 = 0x2F
+comptime OP_FINDMAX: UInt8 = 0x30
+comptime OP_FINDFACTOR: UInt8 = 0x31
+comptime OP_FINDFIT: UInt8 = 0x32
 
 comptime STATUS_OK: UInt8 = 0
 comptime STATUS_ERROR: UInt8 = 1

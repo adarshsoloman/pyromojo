@@ -84,7 +84,7 @@ MOJO_SUITES = [
             "libraries/audioop/tests/mojo",
         ],
         "prefix": "audioop_",
-        "tests": ["test_samples", "test_arithmetic", "test_statistics"],
+        "tests": ["test_samples", "test_arithmetic", "test_statistics", "test_peak_analysis"],
     },
 ]
 

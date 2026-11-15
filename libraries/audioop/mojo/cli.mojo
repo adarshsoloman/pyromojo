@@ -26,6 +26,18 @@ Operations (framed, see ``mojo_audioop/protocol.mojo``):
   decimal (truncated sqrt of the mean square).
 * ``0x2D`` cross -> ``uint8 width | fragment``; replies with one ASCII
   decimal (zero-class transition count).
+* ``0x2E`` avgpp -> ``uint8 width | fragment``; replies with one ASCII
+  decimal (truncated mean of unsigned peak differences).
+* ``0x2F`` maxpp -> ``uint8 width | fragment``; replies with one ASCII
+  decimal (maximum unsigned peak difference).
+* ``0x30`` findmax -> ``int64_be length | fragment``; replies with the
+  winning 16-bit sample index as one ASCII decimal (the reference has
+  no width argument; the fragment is read as native int16 pairs).
+* ``0x31`` findfactor -> ``uint32_be len1 | frag1 | frag2``; replies
+  with 8 big-endian IEEE-754 bytes of the factor (bit-exact, nan too).
+* ``0x32`` findfit -> ``uint32_be len1 | frag1 | frag2``; replies with
+  the ASCII decimal window index, a space, then 8 big-endian IEEE-754
+  bytes of the factor.
 
 Malformed requests produce ``STATUS_ERROR`` frames; framing errors
 produce one error frame plus a non-zero exit, like the other CLIs.
@@ -47,13 +59,18 @@ from mojo_audioop.protocol import (
     OP_AVG,
     OP_BIAS,
     OP_BYTESWAP,
+    OP_AVGPP,
     OP_CROSS,
     OP_DECODE_FRAGMENT,
+    OP_FINDFACTOR,
+    OP_FINDFIT,
+    OP_FINDMAX,
     OP_ECHO,
     OP_ENCODE_FRAGMENT,
     OP_GETSAMPLE,
     OP_LIN2LIN,
     OP_MAX,
+    OP_MAXPP,
     OP_MINMAX,
     OP_MUL,
     OP_PING,
@@ -67,6 +84,7 @@ from mojo_audioop.protocol import (
     write_frame,
 )
 from mojo_audioop.samples import decode_fragment, encode_fragment
+from mojo_audioop.peak_analysis import avgpp, findfactor, findfit, findmax, maxpp
 from mojo_audioop.statistics import avg, cross, getsample, max, minmax, rms
 from std.memory import bitcast
 
@@ -269,6 +287,72 @@ def _cross_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
     return _format_scalar(cross(payload[1:], Int(payload[0])))
 
 
+def _encode_double_be(value: Float64) -> List[UInt8]:
+    """Big-endian IEEE-754 bytes, bit-exact for nan and infinities."""
+    var bits = bitcast[DType.uint64, 1](value)
+    var out = List[UInt8](capacity=8)
+    for shift in range(56, -8, -8):
+        out.append(UInt8((bits >> UInt64(shift)) & 0xFF))
+    return out^
+
+
+def _avgpp_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 1:
+        raise Error("avgpp request too short: need a width byte")
+    return _format_scalar(avgpp(payload[1:], Int(payload[0])))
+
+
+def _maxpp_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 1:
+        raise Error("maxpp request too short: need a width byte")
+    return _format_scalar(maxpp(payload[1:], Int(payload[0])))
+
+
+def _findmax_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 8:
+        raise Error("findmax request too short: need a length")
+    var length = _decode_i64_be(payload[0:8])
+    return _format_scalar(Int64(findmax(payload[8:], length)))
+
+
+def _findfactor_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 4:
+        raise Error("findfactor request too short: need the first length")
+    var length1 = Int(decode_u32_be(payload[0:4]))
+    var rest = payload[4:]
+    if length1 > len(rest):
+        raise Error("findfactor request too short: first fragment is missing")
+    var first = List[UInt8](capacity=length1)
+    for index in range(length1):
+        first.append(rest[index])
+    var second = List[UInt8](capacity=len(rest) - length1)
+    for index in range(length1, len(rest)):
+        second.append(rest[index])
+    return _encode_double_be(findfactor(Span(first), Span(second)))
+
+
+def _findfit_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 4:
+        raise Error("findfit request too short: need the first length")
+    var length1 = Int(decode_u32_be(payload[0:4]))
+    var rest = payload[4:]
+    if length1 > len(rest):
+        raise Error("findfit request too short: first fragment is missing")
+    var first = List[UInt8](capacity=length1)
+    for index in range(length1):
+        first.append(rest[index])
+    var second = List[UInt8](capacity=len(rest) - length1)
+    for index in range(length1, len(rest)):
+        second.append(rest[index])
+    var fit = findfit(Span(first), Span(second))
+    var out = _format_scalar(Int64(fit.index))
+    out.append(32)
+    var bits = _encode_double_be(fit.factor)
+    for byte in bits:
+        out.append(byte)
+    return out^
+
+
 def main() raises:
     var stdin = RawFileDescriptor(0)
     var stdout = RawFileDescriptor(1)
@@ -376,6 +460,36 @@ def main() raises:
             try:
                 var crossings = _cross_request(payload)
                 write_frame(stdout, STATUS_OK, Span(crossings))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_AVGPP:
+            try:
+                var avg_peak = _avgpp_request(payload)
+                write_frame(stdout, STATUS_OK, Span(avg_peak))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_MAXPP:
+            try:
+                var max_peak = _maxpp_request(payload)
+                write_frame(stdout, STATUS_OK, Span(max_peak))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_FINDMAX:
+            try:
+                var window = _findmax_request(payload)
+                write_frame(stdout, STATUS_OK, Span(window))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_FINDFACTOR:
+            try:
+                var factor_bits = _findfactor_request(payload)
+                write_frame(stdout, STATUS_OK, Span(factor_bits))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_FINDFIT:
+            try:
+                var fit_result = _findfit_request(payload)
+                write_frame(stdout, STATUS_OK, Span(fit_result))
             except error:
                 _reply_error(stdout, String(error))
         else:
