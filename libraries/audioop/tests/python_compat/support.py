@@ -29,6 +29,8 @@ OP_MAXPP = 0x2F
 OP_FINDMAX = 0x30
 OP_FINDFACTOR = 0x31
 OP_FINDFIT = 0x32
+OP_TOMONO = 0x33
+OP_TOSTEREO = 0x34
 
 
 def request(body: bytes) -> bytes:
@@ -166,3 +168,17 @@ def parse_double_bits(payload: bytes) -> float:
 def parse_fit(payload: bytes) -> tuple[int, float]:
     index_text, _, factor_bytes = payload.partition(b" ")
     return int(index_text.decode("ascii")), struct.unpack(">d", factor_bytes)[0]
+
+
+def channel_body(opcode: int, width: int, lfactor: float, rfactor: float, fragment: bytes) -> bytes:
+    return (
+        bytes([opcode, width]) + struct.pack(">d", lfactor) + struct.pack(">d", rfactor) + fragment
+    )
+
+
+def tomono_body(width: int, lfactor: float, rfactor: float, fragment: bytes) -> bytes:
+    return channel_body(OP_TOMONO, width, lfactor, rfactor, fragment)
+
+
+def tostereo_body(width: int, lfactor: float, rfactor: float, fragment: bytes) -> bytes:
+    return channel_body(OP_TOSTEREO, width, lfactor, rfactor, fragment)

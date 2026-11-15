@@ -41,6 +41,8 @@ comptime OP_MAXPP: UInt8 = 0x2F
 comptime OP_FINDMAX: UInt8 = 0x30
 comptime OP_FINDFACTOR: UInt8 = 0x31
 comptime OP_FINDFIT: UInt8 = 0x32
+comptime OP_TOMONO: UInt8 = 0x33
+comptime OP_TOSTEREO: UInt8 = 0x34
 
 comptime STATUS_OK: UInt8 = 0
 comptime STATUS_ERROR: UInt8 = 1

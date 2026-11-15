@@ -223,6 +223,26 @@ def _findfit_one(item: dict) -> dict:
     )
 
 
+def _tomono_one(item: dict) -> dict:
+    return _call(
+        audioop.tomono,
+        bytes.fromhex(item["fragment_hex"]),
+        int(item["width"]),
+        _factor(item["lfactor"]),
+        _factor(item["rfactor"]),
+    )
+
+
+def _tostereo_one(item: dict) -> dict:
+    return _call(
+        audioop.tostereo,
+        bytes.fromhex(item["fragment_hex"]),
+        int(item["width"]),
+        _factor(item["lfactor"]),
+        _factor(item["rfactor"]),
+    )
+
+
 def main() -> int:
     request = json.load(sys.stdin)
     response = {
@@ -245,6 +265,8 @@ def main() -> int:
         "findmax": [_findmax_one(item) for item in request.get("findmax", [])],
         "findfactor": [_findfactor_one(item) for item in request.get("findfactor", [])],
         "findfit": [_findfit_one(item) for item in request.get("findfit", [])],
+        "tomono": [_tomono_one(item) for item in request.get("tomono", [])],
+        "tostereo": [_tostereo_one(item) for item in request.get("tostereo", [])],
     }
     json.dump(response, sys.stdout)
     return 0

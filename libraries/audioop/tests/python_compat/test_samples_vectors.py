@@ -30,19 +30,21 @@ def sample_cases(vectors_bundle: dict) -> list[dict]:
 
 def test_corpus_preserves_phase0_cases(vectors_bundle: dict) -> None:
     cases = vectors_bundle["cases"]
-    assert len(cases) == 243
+    assert len(cases) == 276
     ids = [case["id"] for case in cases]
     assert len(set(ids)) == len(ids)
     sample = [case for case in cases if case["op"] in SAMPLE_OPS]
     phase2 = [case for case in cases if case["id"].startswith("p2-")]
     phase3 = [case for case in cases if case["id"].startswith("p3-")]
     phase4 = [case for case in cases if case["id"].startswith("p4-")]
+    phase5 = [case for case in cases if case["id"].startswith("p5-")]
     assert len(sample) == 24
     assert len(phase2) == 50
     assert len(phase3) == 69
     assert len(phase4) == 58
+    assert len(phase5) == 33
     # the original 42 Phase 0 operation cases are untouched
-    assert len(cases) - len(sample) - len(phase2) - len(phase3) - len(phase4) == 42
+    assert len(cases) - len(sample) - len(phase2) - len(phase3) - len(phase4) - len(phase5) == 42
 
 
 def test_sample_vector_coverage(sample_cases: list[dict]) -> None:

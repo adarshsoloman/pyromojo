@@ -3079,6 +3079,454 @@
         "error_type": "error",
         "error_message": "Strings should be even-sized"
       }
+    },
+    {
+      "id": "p5-tomono-w1",
+      "op": "tomono",
+      "width": 1,
+      "args": {
+        "fragment_hex": "807fff01",
+        "lfactor": 0.5,
+        "rfactor": 0.5
+      },
+      "expected": {
+        "result_hex": "ff00"
+      }
+    },
+    {
+      "id": "p5-tomono-w2",
+      "op": "tomono",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0080ff7fffff0100",
+        "lfactor": 0.5,
+        "rfactor": 0.5
+      },
+      "expected": {
+        "result_hex": "ffff0000"
+      }
+    },
+    {
+      "id": "p5-tomono-w3",
+      "op": "tomono",
+      "width": 3,
+      "args": {
+        "fragment_hex": "000080ffff7fffffff010000",
+        "lfactor": 0.5,
+        "rfactor": 0.5
+      },
+      "expected": {
+        "result_hex": "ffffff000000"
+      }
+    },
+    {
+      "id": "p5-tomono-w4",
+      "op": "tomono",
+      "width": 4,
+      "args": {
+        "fragment_hex": "00000080ffffff7fffffffff01000000",
+        "lfactor": 0.5,
+        "rfactor": 0.5
+      },
+      "expected": {
+        "result_hex": "ffffffff00000000"
+      }
+    },
+    {
+      "id": "p5-tomono-boundaries",
+      "op": "tomono",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ff7fff7f00800080",
+        "lfactor": 1.0,
+        "rfactor": 1.0
+      },
+      "expected": {
+        "result_hex": "ff7f0080"
+      },
+      "notes": "saturates at both 16-bit extremes"
+    },
+    {
+      "id": "p5-tomono-w4-boundaries",
+      "op": "tomono",
+      "width": 4,
+      "args": {
+        "fragment_hex": "ffffff7f00000080",
+        "lfactor": 1.0,
+        "rfactor": 1.0
+      },
+      "expected": {
+        "result_hex": "ffffffff"
+      },
+      "notes": "floor(-0.5) = -1"
+    },
+    {
+      "id": "p5-tomono-empty",
+      "op": "tomono",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "lfactor": 1.0,
+        "rfactor": 1.0
+      },
+      "expected": {
+        "result_hex": ""
+      }
+    },
+    {
+      "id": "p5-tomono-single-sample",
+      "op": "tomono",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0500",
+        "lfactor": 1.0,
+        "rfactor": 1.0
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "not a whole number of frames"
+      },
+      "notes": "odd sample count is not whole stereo frames"
+    },
+    {
+      "id": "p5-tomono-odd-count",
+      "op": "tomono",
+      "width": 2,
+      "args": {
+        "fragment_hex": "010002000300",
+        "lfactor": 1.0,
+        "rfactor": 1.0
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "not a whole number of frames"
+      }
+    },
+    {
+      "id": "p5-tomono-misaligned",
+      "op": "tomono",
+      "width": 2,
+      "args": {
+        "fragment_hex": "010203",
+        "lfactor": 1.0,
+        "rfactor": 1.0
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "not a whole number of frames"
+      }
+    },
+    {
+      "id": "p5-tomono-width-zero",
+      "op": "tomono",
+      "width": 0,
+      "args": {
+        "fragment_hex": "",
+        "lfactor": 1.0,
+        "rfactor": 1.0
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Size should be 1, 2, 3 or 4"
+      }
+    },
+    {
+      "id": "p5-tomono-zero-factors",
+      "op": "tomono",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e80318fc0500fbff",
+        "lfactor": 0.0,
+        "rfactor": 0.0
+      },
+      "expected": {
+        "result_hex": "00000000"
+      }
+    },
+    {
+      "id": "p5-tomono-mixed-factors",
+      "op": "tomono",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0300fdfffdff0300",
+        "lfactor": 0.5,
+        "rfactor": -0.5
+      },
+      "expected": {
+        "result_hex": "0300fdff"
+      },
+      "notes": "floor of fractional sums"
+    },
+    {
+      "id": "p5-tomono-large-factors",
+      "op": "tomono",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0100ffff0200feff",
+        "lfactor": 1000000.0,
+        "rfactor": -1000000.0
+      },
+      "expected": {
+        "result_hex": "ff7fff7f"
+      },
+      "notes": "saturates through huge sums"
+    },
+    {
+      "id": "p5-tomono-small-factors",
+      "op": "tomono",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e80318fce70319fc",
+        "lfactor": 0.001,
+        "rfactor": 0.001
+      },
+      "expected": {
+        "result_hex": "00000000"
+      },
+      "notes": "floor of tiny products"
+    },
+    {
+      "id": "p5-tomono-inf-factors",
+      "op": "tomono",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0100020003000400",
+        "lfactor": "inf",
+        "rfactor": "-inf"
+      },
+      "expected": {
+        "result_hex": "00000000"
+      },
+      "notes": "infinities clamp through defined comparisons"
+    },
+    {
+      "id": "p5-tomono-nan-factor",
+      "op": "tomono",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0100020003000400",
+        "lfactor": "nan",
+        "rfactor": 0.5
+      },
+      "expected": {
+        "result_hex": "00000000"
+      },
+      "notes": "reference UB; observed result equals the port's NaN->0 policy"
+    },
+    {
+      "id": "p5-tomono-neg-saturation",
+      "op": "tomono",
+      "width": 2,
+      "args": {
+        "fragment_hex": "00800080",
+        "lfactor": 1.0,
+        "rfactor": 1.0
+      },
+      "expected": {
+        "result_hex": "0080"
+      },
+      "notes": "clamps at the 16-bit minimum"
+    },
+    {
+      "id": "p5-tostereo-w1",
+      "op": "tostereo",
+      "width": 1,
+      "args": {
+        "fragment_hex": "807f",
+        "lfactor": 0.5,
+        "rfactor": -0.5
+      },
+      "expected": {
+        "result_hex": "c0403fc0"
+      }
+    },
+    {
+      "id": "p5-tostereo-w2",
+      "op": "tostereo",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0080ff7f",
+        "lfactor": 0.5,
+        "rfactor": -0.5
+      },
+      "expected": {
+        "result_hex": "00c00040ff3f00c0"
+      }
+    },
+    {
+      "id": "p5-tostereo-w3",
+      "op": "tostereo",
+      "width": 3,
+      "args": {
+        "fragment_hex": "000080ffff7f",
+        "lfactor": 0.5,
+        "rfactor": -0.5
+      },
+      "expected": {
+        "result_hex": "0000c0000040ffff3f0000c0"
+      }
+    },
+    {
+      "id": "p5-tostereo-w4",
+      "op": "tostereo",
+      "width": 4,
+      "args": {
+        "fragment_hex": "00000080ffffff7f",
+        "lfactor": 0.5,
+        "rfactor": -0.5
+      },
+      "expected": {
+        "result_hex": "000000c000000040ffffff3f000000c0"
+      }
+    },
+    {
+      "id": "p5-tostereo-boundaries",
+      "op": "tostereo",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ff7f0080",
+        "lfactor": 2.0,
+        "rfactor": 2.0
+      },
+      "expected": {
+        "result_hex": "ff7fff7f00800080"
+      },
+      "notes": "saturates at both 16-bit extremes"
+    },
+    {
+      "id": "p5-tostereo-w4-boundaries",
+      "op": "tostereo",
+      "width": 4,
+      "args": {
+        "fragment_hex": "ffffff7f00000080",
+        "lfactor": 1.0,
+        "rfactor": 1.0
+      },
+      "expected": {
+        "result_hex": "ffffff7fffffff7f0000008000000080"
+      }
+    },
+    {
+      "id": "p5-tostereo-empty",
+      "op": "tostereo",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "lfactor": 1.0,
+        "rfactor": 1.0
+      },
+      "expected": {
+        "result_hex": ""
+      }
+    },
+    {
+      "id": "p5-tostereo-single-sample",
+      "op": "tostereo",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0500",
+        "lfactor": 1.0,
+        "rfactor": 1.0
+      },
+      "expected": {
+        "result_hex": "05000500"
+      },
+      "notes": "one sample expands to one interleaved pair"
+    },
+    {
+      "id": "p5-tostereo-misaligned",
+      "op": "tostereo",
+      "width": 2,
+      "args": {
+        "fragment_hex": "01",
+        "lfactor": 1.0,
+        "rfactor": 1.0
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "not a whole number of frames"
+      }
+    },
+    {
+      "id": "p5-tostereo-width-zero",
+      "op": "tostereo",
+      "width": 0,
+      "args": {
+        "fragment_hex": "",
+        "lfactor": 1.0,
+        "rfactor": 1.0
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Size should be 1, 2, 3 or 4"
+      }
+    },
+    {
+      "id": "p5-tostereo-zero-factors",
+      "op": "tostereo",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e80318fc",
+        "lfactor": 0.0,
+        "rfactor": 0.0
+      },
+      "expected": {
+        "result_hex": "0000000000000000"
+      }
+    },
+    {
+      "id": "p5-tostereo-fractional-factors",
+      "op": "tostereo",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0300fdff",
+        "lfactor": 0.5,
+        "rfactor": 0.5
+      },
+      "expected": {
+        "result_hex": "01000100fefffeff"
+      },
+      "notes": "floor(1.5) = 1; floor(-1.5) = -2"
+    },
+    {
+      "id": "p5-tostereo-large-factors",
+      "op": "tostereo",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0100ffff",
+        "lfactor": 1000000.0,
+        "rfactor": -1000000.0
+      },
+      "expected": {
+        "result_hex": "ff7f00800080ff7f"
+      }
+    },
+    {
+      "id": "p5-tostereo-inf-factors",
+      "op": "tostereo",
+      "width": 2,
+      "args": {
+        "fragment_hex": "01000200",
+        "lfactor": "inf",
+        "rfactor": "-inf"
+      },
+      "expected": {
+        "result_hex": "ff7f0080ff7f0080"
+      }
+    },
+    {
+      "id": "p5-tostereo-nan-factor",
+      "op": "tostereo",
+      "width": 2,
+      "args": {
+        "fragment_hex": "01000200",
+        "lfactor": "nan",
+        "rfactor": 0.5
+      },
+      "expected": {
+        "result_hex": "0000000000000100"
+      },
+      "notes": "reference UB; observed result equals the port's NaN->0 policy"
     }
   ]
 }

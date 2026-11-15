@@ -1286,6 +1286,244 @@ def build_phase4_cases(cases: list[dict[str, object]]) -> None:
     fit_case("p4-findfit-odd", b"\x01\x02\x03", b"\x01\x02")
 
 
+def build_phase5_cases(cases: list[dict[str, object]]) -> None:
+    """Coverage for the two Phase 5 channel operations."""
+
+    def as_factor(value):
+        return float(value) if isinstance(value, str) else value
+
+    def channel_case(case_id, op, width, fragment, lfactor, rfactor, notes=None):
+        left = as_factor(lfactor)
+        right = as_factor(rfactor)
+        cases.append(
+            case(
+                case_id,
+                op,
+                width=width,
+                args={
+                    "fragment_hex": hexed(fragment),
+                    "lfactor": lfactor,
+                    "rfactor": rfactor,
+                },
+                call=lambda op=op, f=fragment, w=width, left=left, right=right: getattr(
+                    audioop, op
+                )(f, w, left, right),
+                notes=notes,
+            )
+        )
+
+    # --- tomono -----------------------------------------------------------
+    for width in range(1, 5):
+        lo = -(1 << (width * 8 - 1))
+        hi = (1 << (width * 8 - 1)) - 1
+        channel_case(
+            f"p5-tomono-w{width}",
+            "tomono",
+            width,
+            pcm_w(width, lo, hi, -1, 1),
+            0.5,
+            0.5,
+        )
+    channel_case(
+        "p5-tomono-boundaries",
+        "tomono",
+        2,
+        pcm(32767, 32767, -32768, -32768),
+        1.0,
+        1.0,
+        notes="saturates at both 16-bit extremes",
+    )
+    channel_case(
+        "p5-tomono-w4-boundaries",
+        "tomono",
+        4,
+        pcm_w(4, 2147483647, -2147483648),
+        1.0,
+        1.0,
+        notes="floor(-0.5) = -1",
+    )
+    channel_case("p5-tomono-empty", "tomono", 2, b"", 1.0, 1.0)
+    channel_case(
+        "p5-tomono-single-sample",
+        "tomono",
+        2,
+        pcm(5),
+        1.0,
+        1.0,
+        notes="odd sample count is not whole stereo frames",
+    )
+    channel_case(
+        "p5-tomono-odd-count",
+        "tomono",
+        2,
+        pcm(1, 2, 3),
+        1.0,
+        1.0,
+    )
+    channel_case(
+        "p5-tomono-misaligned",
+        "tomono",
+        2,
+        b"\x01\x02\x03",
+        1.0,
+        1.0,
+    )
+    channel_case("p5-tomono-width-zero", "tomono", 0, b"", 1.0, 1.0)
+    channel_case(
+        "p5-tomono-zero-factors",
+        "tomono",
+        2,
+        pcm(1000, -1000, 5, -5),
+        0.0,
+        0.0,
+    )
+    channel_case(
+        "p5-tomono-mixed-factors",
+        "tomono",
+        2,
+        pcm(3, -3, -3, 3),
+        0.5,
+        -0.5,
+        notes="floor of fractional sums",
+    )
+    channel_case(
+        "p5-tomono-large-factors",
+        "tomono",
+        2,
+        pcm(1, -1, 2, -2),
+        1e6,
+        -1e6,
+        notes="saturates through huge sums",
+    )
+    channel_case(
+        "p5-tomono-small-factors",
+        "tomono",
+        2,
+        pcm(1000, -1000, 999, -999),
+        0.001,
+        0.001,
+        notes="floor of tiny products",
+    )
+    channel_case(
+        "p5-tomono-inf-factors",
+        "tomono",
+        2,
+        pcm(1, 2, 3, 4),
+        "inf",
+        "-inf",
+        notes="infinities clamp through defined comparisons",
+    )
+    channel_case(
+        "p5-tomono-nan-factor",
+        "tomono",
+        2,
+        pcm(1, 2, 3, 4),
+        "nan",
+        0.5,
+        notes="reference UB; observed result equals the port's NaN->0 policy",
+    )
+    channel_case(
+        "p5-tomono-neg-saturation",
+        "tomono",
+        2,
+        pcm(-32768, -32768),
+        1.0,
+        1.0,
+        notes="clamps at the 16-bit minimum",
+    )
+
+    # --- tostereo ----------------------------------------------------------
+    for width in range(1, 5):
+        lo = -(1 << (width * 8 - 1))
+        hi = (1 << (width * 8 - 1)) - 1
+        channel_case(
+            f"p5-tostereo-w{width}",
+            "tostereo",
+            width,
+            pcm_w(width, lo, hi),
+            0.5,
+            -0.5,
+        )
+    channel_case(
+        "p5-tostereo-boundaries",
+        "tostereo",
+        2,
+        pcm(32767, -32768),
+        2.0,
+        2.0,
+        notes="saturates at both 16-bit extremes",
+    )
+    channel_case(
+        "p5-tostereo-w4-boundaries",
+        "tostereo",
+        4,
+        pcm_w(4, 2147483647, -2147483648),
+        1.0,
+        1.0,
+    )
+    channel_case("p5-tostereo-empty", "tostereo", 2, b"", 1.0, 1.0)
+    channel_case(
+        "p5-tostereo-single-sample",
+        "tostereo",
+        2,
+        pcm(5),
+        1.0,
+        1.0,
+        notes="one sample expands to one interleaved pair",
+    )
+    channel_case(
+        "p5-tostereo-misaligned",
+        "tostereo",
+        2,
+        b"\x01",
+        1.0,
+        1.0,
+    )
+    channel_case("p5-tostereo-width-zero", "tostereo", 0, b"", 1.0, 1.0)
+    channel_case(
+        "p5-tostereo-zero-factors",
+        "tostereo",
+        2,
+        pcm(1000, -1000),
+        0.0,
+        0.0,
+    )
+    channel_case(
+        "p5-tostereo-fractional-factors",
+        "tostereo",
+        2,
+        pcm(3, -3),
+        0.5,
+        0.5,
+        notes="floor(1.5) = 1; floor(-1.5) = -2",
+    )
+    channel_case(
+        "p5-tostereo-large-factors",
+        "tostereo",
+        2,
+        pcm(1, -1),
+        1e6,
+        -1e6,
+    )
+    channel_case(
+        "p5-tostereo-inf-factors",
+        "tostereo",
+        2,
+        pcm(1, 2),
+        "inf",
+        "-inf",
+    )
+    channel_case(
+        "p5-tostereo-nan-factor",
+        "tostereo",
+        2,
+        pcm(1, 2),
+        "nan",
+        0.5,
+        notes="reference UB; observed result equals the port's NaN->0 policy",
+    )
+
+
 def main() -> int:
     check = "--check" in sys.argv[1:]
     cases = build_cases()
@@ -1293,6 +1531,7 @@ def main() -> int:
     build_phase2_cases(cases)
     build_phase3_cases(cases)
     build_phase4_cases(cases)
+    build_phase5_cases(cases)
     payload = {
         "schema_version": SCHEMA_VERSION,
         "generator": {"name": "audioop_vectors", "version": SCHEMA_VERSION},

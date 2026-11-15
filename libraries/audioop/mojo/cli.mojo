@@ -38,6 +38,11 @@ Operations (framed, see ``mojo_audioop/protocol.mojo``):
 * ``0x32`` findfit -> ``uint32_be len1 | frag1 | frag2``; replies with
   the ASCII decimal window index, a space, then 8 big-endian IEEE-754
   bytes of the factor.
+* ``0x33`` tomono -> ``uint8 width | 8-byte IEEE-754 BE lfactor |
+  8-byte IEEE-754 BE rfactor | fragment``; replies with the mono
+  fragment bytes.
+* ``0x34`` tostereo -> same payload as tomono; replies with the stereo
+  fragment bytes (left sample first per input sample).
 
 Malformed requests produce ``STATUS_ERROR`` frames; framing errors
 produce one error frame plus a non-zero exit, like the other CLIs.
@@ -76,6 +81,8 @@ from mojo_audioop.protocol import (
     OP_PING,
     OP_REVERSE,
     OP_RMS,
+    OP_TOMONO,
+    OP_TOSTEREO,
     STATUS_ERROR,
     STATUS_OK,
     ascii_bytes,
@@ -84,6 +91,7 @@ from mojo_audioop.protocol import (
     write_frame,
 )
 from mojo_audioop.samples import decode_fragment, encode_fragment
+from mojo_audioop.channels import tomono, tostereo
 from mojo_audioop.peak_analysis import avgpp, findfactor, findfit, findmax, maxpp
 from mojo_audioop.statistics import avg, cross, getsample, max, minmax, rms
 from std.memory import bitcast
@@ -353,6 +361,24 @@ def _findfit_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
     return out^
 
 
+def _tomono_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 17:
+        raise Error("tomono request too short: need width and two factors")
+    var width = Int(payload[0])
+    var left = _decode_double_be(payload[1:9])
+    var right = _decode_double_be(payload[9:17])
+    return tomono(payload[17:], width, left, right)
+
+
+def _tostereo_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 17:
+        raise Error("tostereo request too short: need width and two factors")
+    var width = Int(payload[0])
+    var left = _decode_double_be(payload[1:9])
+    var right = _decode_double_be(payload[9:17])
+    return tostereo(payload[17:], width, left, right)
+
+
 def main() raises:
     var stdin = RawFileDescriptor(0)
     var stdout = RawFileDescriptor(1)
@@ -490,6 +516,18 @@ def main() raises:
             try:
                 var fit_result = _findfit_request(payload)
                 write_frame(stdout, STATUS_OK, Span(fit_result))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_TOMONO:
+            try:
+                var mono_fragment = _tomono_request(payload)
+                write_frame(stdout, STATUS_OK, Span(mono_fragment))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_TOSTEREO:
+            try:
+                var stereo_fragment = _tostereo_request(payload)
+                write_frame(stdout, STATUS_OK, Span(stereo_fragment))
             except error:
                 _reply_error(stdout, String(error))
         else:
