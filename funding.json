@@ -1,0 +1,51 @@
+{
+  "version": "v1.0.0",
+  "entity": {
+    "type": "individual",
+    "role": "maintainer",
+    "name": "Adarsh Soloman Banjare",
+    "email": "adarshsoloman196@gmail.com",
+    "phone": "",
+    "description": "PyroMojo: reference-faithful ports of Python libraries to native Mojo, with differential test suites against the originals.",
+    "webpageUrl": {
+      "url": "https://github.com/adarshsoloman/pyromojo"
+    }
+  },
+  "projects": [
+    {
+      "guid": "pyromojo",
+      "name": "PyroMojo",
+      "description": "Native Mojo ports of msgpack, Levenshtein, and bitarray, each validated against its Python reference implementation and its test vectors.",
+      "webpageUrl": {
+        "url": "https://github.com/adarshsoloman/pyromojo"
+      },
+      "repositoryUrl": {
+        "url": "https://github.com/adarshsoloman/pyromojo"
+      },
+      "licenses": ["spdx:Apache-2.0"],
+      "tags": ["mojo", "python", "serialization", "algorithms", "systems-programming"]
+    }
+  ],
+  "funding": {
+    "channels": [
+      {
+        "guid": "github-sponsors",
+        "type": "payment-provider",
+        "address": "https://github.com/sponsors/adarshsoloman",
+        "description": "GitHub Sponsors"
+      }
+    ],
+    "plans": [
+      {
+        "guid": "support",
+        "status": "active",
+        "name": "Sponsorship",
+        "description": "Any amount; supports ongoing Mojo ports, differential test suites, and benchmark runs.",
+        "amount": 0,
+        "currency": "USD",
+        "frequency": "one-time",
+        "channels": ["github-sponsors"]
+      }
+    ]
+  }
+}
