@@ -13,7 +13,7 @@ Verified against the originals. Benchmarked honestly.
 [![Tests](https://img.shields.io/github/actions/workflow/status/adarshsoloman/pyromojo/tests.yml?style=flat-square&label=tests)](https://github.com/adarshsoloman/pyromojo/actions/workflows/tests.yml)
 [![Sponsor](https://img.shields.io/badge/Sponsor-%E2%99%A5-ea4aaa.svg?style=flat-square)](https://github.com/sponsors/adarshsoloman)
 
-<sub>4 libraries shipped &nbsp;·&nbsp; 1,800+ golden vectors &nbsp;·&nbsp; every number below is measured, not claimed</sub>
+<sub>4 libraries shipped &nbsp;·&nbsp; 2,139 golden vectors &nbsp;·&nbsp; 979 tests &nbsp;·&nbsp; every number below is measured, not claimed</sub>
 
 </div>
 
@@ -47,7 +47,7 @@ For every library, PyroMojo answers three questions:
 2. Can that be verified rigorously against the Python reference?
 3. What is the measured performance, stated honestly?
 
-A Mojo port is **not assumed to be faster**. Results are published with reproducible evidence, including the cases where the reference wins.
+A Mojo port is **not assumed to be faster** than an optimized native implementation. Results are published with reproducible evidence, including the cases where the reference wins.
 
 <br>
 
@@ -61,11 +61,13 @@ A Mojo port is **not assumed to be faster**. Results are published with reproduc
 | 04 | [Audioop](libraries/audioop/) | `v0.1.0` | CPython 3.12 `audioop`, 26/26 operations | 1,277 vectors · 105 native + 136 Python tests |
 | 05 | [Resampy](libraries/resampy/) | planned | Audio resampling | not started |
 
+<sub>01–04 are released at `v0.1.0`; Resampy (05) is the planned fifth library and is not started.</sub>
+
 <br>
 
 ## Honest benchmarks
 
-Three-way comparisons: pure Python, the optimized native reference, and Mojo. Every result passes an exact-equality correctness gate before it counts.
+Three-way comparisons on identical inputs: a **pure-Python** implementation (same semantics, no native extension), the **optimized native reference** (the upstream C / C++ extension), and **native Mojo**. A timing counts only after an exact-equality correctness gate — the port's output must match the reference exactly (bytes, and state where applicable) — so no speedup is ever claimed for a result that disagrees.
 
 | Library | vs pure Python | vs optimized C / C++ |
 |---|---|---|
@@ -74,7 +76,9 @@ Three-way comparisons: pure Python, the optimized native reference, and Mojo. Ev
 | Levenshtein | up to ~45× faster than the untrimmed baseline (ratio) | slower, ~2–9× on distance |
 | MessagePack | n/a | up to ~4× faster on small-map encode; binary encode 7.4× slower |
 
-Neither side is universally faster. The gaps have identified causes (allocation, byte-serial loops, scalar arithmetic) and are the subject of the next phase: **profile first, then optimize.**
+Neither side is universally faster, and Mojo is **not assumed to be faster** than an optimized native implementation. Where it trails, the gaps have identified causes (per-call allocation, byte-serial loops, scalar arithmetic) and are the subject of the next phase: **profile first, then optimize.**
+
+Timings measure steady-state execution after warmup, over repeated samples reported as medians. Cold compilation and per-request process/CLI overhead are measured and reported separately, never folded into kernel numbers. Workloads are deterministic, each report records its environment and toolchain versions, and raw data is retained so results can be reproduced.
 
 <sub>Full tables and methodology: [Audioop](libraries/audioop/benchmarks/reports/BENCHMARK_REPORT.md) · [Bitarray](libraries/bitarray/benchmarks/README.md) · [Levenshtein](docs/benchmarks/releases/levenshtein-v0.1.md) · [MessagePack](docs/benchmarks/releases/msgpack-v0.1.md)</sub>
 
@@ -82,18 +86,18 @@ Neither side is universally faster. The gaps have identified causes (allocation,
 
 ## Method
 
-Every port follows the same pipeline, so a result in one library means the same thing in the next.
+Every port follows the same pipeline, so a result in one library means the same thing in the next. Correctness comes before performance: a port must match its reference before any timing is trusted.
 
 ```
 reference audit → toolchain probes → native port → golden vectors
       → native + Python compatibility tests → benchmarks → tagged release
 ```
 
-- **Pinned references.** `msgpack==1.2.4` · `rapidfuzz==3.14.6` · `bitarray==3.12.3` · CPython 3.12.3. Upstream source is never vendored.
-- **Golden vectors.** Deterministic, schema-validated, drift-checked on every run.
-- **Cross-language tests.** Error behaviour is compared too: bad input must fail predictably.
-- **Documented deviations.** Every intentional difference from the reference is listed with its rationale.
-- **Reproducible benchmarks.** Warmup, repeated samples, environment metadata captured, cold compile reported separately.
+- **Pinned references.** `msgpack==1.2.4` · `rapidfuzz==3.14.6` · `bitarray==3.12.3` · CPython 3.12.3. All compatibility is verified against these pinned implementations; upstream source is never vendored.
+- **Golden vectors.** Deterministic, schema-validated, drift-checked on every run; both implementations must satisfy the same expected outputs.
+- **Cross-language tests.** Output and error behaviour are compared against the reference: bad input must fail predictably, never silently.
+- **Documented deviations.** Every intentional difference from the reference is listed with its rationale, not left implicit.
+- **Reproducible benchmarks.** Steady-state timing after warmup, repeated samples, environment and toolchain metadata captured, cold compile reported separately; raw data retained.
 
 <details>
 <summary><b>Reference licenses and attribution</b></summary>
@@ -133,9 +137,11 @@ uv sync --extra dev
 |---|---|---|
 | 1 | Repository foundation | ✅ Complete |
 | 2 | MessagePack, the first complete port | ✅ Complete |
-| 3 | First five verified ports | 🔶 4 of 5 |
+| 3 | First five verified ports | 🔶 4 of 5 released |
 | 4 | Expand toward 20 libraries | ⬜ Planned |
 | 5 | Performance analysis and upstream contributions | ⬜ Planned |
+
+<sub>Four of the first five ports are released (MessagePack, Levenshtein, Bitarray, Audioop); Resampy is the planned fifth and is not started. The 20-library milestone (Phase 4) remains a future objective.</sub>
 
 Details and exit criteria: [docs/roadmap.md](docs/roadmap.md).
 
