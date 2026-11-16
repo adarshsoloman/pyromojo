@@ -10,7 +10,7 @@ Verified against the originals. Benchmarked honestly.
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](LICENSE)
 [![Mojo](https://img.shields.io/badge/Mojo-1.2.0-ff5a1f.svg?style=flat-square)](https://www.modular.com/mojo)
 [![Python](https://img.shields.io/badge/Python-%E2%89%A53.11-3776ab.svg?style=flat-square)](https://www.python.org)
-[![Tests](https://img.shields.io/github/actions/workflow/status/adarshsoloman/pyromojo/tests.yml?style=flat-square&label=tests)](https://github.com/adarshsoloman/pyromojo/actions/workflows/tests.yml)
+[![Tests](https://github.com/adarshsoloman/pyromojo/actions/workflows/tests.yml/badge.svg)](https://github.com/adarshsoloman/pyromojo/actions/workflows/tests.yml)
 [![Sponsor](https://img.shields.io/badge/Sponsor-%E2%99%A5-ea4aaa.svg?style=flat-square)](https://github.com/sponsors/adarshsoloman)
 
 <sub>4 libraries shipped &nbsp;·&nbsp; 2,139 golden vectors &nbsp;·&nbsp; 979 tests &nbsp;·&nbsp; every number below is measured, not claimed</sub>
