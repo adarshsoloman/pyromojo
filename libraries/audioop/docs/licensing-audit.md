@@ -50,14 +50,30 @@ The repository is Apache-2.0; the library's own Mojo code will be Apache-2.0.
 1. **Independent implementation.** The Mojo code is written from observed
    behaviour and the algorithm analysis, not by translating the C file. No C
    source, comments, or identifier names are copied.
-2. **Tables regenerated, not transcribed.** The G.711 u-law/A-law decode
-   tables are fully determined by the published companding formulas and are
-   generated in Mojo from those formulas, then validated against observed
-   outputs. The ADPCM step-size and index tables are standard IMA/DVI values;
-   they will be produced from the published table in the specification and
-   cross-checked against the reference's behaviour. If a table cannot be
-   reproduced independently, the decision and the applicable notice will be
-   revisited before release.
+2. **Tables regenerated, not transcribed.** *(Phase 9 record — the
+   original plan below was revised during Phase 7; see the update note.)*
+   The G.711 u-law/A-law decode tables are fully determined by the published
+   companding formulas and are generated in Mojo from those formulas, then
+   validated against observed outputs. The ADPCM step-size and index tables
+   are standard IMA/DVI values; they will be produced from the published
+   table in the specification and cross-checked against the reference's
+   behaviour. If a table cannot be reproduced independently, the decision
+   and the applicable notice will be revisited before release.
+
+   **Phase 9 update.** The Phase 7 implementation first used algorithmic
+   decoder formulas, which did not reproduce CPython's table ordering, so
+   the four decoder/codec tables (256-entry A-law and mu-law decode
+   tables, 89-entry ADPCM step-size table, 16-entry index table) were
+   transcribed verbatim from the reference `Modules/audioop.c` instead —
+   the exact outcome this section's revisit clause anticipated. Provenance
+   remains covered: the G.711 tables live in the SoX-derived section of
+   `audioop.c` that carries the embedded Sun Microsystems unrestricted-use
+   notice (copying and modification without charge, documented above), and
+   the ADPCM tables are standard IMA/DVI constants cross-checked against
+   the published specification. The tables are data, transcribed from a
+   PSF-2.0 file whose codec section carries the Sun notice; the
+   attribution prepared in section 4 has been added to
+   `THIRD_PARTY_NOTICES.md` (Phase 9).
 3. **Vectors are derived data.** `tests/vectors/audioop_vectors.json` is a
    record of outputs produced by running the pinned reference; it is not
    source code and contains no C.

@@ -65,12 +65,22 @@ responses append the updated state after `uint32_be out_len | bytes`.
 
 ## 6. Encoder and decoder differential results
 
-- Curated oracle cases: **54** (both ops; all widths; boundary,
-  alternating, abrupt, repeated, zero, small-diff fragments; empty,
-  one/three-sample odd cases; continued and boundary states; all error
-  paths; the exhaustive 256-byte decoder group).
-- Randomized cases: **120** (4 widths × 20 encoder + 35 decoder
-  sequences; seed **20260610**).
+*(Counts corrected in Phase 9 to match the actual emissions in
+`test_adpcm_oracle.py`; the test results themselves were valid and
+unchanged.)*
+
+- Curated oracle cases: **317** — 29 encoder (16 per-width + 13
+  edge/error: boundary, alternating, abrupt, repeated, zero,
+  small-diff fragments; empty, one/three-sample odd cases; continued
+  and boundary states; all error paths) + 288 decoder (the exhaustive
+  **256 byte values** at width 2 + 24 sampled width-1/3/4 cases + 8
+  sequence/state/error cases).
+- Randomized cases: **115** — 80 encoder (4 widths × 20) + 35 decoder
+  (20 width-2 + 15 width-1/3/4 sequences; seed **20260610**).
+- **Methodology**: the 256 decoder bytes are tested as **256
+  independent CLI requests** (one emission per byte, each compared 1:1
+  against the oracle), not one combined input; the same 256 bytes also
+  appear as 256 independent golden-vector cases replayed individually.
 - Mismatches: **0**; exception mismatches: **0** (exact messages).
 - Comparison: exact output bytes and exact `(valpred, index)` state.
 
