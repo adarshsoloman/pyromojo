@@ -1,0 +1,15 @@
+{
+  "python": "3.13.14",
+  "reference_python": "Python 3.12.3",
+  "mojo": "Mojo 1.2.0 (2016d0cd)",
+  "cpu": "AMD Ryzen 7 6800H with Radeon Graphics",
+  "cores": 16,
+  "memory": "15528948 kB",
+  "os": "Linux-7.0.0-28-generic-x86_64-with-glibc2.39",
+  "git": "8b7596d",
+  "seed": 20260610,
+  "timer": "time.perf_counter_ns (integer ns) / std.time.perf_counter_ns (Mojo)",
+  "date": "2026-11-16T09:54:02",
+  "cold_compile_bench_s": 2.061173024,
+  "cold_compile_cli_s": 1.841005044
+}

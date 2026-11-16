@@ -34,10 +34,10 @@ A port is considered complete when it reproduces the documented compatibility su
 | [MessagePack](libraries/msgpack/) | Complete | `v0.1.0` | Native Mojo binary serialization codec |
 | [Levenshtein](libraries/levenshtein/) | Complete | `v0.1.0` | Native Mojo string distance and similarity algorithms |
 | [Bitarray](libraries/bitarray/) | Complete | `v0.1.0` | Native Mojo packed-bit arrays |
-| [Audioop](libraries/audioop/) | Planned | — | Digital audio processing |
+| [Audioop](libraries/audioop/) | 26/26 ops implemented (benchmarked) | — | Digital audio processing |
 | [Resampy](libraries/resampy/) | Planned | — | Audio resampling |
 
-MessagePack was the first finished port and remains the reference project for the full workflow. Levenshtein is the second finished port. Bitarray is the third finished port. Audioop and resampy remain scoped directories only — no implementation work has begun on them.
+MessagePack was the first finished port and remains the reference project for the full workflow. Levenshtein is the second finished port. Bitarray is the third finished port. Resampy remains a scoped directory — no implementation work has begun on it; audioop's 26-operation port plus three-way benchmarks are complete (pending release review).
 
 ## MessagePack spotlight
 
@@ -186,7 +186,7 @@ pyromojo/
 │   │   ├── docs/             # reference audit, unicode, benchmark design
 │   │   ├── experiments/      # toolchain probes and raw outputs
 │   │   └── PHASE*.md         # per-phase reports
-│   ├── audioop/              # planned (scope stub)
+│   ├── audioop/              # 26/26 ops implemented (Phases 0–10, pre-release)
 │   ├── bitarray/             # v0.1 implemented (Phases 1A–1E, untagged)
 │   │   ├── mojo/             # native bitarray, batch CLI
 │   │   ├── python_reference/ # vector generator, pins
@@ -258,11 +258,11 @@ Run the Levenshtein benchmark suite:
 |---|---|---|
 | 1. Repository foundation | Maintainable project skeleton | Complete |
 | 2. MessagePack v0.1 | First complete port, exercising the entire workflow | Complete (`v0.1.0`) |
-| 3. First five verified ports | Prove the process generalises beyond one library | In progress (3 of 5: msgpack, levenshtein, bitarray) |
+| 3. First five verified ports | Prove the process generalises beyond one library | In progress (4 of 5: msgpack, levenshtein, bitarray, audioop) |
 | 4. Expand toward 20 libraries | Broad, sustainable coverage | Planned |
 | 5. Performance analysis | Cross-library analysis and upstream contributions | Planned |
 
-Port sequence: **1. MessagePack — Complete (`v0.1.0`, tagged). 2. Levenshtein — Complete (`v0.1.0`, tagged as `levenshtein-v0.1.0`). 3. Bitarray — Complete (`v0.1.0`, tagged as `bitarray-v0.1.0`).** Audioop and resampy remain planned scope stubs; no implementation work has begun on them.
+Port sequence: **1. MessagePack — Complete (`v0.1.0`, tagged). 2. Levenshtein — Complete (`v0.1.0`, tagged as `levenshtein-v0.1.0`). 3. Bitarray — Complete (`v0.1.0`, tagged as `bitarray-v0.1.0`).** Audioop is implemented (26/26 ops, pre-release); resampy remains a planned scope stub.
 
 Details, exit criteria, and deliberately omitted dates: [docs/roadmap.md](docs/roadmap.md).
 
