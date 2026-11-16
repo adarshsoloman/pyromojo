@@ -1,323 +1,188 @@
-# PyroMojo
+<div align="center">
 
-<p align="center">
-  <h1 align="center">PyroMojo</h1>
-  <p align="center">Native Mojo ports of widely used Python libraries — verified against the originals, benchmarked honestly.</p>
-  <p align="center">
-    <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License: Apache 2.0"></a>
-    <img src="https://img.shields.io/badge/Mojo-1.2.0-5e5e5e.svg" alt="Mojo 1.2.0">
-    <img src="https://img.shields.io/badge/Python-%3E%3D3.11-5e5e5e.svg" alt="Python 3.11 or newer">
-    <a href="https://github.com/adarshsoloman/pyromojo/actions/workflows/tests.yml"><img src="https://github.com/adarshsoloman/pyromojo/actions/workflows/tests.yml/badge.svg" alt="GitHub Actions tests workflow status"></a>
-  </p>
-</p>
+# 🔥 PyroMojo
 
-> **Status:** Four native ports are complete and tagged — **MessagePack `v0.1.0`**, **Levenshtein `v0.1.0`** (tagged `levenshtein-v0.1.0`), **Bitarray `v0.1.0`** (tagged `bitarray-v0.1.0`), and **Audioop `v0.1.0`** (tagged [`audioop-v0.1.0`](https://github.com/adarshsoloman/pyromojo/releases/tag/audioop-v0.1.0)). CI runs lint, formatting, and the Python test suite on every push.
+**Native Mojo ports of widely used Python libraries.**<br>
+Verified against the originals. Benchmarked honestly.
 
-<p align="center">
-  <a href="libraries/audioop/">Audioop v0.1.0 — 26/26 ops</a> ·
-  <a href="CONTRIBUTING.md">Contribute</a> ·
-  <a href="LICENSE">License</a>
-</p>
+<br>
 
-## Project overview
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](LICENSE)
+[![Mojo](https://img.shields.io/badge/Mojo-1.2.0-ff5a1f.svg?style=flat-square)](https://www.modular.com/mojo)
+[![Python](https://img.shields.io/badge/Python-%E2%89%A53.11-3776ab.svg?style=flat-square)](https://www.python.org)
+[![Tests](https://img.shields.io/github/actions/workflow/status/adarshsoloman/pyromojo/tests.yml?style=flat-square&label=tests)](https://github.com/adarshsoloman/pyromojo/actions/workflows/tests.yml)
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%99%A5-ea4aaa.svg?style=flat-square)](https://github.com/sponsors/adarshsoloman)
 
-PyroMojo reimplements widely used Python libraries natively in [Mojo](https://www.modular.com/mojo) and subjects each port to the same bar: a reference audit, a pinned upstream reference, a shared corpus of golden test vectors, native and cross-language tests, and reproducible benchmarks that report what was actually measured.
+<sub>4 libraries shipped &nbsp;·&nbsp; 1,800+ golden vectors &nbsp;·&nbsp; every number below is measured, not claimed</sub>
 
-The project exists to answer a concrete engineering question for each library:
+</div>
 
-1. Can the library's public behaviour be reproduced natively in Mojo?
-2. Can that implementation be verified rigorously against the Python reference?
-3. What are the measured performance characteristics, stated honestly?
+<br>
 
-The project does **not** assume that a Mojo port is faster. Performance claims are published only alongside reproducible benchmark evidence, including the cases where the reference wins.
+## Sponsors
 
-A port is considered complete when it reproduces the documented compatibility surface, passes every verification layer, documents its deviations, and ships a benchmark report under the shared methodology.
+PyroMojo is built and benchmarked by one maintainer. Sponsors fund compute for benchmarking and CI, AI tooling credits, and time for the profiling and optimization work. **Five slots are open.**
 
-## Library ports
+<div align="center">
+<table>
+  <tr>
+    <td align="center" width="20%"><br><a href="https://github.com/sponsors/adarshsoloman"><b>Your logo</b></a><br><sub>Slot 1</sub><br><br></td>
+    <td align="center" width="20%"><br><a href="https://github.com/sponsors/adarshsoloman"><b>Your logo</b></a><br><sub>Slot 2</sub><br><br></td>
+    <td align="center" width="20%"><br><a href="https://github.com/sponsors/adarshsoloman"><b>Your logo</b></a><br><sub>Slot 3</sub><br><br></td>
+    <td align="center" width="20%"><br><a href="https://github.com/sponsors/adarshsoloman"><b>Your logo</b></a><br><sub>Slot 4</sub><br><br></td>
+    <td align="center" width="20%"><br><a href="https://github.com/sponsors/adarshsoloman"><b>Your logo</b></a><br><sub>Slot 5</sub><br><br></td>
+  </tr>
+</table>
 
-| Library | Status | Version | Description |
-|---|---|---|---|
-| [MessagePack](libraries/msgpack/) | Complete | `v0.1.0` | Native Mojo binary serialization codec |
-| [Levenshtein](libraries/levenshtein/) | Complete | `v0.1.0` | Native Mojo string distance and similarity algorithms |
-| [Bitarray](libraries/bitarray/) | Complete | `v0.1.0` | Native Mojo packed-bit arrays |
-| [Audioop](libraries/audioop/) | Complete | `v0.1.0` | Native Mojo implementation of CPython 3.12's `audioop` — 26/26 public operations, verified and benchmarked |
-| [Resampy](libraries/resampy/) | Planned | — | Audio resampling |
+<sub>Funding · AI credits · cloud compute &nbsp;→&nbsp; <a href="https://github.com/sponsors/adarshsoloman">github.com/sponsors/adarshsoloman</a></sub>
+</div>
 
-MessagePack was the first finished port and remains the reference project for the full workflow. Levenshtein is the second finished port. Bitarray is the third finished port. Audioop is the fourth complete port — [Library 04 — Audioop `v0.1.0`](https://github.com/adarshsoloman/pyromojo/releases/tag/audioop-v0.1.0) (tagged `audioop-v0.1.0`), native Mojo implementation of CPython 3.12's `audioop` (26/26 operations, 105 native tests, 136 compatibility tests, 1,277 golden vectors, 250 benchmarks) — see the [Audioop spotlight](#audioop-spotlight) below. Resampy remains a scoped directory — no implementation work has begun on it.
+<br>
 
-## MessagePack spotlight
+## Why PyroMojo
 
-The first finished port: a complete native MessagePack v0.1 codec, [tagged `v0.1.0`](https://github.com/adarshsoloman/pyromojo/releases/tag/v0.1.0), covering the full type set — integers, Float32/Float64, strings, binary blobs, nil and bool, recursively nested arrays and maps, all eight extension families, and all three timestamp representations.
+For every library, PyroMojo answers three questions:
 
-How it is verified:
+1. Can its public behaviour be reproduced natively in Mojo?
+2. Can that be verified rigorously against the Python reference?
+3. What is the measured performance, stated honestly?
 
-- **Native Mojo encoder and decoder** operating on byte buffers, exposed through a length-prefixed batch CLI so Python can compare results without delegating work to the Python package.
-- **Python-reference compatibility testing** against pinned `msgpack==1.2.4`, in both C-backed and pure-Python (`fallback`) modes.
-- **162 golden test vectors**, generated deterministically, validated against a versioned schema, and drift-checked on every run.
-- **129 Python tests and 79 native Mojo tests**, including boundary values, malformed and hostile inputs, and depth and resource limits.
-- **Three-way benchmarks** (pure-Python fallback vs C-backed reference vs native Mojo) with in-process timing, warmup, and repeated samples per workload.
+A Mojo port is **not assumed to be faster**. Results are published with reproducible evidence, including the cases where the reference wins.
 
-Honest results, in brief: Mojo encodes integer, map, and telemetry shapes faster than C (up to ~4x on small maps) but loses bulk byte copies (binary encode 7.4x slower than C); decode is mixed, with C ahead on scalar-dense payloads. Neither implementation is universally faster. Full tables, methodology, and limitations: [benchmark release `msgpack-v0.1`](docs/benchmarks/releases/msgpack-v0.1.md).
+<br>
 
-Details: [library README](libraries/msgpack/README.md) · [phase results](libraries/msgpack/PHASE7_RESULTS.md) · [batch protocol](libraries/msgpack/docs/batch_protocol.md)
+## Libraries
 
-## Levenshtein spotlight
+| | Library | Version | What it is | Verification |
+|:-:|---|:-:|---|---|
+| 01 | [MessagePack](libraries/msgpack/) | `v0.1.0` | Binary serialization codec | 162 vectors · 79 native + 129 Python tests |
+| 02 | [Levenshtein](libraries/levenshtein/) | `v0.1.0` | String distance and similarity | 434 vectors · 40 native + 25 Python tests |
+| 03 | [Bitarray](libraries/bitarray/) | `v0.1.0` | Packed-bit arrays | 266 vectors · 74 native + 391 Python tests |
+| 04 | [Audioop](libraries/audioop/) | `v0.1.0` | CPython 3.12 `audioop`, 26/26 operations | 1,277 vectors · 105 native + 136 Python tests |
+| 05 | [Resampy](libraries/resampy/) | planned | Audio resampling | not started |
 
-The second finished port: native Mojo string distance and similarity algorithms, [tagged `levenshtein-v0.1.0`](https://github.com/adarshsoloman/pyromojo/releases/tag/levenshtein-v0.1.0). The Python reference is [`rapidfuzz==3.14.6`](https://github.com/rapidfuzz/RapidFuzz) (MIT license); the GPL-licensed `Levenshtein` wrapper package is used only for black-box observation and never enters the code, tests, or dependencies.
+<br>
 
-Public operations (Unicode `str` only, code-point semantics, no normalization):
+## Honest benchmarks
 
-- `levenshtein_distance()` — unit costs via blocked Myers bit-parallel search; other positive-integer weights via two-row dynamic programming.
-- `levenshtein_ratio()` — Indel normalized similarity (`1 - indel/(len1+len2)`), computed over a blocked bit-parallel LCS.
-- `levenshtein_hamming()` — substitution counting over a single lockstep pass, no materialized arrays.
+Three-way comparisons: pure Python, the optimized native reference, and Mojo. Every result passes an exact-equality correctness gate before it counts.
 
-Internal algorithms: two-row dynamic-programming oracle (retained and tested as the independent correctness reference), blocked multiword Myers distance, common prefix/suffix trimming (exact for positive costs), blocked bit-parallel LCS for Indel similarity, and materialization-free Hamming comparison.
+| Library | vs pure Python | vs optimized C / C++ |
+|---|---|---|
+| Audioop | ~40× faster | ~0.26× (C typically 2–20× faster; `getsample` ~2.7× faster in Mojo) |
+| Bitarray | ~2–205× faster | matches or beats at 64-bit sizes; trails ~2–75× at 1 Mibit |
+| Levenshtein | up to ~45× faster than the untrimmed baseline (ratio) | slower, ~2–9× on distance |
+| MessagePack | n/a | up to ~4× faster on small-map encode; binary encode 7.4× slower |
 
-How it is verified:
+Neither side is universally faster. The gaps have identified causes (allocation, byte-serial loops, scalar arithmetic) and are the subject of the next phase: **profile first, then optimize.**
 
-- **434 golden test vectors**, generated deterministically from the pinned reference, drift-checked on every run; 432 exercised end-to-end through the batch CLI.
-- **2470 adversarial differential fuzz cases** (affix-heavy pairs, weighted costs, cutoff boundaries, Unicode edge cases) plus **96 word-boundary bit-pattern cases** (sizes 1–256 around 64-bit word boundaries), all matching the reference bit-exactly, including float64 ratio bits.
-- **40 native Mojo tests and 25 Python compatibility tests**, covering DP-vs-bit-parallel parity (450 randomized pairs each), trimming, Unicode (accents, CJK, astral emoji, combining sequences, NFC/NFD), weighted costs, cutoffs, error messages, and overflow guards.
-- **Three-way benchmarks** (naive Python DP vs RapidFuzz `_py` fallback vs RapidFuzz C++ vs native Mojo) with in-process timing, warmup, and 25 measured samples per workload.
+<sub>Full tables and methodology: [Audioop](libraries/audioop/benchmarks/reports/BENCHMARK_REPORT.md) · [Bitarray](libraries/bitarray/benchmarks/README.md) · [Levenshtein](docs/benchmarks/releases/levenshtein-v0.1.md) · [MessagePack](docs/benchmarks/releases/msgpack-v0.1.md)</sub>
 
-Honest results, in brief: affix trimming makes identical 2048-char inputs ~28x faster than the untrimmed baseline; the blocked bit-parallel LCS makes ratio up to ~45x faster on random content and collapses identical inputs ~1000x (16.7 ms to ~15 µs); materialization-free hamming is ~2–5x faster on every measured workload. Native Mojo remains slower than optimized C++ on the reported workloads (roughly 2–9x on distance, up to ~250x on ratio at large sizes) — these are measured gaps with identified causes, not universal claims. Full tables, methodology, and limitations: [benchmark release `levenshtein-v0.1`](docs/benchmarks/releases/levenshtein-v0.1.md).
+<br>
 
-Details: [library README](libraries/levenshtein/README.md) · [reference audit](libraries/levenshtein/docs/reference-audit.md) · [benchmark design](libraries/levenshtein/docs/benchmark-design.md)
+## Method
 
-## Bitarray spotlight
+Every port follows the same pipeline, so a result in one library means the same thing in the next.
 
-The third finished port: native Mojo packed-bit arrays, [tagged `bitarray-v0.1.0`](https://github.com/adarshsoloman/pyromojo/releases/tag/bitarray-v0.1.0). The Python reference is [`bitarray==3.12.3`](https://github.com/ilanschnell/bitarray) (PSF-2.0).
-
-Public operations (mutable bit arrays, packed `UInt8` storage, big/little-endian bit ordering):
-
-- Construction from bit strings, int/bool iterables, and packed bytes; length and layout introspection (`len`, `nbytes`, `padbits`, `endian`).
-- Indexing, assignment (including negative indices and resizing slices), iteration, `to01()`/`tolist()`.
-- `append`, `extend`, `insert`, `delete`, concatenation (`+`/`+=`), and lexicographic comparison.
-- Bitwise AND, OR, XOR, and NOT with in-place forms (equal endianness, equal lengths required) and length-preserving shifts.
-- `count` (bit values and sub-patterns, bounds, steps), overlapping `search` with `right=`, and `find`/`index` with `-1`/`ValueError` miss behavior.
-- `reverse`, `copy`, `fill` (zero-pad to a multiple, returns pad count), `rotate`, and byte conversion (`tobytes`/`frombytes`).
-
-Deferred, as in the frozen scope: `frozenbitarray`, buffer-protocol interoperability, file operations, `pack()`/`unpack` utilities, sorting, `bitarray.util`, `bitarray.bitfields`, and prefix-code machinery.
-
-Serialization preserves the logical bit length explicitly — it is never inferred from packed bytes:
-
-```text
-uint32_be nbits | uint8 endian_id | packed bytes
+```
+reference audit → toolchain probes → native port → golden vectors
+      → native + Python compatibility tests → benchmarks → tagged release
 ```
 
-`endian_id` is `0x00` (big) or `0x01` (little); exactly `ceil(nbits/8)` data bytes follow with zeroed padding, and the decoder rejects anything else. A length-prefixed batch CLI (`0x01` ping, `0x02` echo, `0x10` decode, `0x11` encode) exposes the same framing as the other ports:
+- **Pinned references.** `msgpack==1.2.4` · `rapidfuzz==3.14.6` · `bitarray==3.12.3` · CPython 3.12.3. Upstream source is never vendored.
+- **Golden vectors.** Deterministic, schema-validated, drift-checked on every run.
+- **Cross-language tests.** Error behaviour is compared too: bad input must fail predictably.
+- **Documented deviations.** Every intentional difference from the reference is listed with its rationale.
+- **Reproducible benchmarks.** Warmup, repeated samples, environment metadata captured, cold compile reported separately.
 
-```bash
-.venv/bin/mojo build libraries/bitarray/mojo/cli.mojo \
-    -I libraries/bitarray/mojo -o build/bitarray_cli
-```
+<details>
+<summary><b>Reference licenses and attribution</b></summary>
 
-How it is verified:
+<br>
 
-- **266 golden test vectors**, generated deterministically from the pinned reference and drift-checked on every run, covering lengths 0–65, zeros/ones/alternating/single-bit/sparse/dense/random patterns in both endiannesses.
-- **74 native Mojo tests and 391 Python compatibility tests**, covering every operation above, error behavior, malformed frames, and randomized differentials.
-- **Three-way benchmarks** (pure Python vs C-backed `bitarray` vs native Mojo) over 8 sizes, 6 distributions, and both endiannesses: Mojo beats pure Python everywhere measured (about 2x–205x; only full-length shifts tie near 1x, where both sides just zero-fill) and matches or beats C at 64-bit sizes (1.0x–10.5x), but trails C at scale — roughly 6x on bitwise ops, 2x on `count`, and 10x–75x on shifts at 1 Mibit — where the C extension's word-parallel kernels win over the port's byte-serial loops. Full tables, methodology, and limitations: [Bitarray benchmarks](libraries/bitarray/benchmarks/README.md).
-- **Documented deviations**: `search()` returns a materialized `List[Int]` instead of a lazy iterator; Mojo uses its general `Error` type with reference message text; direct self-aliasing (`a &= a`) needs an explicit snapshot; there is no `del a[i]` syntax (`delete(i)` carries the semantics); the payload carries the logical length explicitly.
+| Port | Pinned reference | Reference license |
+|---|---|---|
+| MessagePack | `msgpack` | Apache-2.0 |
+| Levenshtein | [`rapidfuzz`](https://github.com/rapidfuzz/RapidFuzz) | MIT |
+| Bitarray | [`bitarray`](https://github.com/ilanschnell/bitarray) | PSF-2.0 |
+| Audioop | CPython 3.12 `audioop` | PSF-2.0 |
 
-Details: [library README](libraries/bitarray/README.md) · [phase 1E probes](libraries/bitarray/docs/phase1e-reference-probes.md) · [API scope](libraries/bitarray/docs/api-scope.md)
+The GPL-licensed `Levenshtein` wrapper package is used only for black-box observation and never enters the code, tests, or dependencies. Third-party notices: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-## Audioop spotlight
+</details>
 
-The fourth complete port: native Mojo implementation of CPython 3.12's `audioop`, [tagged `audioop-v0.1.0`](https://github.com/adarshsoloman/pyromojo/releases/tag/audioop-v0.1.0). The legacy audio-sample module was removed in Python 3.13 (PEP 594); this port reimplements its full public surface with exact sample semantics.
+<br>
 
-Public operations (26/26, bytes fragments, native byte order, widths 1–4):
+## Quick start
 
-- Arithmetic — `add` (saturating), `bias` (wrapping), `mul` (clamp-then-floor), `reverse`, `byteswap`, `lin2lin` (shift-based width conversion).
-- Statistics — `getsample`, `max` (unsigned absolute), `minmax` (signed sentinel pair), `avg` (`floor(sum/n)`), `rms` (truncated `sqrt(mean(square))`), `cross` (zero-crossing count).
-- Peak analysis — `avgpp`, `maxpp`, `findmax`, `findfactor`, `findfit` (fixed 16-bit search windows, exact floating-point ties).
-- Channel conversion — `tomono`, `tostereo`.
-- Stateful sample-rate conversion — `ratecv` (phase accumulator, per-channel filter history, GCD-reduced rates).
-- G.711 companding — `lin2alaw`, `alaw2lin`, `lin2ulaw`, `ulaw2lin` (SoX-derived tables, Sun notice retained).
-- Intel/DVI ADPCM — `lin2adpcm`, `adpcm2lin` (predictor/index state, packed 4-bit nibbles).
-
-How it is verified:
-
-- **1,277 golden vectors**, generated deterministically from CPython 3.12.3 and drift-checked on every run — including all 256 A-law and all 256 μ-law decoder codewords and all 256 ADPCM byte values.
-- **105 native Mojo tests and 136 Python compatibility tests**, covering every operation at all four widths, empty/misaligned inputs, boundary amplitudes, error messages, and explicit chunk/state continuity for `ratecv` and ADPCM.
-- **250 deterministic benchmarks** (seed `20260610`) with a three-way exact-equality gate (pure Python == CPython C == Mojo, bytes and state). CLI path measured separately (~16 ms floor, process spawn).
-
-Honest results, in brief: Mojo is ~40× the pure-Python floor (15–110× per-operation) and ~0.26× CPython C (C typically 2–20× faster; `getsample` excepted at ~2.7× Mojo-faster). No SIMD or buffer-reuse work was done. Full tables, methodology, and limitations: [Audioop benchmark report](libraries/audioop/benchmarks/reports/BENCHMARK_REPORT.md).
-
-Details: [library README](libraries/audioop/README.md) · [CHANGELOG](libraries/audioop/CHANGELOG.md) · [release `audioop-v0.1.0`](https://github.com/adarshsoloman/pyromojo/releases/tag/audioop-v0.1.0) · [compatibility](libraries/audioop/docs/api-scope.md) · [benchmark design](libraries/audioop/docs/benchmark-design.md) · [CLI opcode registry](libraries/audioop/docs/cli-opcode-registry.md)
-
-## Benchmark transparency
-
-Audioop v0.1.0 was measured across 250 deterministic workloads (seed `20260610`). Every reported number passed a three-way exact-equality gate (pure Python == CPython C == Mojo, bytes and state, no tolerances).
-
-- **Mojo is ~40× faster than the pure-Python floor** (per-operation geometric means 15–110×) — a clean native-implementation win over naïve per-sample Python.
-- **Mojo is ~0.26× CPython C** (C is typically 2–20× faster; `getsample` is the single exception at ~2.7× Mojo-faster). This is an honest regression relative to the C reference, reported as such. The gap is dominated by per-call allocation and 64-bit scalar arithmetic where the C reference uses tight pointer loops; no SIMD or buffer-reuse work was done in this phase.
-- **The CLI costs ~16 ms per request** (pinned process spawn) and must not be read as kernel performance.
-
-All workloads exclude NaN-factor inputs per the frozen Phase 0 policy. See the full 250-row table, per-operation breakdowns, content sweep, size scaling, variance analysis, and methodology in the [benchmark report](libraries/audioop/benchmarks/reports/BENCHMARK_REPORT.md).
-
-## Engineering methodology
-
-Every port follows the same pipeline, so a result in one library means the same thing in the next:
-
-1. **Reference audit** — record the exact pinned version, its license, and the compatibility surface; document what is in and out of scope before coding.
-2. **Algorithm and toolchain validation** — probe the Mojo toolchain's actual behaviour (integer semantics, Unicode handling, timing APIs) with throwaway experiments.
-3. **Native implementation** — port the approved surface only; keep the public API minimal and the oracle implementation intact.
-4. **Golden-vector and compatibility testing** — deterministic vectors with drift gates, native unit tests, and Python tests that compare Mojo output against the reference, including error behaviour.
-5. **Benchmarking** — warmup plus repeated samples, cold compilation reported separately from warm execution, environment metadata captured, raw datasets kept out of version control.
-6. **Targeted optimization** — only where benchmarks justify it, measured before and after against the same suite, with regressions treated as failures.
-7. **Documentation and release** — curated release notes with tables, analysis, and limitations; a tagged release only when every gate passes.
-
-```mermaid
-flowchart LR
-    accTitle: PyroMojo Port Verification Pipeline
-    accDescr: Each library port flows from pinned reference and golden vectors through native tests, compatibility tests, CLI audit, and benchmarks before release.
-
-    vectors["golden vectors"]
-    reference["pinned reference"]
-    native["native Mojo port"]
-    unit["Mojo unit tests"]
-    compat["Python compatibility tests"]
-    audit["CLI and safety audit"]
-    bench["benchmarks"]
-    release["tagged release"]
-
-    vectors --> native
-    reference --> native
-    native --> unit
-    native --> compat
-    unit --> audit
-    compat --> audit
-    audit --> bench
-    bench --> release
-
-    classDef input fill:#e8eef4,stroke:#5b6b7c,stroke-width:1px,color:#1f2a33
-    classDef check fill:#e9f2e9,stroke:#4c7a4c,stroke-width:1px,color:#1f331f
-    classDef out fill:#f4ece1,stroke:#8a6d3b,stroke-width:1px,color:#3a2f1a
-
-    class vectors,reference input
-    class unit,compat,audit,bench check
-    class native,release out
-```
-
-- **Pinned references.** Each port records the exact upstream version it is verified against (`msgpack==1.2.4`, `rapidfuzz==3.14.6`, `bitarray==3.12.3`); upstream source is never vendored.
-- **Golden vectors.** Deterministic, human-inspectable, schema-validated inputs and expected outputs that both implementations must satisfy. Drift fails the suite.
-- **Cross-language correctness.** Python compatibility tests compare Mojo output against the reference, including error behaviour: malformed input must fail predictably, never silently.
-- **Native tests.** Mojo unit tests cover each type family, boundary values, nesting and depth limits, and invalid inputs.
-- **Reproducible benchmarks.** Warmup plus repeated samples, cold compilation reported separately from warm execution, environment metadata captured, raw datasets kept out of version control and curated releases committed deliberately.
-- **Documented deviations.** Intentional differences from the reference are listed with rationale — for msgpack: wire-negative extension codes, a 128 vs 1024 nesting-depth limit, and textual rather than structured errors; for levenshtein: no normalization, code-point (not byte or grapheme) comparison, and rejection of non-UTF-8 and lone-surrogate input.
-
-## Repository structure
-
-```text
-pyromojo/
-├── libraries/
-│   ├── msgpack/              # v0.1.0 — complete port
-│   │   ├── mojo/             # native codec, batch CLI
-│   │   ├── python_reference/ # vector generator, pins
-│   │   ├── tests/            # mojo unit, python_compat, vectors
-│   │   ├── benchmarks/       # bench executable, workloads, driver
-│   │   ├── docs/             # batch protocol
-│   │   └── PHASE*.md         # per-phase reports
-│   ├── levenshtein/          # v0.1.0 — complete port
-│   │   ├── mojo/             # native algorithms, batch CLI
-│   │   ├── python_reference/ # vector generator, pins
-│   │   ├── tests/            # mojo unit, python_compat, vectors
-│   │   ├── benchmarks/       # bench executable, workloads, driver
-│   │   ├── docs/             # reference audit, unicode, benchmark design
-│   │   ├── experiments/      # toolchain probes and raw outputs
-│   │   └── PHASE*.md         # per-phase reports
-│   ├── audioop/              # v0.1.0 — complete port (26/26 ops, 105+136 tests, 1277 vectors)
-│   ├── bitarray/             # v0.1.0 — complete port
-│   │   ├── mojo/             # native bitarray, batch CLI
-│   │   ├── python_reference/ # vector generator, pins
-│   │   ├── tests/            # mojo unit, python_compat, vectors
-│   │   ├── docs/             # reference audits, API scope, probes
-│   │   ├── experiments/      # toolchain probes and raw outputs
-│   │   └── PHASE0_RESULTS.md # frozen scope and readiness report
-│   └── resampy/              # planned (scope stub)
-├── shared/
-│   ├── benchmark_utils/      # timing harness, statistics, environment capture
-│   ├── test_vectors/
-│   │   ├── schema/           # versioned vector JSON schema
-│   │   └── generators/       # deterministic vector generation tools
-│   └── validation/           # output and vector-integrity validators
-├── scripts/
-│   ├── run_all_tests.py      # lint, vectors, pytest, all native suites
-│   ├── check_compatibility.py# build CLI, run compatibility suite
-│   ├── run_all_benchmarks.py
-│   └── generate_reports.py
-├── benchmarks/
-│   └── configs/              # shared benchmark configuration
-├── docs/
-│   ├── architecture.md
-│   ├── roadmap.md
-│   └── benchmarks/
-│       ├── README.md         # binding benchmark methodology
-│       └── releases/         # curated release reports
-└── CONTRIBUTING.md, LICENSE, THIRD_PARTY_NOTICES.md, pyproject.toml
-```
-
-Libraries are isolated: a library may depend on `shared/` but never on another library. See [docs/architecture.md](docs/architecture.md) for the full rules.
-
-## Getting started
-
-Prerequisites: [uv](https://docs.astral.sh/uv/) and Python 3.11 or newer. All commands run from the repository root.
+Requires [uv](https://docs.astral.sh/uv/) and Python 3.11+. Run from the repository root.
 
 ```bash
 uv sync --extra dev
 .venv/bin/pytest -q
-```
 
-Run the full verification pipeline (lint, golden-vector drift check, pytest, every native Mojo suite):
-
-```bash
+# full pipeline: lint, vector drift check, pytest, every native Mojo suite
 .venv/bin/python scripts/run_all_tests.py
 ```
 
-Check Python compatibility for a finished port:
-
-```bash
-.venv/bin/python scripts/check_compatibility.py
-```
-
-Run the MessagePack benchmark suite:
-
-```bash
-.venv/bin/python libraries/msgpack/benchmarks/run_benchmarks.py
-```
-
-Run the Levenshtein benchmark suite:
-
-```bash
-.venv/bin/python libraries/levenshtein/benchmarks/run_benchmarks.py
-```
+<br>
 
 ## Roadmap
 
 | Phase | Goal | Status |
 |---|---|---|
-| 1. Repository foundation | Maintainable project skeleton | Complete |
-| 2. MessagePack v0.1 | First complete port, exercising the entire workflow | Complete (`v0.1.0`) |
-| 3. First five verified ports | Prove the process generalises beyond one library | In progress (4 of 5: msgpack, levenshtein, bitarray, audioop) |
-| 4. Expand toward 20 libraries | Broad, sustainable coverage | Planned |
-| 5. Performance analysis | Cross-library analysis and upstream contributions | Planned |
+| 1 | Repository foundation | ✅ Complete |
+| 2 | MessagePack, the first complete port | ✅ Complete |
+| 3 | First five verified ports | 🔶 4 of 5 |
+| 4 | Expand toward 20 libraries | ⬜ Planned |
+| 5 | Performance analysis and upstream contributions | ⬜ Planned |
 
-Port sequence: **1. MessagePack — Complete (`v0.1.0`, tagged). 2. Levenshtein — Complete (`v0.1.0`, tagged as `levenshtein-v0.1.0`). 3. Bitarray — Complete (`v0.1.0`, tagged as `bitarray-v0.1.0`). 4. Audioop — Complete (`v0.1.0`, tagged as `audioop-v0.1.0`).** Resampy remains a planned scope stub.
+Details and exit criteria: [docs/roadmap.md](docs/roadmap.md).
 
-Details, exit criteria, and deliberately omitted dates: [docs/roadmap.md](docs/roadmap.md).
+<br>
 
-## Contributing
+<details>
+<summary><b>Repository structure</b></summary>
 
-Development workflow, quality expectations, and review standards live in [CONTRIBUTING.md](CONTRIBUTING.md). In short:
+<br>
 
-- Open or claim an issue first; for a new port, state the target library, the pinned reference version, and the intended compatibility surface.
-- Work inside a single library directory; `shared/` changes require a second real consumer.
-- Keep `main` green — build and test locally before review, and submit focused pull requests.
-- Match the installed Mojo toolchain's syntax, pass `ruff` (100-character lines), prefer small explicit code, and document allocation-sensitive behaviour and any deliberate deviation.
-- A change is not complete until Mojo unit tests, Python compatibility tests, and golden vectors cover the new behaviour.
+```text
+pyromojo/
+├── libraries/
+│   ├── msgpack/  levenshtein/  bitarray/  audioop/    # shipped, v0.1.0
+│   └── resampy/                                       # planned
+│       └── (each) mojo/ · python_reference/ · tests/ · benchmarks/ · docs/
+├── shared/
+│   ├── benchmark_utils/      # timing harness, statistics, environment capture
+│   ├── test_vectors/         # versioned schema + deterministic generators
+│   └── validation/           # output and vector-integrity validators
+├── scripts/                  # run_all_tests · check_compatibility · run_all_benchmarks
+├── docs/                     # architecture · roadmap · benchmark releases
+└── CONTRIBUTING.md · LICENSE · THIRD_PARTY_NOTICES.md
+```
 
-Do not commit generated reports, benchmark scratch data, build artifacts, or pinned environment directories.
+A library may depend on `shared/`, never on another library. See [docs/architecture.md](docs/architecture.md).
 
-## License
+</details>
 
-Apache License 2.0. See [LICENSE](LICENSE) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for the third-party dependency policy.
+<details>
+<summary><b>Contributing</b></summary>
+
+<br>
+
+- Open or claim an issue first. For a new port, state the target library, the pinned reference version, and the intended compatibility surface.
+- Work inside a single library directory. `shared/` changes need a second real consumer.
+- Keep `main` green, match the installed Mojo toolchain's syntax, and pass `ruff` (100-character lines).
+- A change is complete only when Mojo unit tests, Python compatibility tests, and golden vectors cover it.
+
+Full guide: [CONTRIBUTING.md](CONTRIBUTING.md).
+
+</details>
+
+<br>
+
+<div align="center">
+
+**Apache-2.0** &nbsp;·&nbsp; Built by [Adarsh](https://github.com/adarshsoloman) &nbsp;·&nbsp; [Sponsor this work](https://github.com/sponsors/adarshsoloman)
+
+</div>
