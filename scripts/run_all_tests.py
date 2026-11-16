@@ -91,6 +91,7 @@ MOJO_SUITES = [
             "test_peak_analysis",
             "test_channels",
             "test_ratecv",
+            "test_g711",
         ],
     },
 ]

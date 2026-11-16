@@ -276,6 +276,38 @@ def _ratecv_one(item: dict) -> dict:
     }
 
 
+def _lin2alaw_one(item: dict) -> dict:
+    return _call(
+        audioop.lin2alaw,
+        bytes.fromhex(item["fragment_hex"]),
+        int(item["width"]),
+    )
+
+
+def _alaw2lin_one(item: dict) -> dict:
+    return _call(
+        audioop.alaw2lin,
+        bytes.fromhex(item["fragment_hex"]),
+        int(item["width"]),
+    )
+
+
+def _lin2ulaw_one(item: dict) -> dict:
+    return _call(
+        audioop.lin2ulaw,
+        bytes.fromhex(item["fragment_hex"]),
+        int(item["width"]),
+    )
+
+
+def _ulaw2lin_one(item: dict) -> dict:
+    return _call(
+        audioop.ulaw2lin,
+        bytes.fromhex(item["fragment_hex"]),
+        int(item["width"]),
+    )
+
+
 def main() -> int:
     request = json.load(sys.stdin)
     response = {
@@ -301,6 +333,10 @@ def main() -> int:
         "tomono": [_tomono_one(item) for item in request.get("tomono", [])],
         "tostereo": [_tostereo_one(item) for item in request.get("tostereo", [])],
         "ratecv": [_ratecv_one(item) for item in request.get("ratecv", [])],
+        "lin2alaw": [_lin2alaw_one(item) for item in request.get("lin2alaw", [])],
+        "alaw2lin": [_alaw2lin_one(item) for item in request.get("alaw2lin", [])],
+        "lin2ulaw": [_lin2ulaw_one(item) for item in request.get("lin2ulaw", [])],
+        "ulaw2lin": [_ulaw2lin_one(item) for item in request.get("ulaw2lin", [])],
     }
     json.dump(response, sys.stdout)
     return 0

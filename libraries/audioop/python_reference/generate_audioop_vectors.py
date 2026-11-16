@@ -1768,6 +1768,245 @@ def build_phase6_cases(cases: list[dict[str, object]]) -> None:
     )
 
 
+def build_phase7_cases(cases: list[dict[str, object]]) -> None:
+    """Coverage for the four Phase 7 G.711 codec operations."""
+
+    def codec_case(case_id, op, width, fragment, notes=None):
+        cases.append(
+            case(
+                case_id,
+                op,
+                width=width,
+                args={"fragment_hex": hexed(fragment)},
+                call=lambda op=op, f=fragment, w=width: getattr(audioop, op)(f, w),
+                notes=notes,
+            )
+        )
+
+    # encoders: every width, boundaries, alternating, repeated, segment values
+    for width in range(1, 5):
+        lo = -(1 << (width * 8 - 1))
+        hi = (1 << (width * 8 - 1)) - 1
+        fragment = pcm_w(width, lo, hi, -1, 1, 0)
+        codec_case(f"p7-lin2alaw-w{width}", "lin2alaw", width, fragment)
+        codec_case(f"p7-lin2ulaw-w{width}", "lin2ulaw", width, fragment)
+    # width-specific scaling: w1 x64 (ulaw) / x32 (alaw); w2 >>2 (ulaw) /
+    # >>3 (alaw); w3 >>10 (ulaw) / >>11 (alaw); w4 >>18 / >>19
+    codec_case(
+        "p7-lin2ulaw-w1-scale",
+        "lin2ulaw",
+        1,
+        bytes([127, 128, 64]),
+        notes="8-bit samples are multiplied by 64 into the 14-bit range",
+    )
+    codec_case(
+        "p7-lin2alaw-w1-scale",
+        "lin2alaw",
+        1,
+        bytes([127, 128, 64]),
+        notes="8-bit samples are multiplied by 32 into the 13-bit range",
+    )
+    codec_case(
+        "p7-lin2ulaw-w2-scale",
+        "lin2ulaw",
+        2,
+        pcm(8191, -8192, 8192, -8193),
+        notes="16-bit samples shift right by 2 (arithmetic)",
+    )
+    codec_case(
+        "p7-lin2alaw-w2-scale",
+        "lin2alaw",
+        2,
+        pcm(4095, -4096, 4096, -4097),
+        notes="16-bit samples shift right by 3 (arithmetic)",
+    )
+    codec_case(
+        "p7-lin2ulaw-w3-scale",
+        "lin2ulaw",
+        3,
+        pcm_w(3, 819199, -819200, 0, 1),
+        notes="24-bit samples shift right by 10 (arithmetic)",
+    )
+    codec_case(
+        "p7-lin2alaw-w3-scale",
+        "lin2alaw",
+        3,
+        pcm_w(3, 409599, -409600, 0, 1),
+        notes="24-bit samples shift right by 11 (arithmetic)",
+    )
+    codec_case(
+        "p7-lin2ulaw-w4-scale",
+        "lin2ulaw",
+        4,
+        pcm_w(4, 2147483647, -2147483648, 0, 1),
+        notes="32-bit samples shift right by 18 (arithmetic)",
+    )
+    codec_case(
+        "p7-lin2alaw-w4-scale",
+        "lin2alaw",
+        4,
+        pcm_w(4, 2147483647, -2147483648, 0, 1),
+        notes="32-bit samples shift right by 19 (arithmetic)",
+    )
+    # A-law segment boundaries: 13-bit values around seg_aend
+    alaw_bounds = [
+        30,
+        31,
+        32,
+        62,
+        63,
+        64,
+        126,
+        127,
+        128,
+        254,
+        255,
+        256,
+        510,
+        511,
+        512,
+        1022,
+        1023,
+        1024,
+        2046,
+        2047,
+        2048,
+        4094,
+        4095,
+        4096,
+        0,
+        -1,
+        -2,
+    ]
+    # these are 13-bit values; feed them at width 4 unshifted means
+    # val32 >> 19: use val << 19 scaled samples
+    for value in alaw_bounds:
+        encoded_value = value << 19
+        if encoded_value > 2147483647 or encoded_value < -2147483648:
+            continue
+        codec_case(
+            f"p7-lin2alaw-bound-{value}",
+            "lin2alaw",
+            4,
+            pcm_w(4, encoded_value),
+        )
+    # mu-law segment boundaries: 14-bit values around seg_uend (+33 bias)
+    ulaw_bounds = [
+        30,
+        31,
+        32,
+        62,
+        63,
+        64,
+        126,
+        127,
+        128,
+        254,
+        255,
+        256,
+        510,
+        511,
+        512,
+        1022,
+        1023,
+        1024,
+        2046,
+        2047,
+        2048,
+        4094,
+        4095,
+        4096,
+        8190,
+        8191,
+        0,
+        -1,
+        -2,
+    ]
+    for value in ulaw_bounds:
+        encoded_value = value << 18
+        if encoded_value > 2147483647 or encoded_value < -2147483648:
+            continue
+        codec_case(
+            f"p7-lin2ulaw-bound-{value}",
+            "lin2ulaw",
+            4,
+            pcm_w(4, encoded_value),
+        )
+    codec_case("p7-lin2alaw-empty", "lin2alaw", 2, b"")
+    codec_case("p7-lin2ulaw-empty", "lin2ulaw", 2, b"")
+    codec_case("p7-lin2alaw-width-zero", "lin2alaw", 0, b"")
+    codec_case("p7-lin2ulaw-width-zero", "lin2ulaw", 0, b"")
+    codec_case("p7-lin2alaw-misaligned", "lin2alaw", 2, b"\x01\x02\x03")
+    codec_case("p7-lin2ulaw-misaligned", "lin2ulaw", 2, b"\x01")
+
+    # decoders: exhaustive 256 codewords at width 2, plus other widths
+    for code in range(256):
+        codec_case(
+            f"p7-alaw2lin-code-{code:02x}",
+            "alaw2lin",
+            2,
+            bytes([code]),
+            notes="exhaustive decoder verification" if code == 0 else None,
+        )
+    for code in range(256):
+        codec_case(
+            f"p7-ulaw2lin-code-{code:02x}",
+            "ulaw2lin",
+            2,
+            bytes([code]),
+        )
+    # decoder widths: same codewords at widths 1, 3, 4 (sampled set)
+    for code in (0x00, 0x55, 0x2A, 0x7F, 0x80, 0xD5, 0xAA, 0xFF):
+        for width in (1, 3, 4):
+            codec_case(
+                f"p7-alaw2lin-w{width}-code-{code:02x}",
+                "alaw2lin",
+                width,
+                bytes([code]),
+            )
+            codec_case(
+                f"p7-ulaw2lin-w{width}-code-{code:02x}",
+                "ulaw2lin",
+                width,
+                bytes([code]),
+            )
+    # decoder byte order: multi-byte sequences
+    codec_case(
+        "p7-alaw2lin-sequence",
+        "alaw2lin",
+        2,
+        bytes([0x00, 0xD5, 0x55, 0x2A, 0x7F, 0x80, 0xFF, 0xAA]),
+        notes="mixed codewords decode in order",
+    )
+    codec_case(
+        "p7-ulaw2lin-sequence",
+        "ulaw2lin",
+        2,
+        bytes([0x00, 0x7F, 0x80, 0xFF, 0x55, 0xAA, 0x01, 0xFE]),
+        notes="mixed codewords decode in order",
+    )
+    codec_case("p7-alaw2lin-empty", "alaw2lin", 2, b"")
+    codec_case("p7-ulaw2lin-empty", "ulaw2lin", 2, b"")
+    codec_case("p7-alaw2lin-width-zero", "alaw2lin", 0, b"")
+    codec_case("p7-ulaw2lin-width-zero", "ulaw2lin", 0, b"")
+    # round trips
+    lin = pcm(1000, -1000, 32767, -32768, 0, 1, -1)
+    codec_case(
+        "p7-alaw-roundtrip",
+        "alaw2lin",
+        2,
+        audioop.lin2alaw(lin, 2),
+        notes="round trip through the reference encoder",
+    )
+    codec_case(
+        "p7-ulaw-roundtrip",
+        "ulaw2lin",
+        2,
+        audioop.lin2ulaw(lin, 2),
+        notes="round trip through the reference encoder",
+    )
+
+
 def main() -> int:
     check = "--check" in sys.argv[1:]
     cases = build_cases()
@@ -1777,6 +2016,7 @@ def main() -> int:
     build_phase4_cases(cases)
     build_phase5_cases(cases)
     build_phase6_cases(cases)
+    build_phase7_cases(cases)
     payload = {
         "schema_version": SCHEMA_VERSION,
         "generator": {"name": "audioop_vectors", "version": SCHEMA_VERSION},

@@ -32,6 +32,10 @@ OP_FINDFIT = 0x32
 OP_TOMONO = 0x33
 OP_TOSTEREO = 0x34
 OP_RATECV = 0x35
+OP_LIN2ALAW = 0x36
+OP_ALAW2LIN = 0x37
+OP_LIN2ULAW = 0x38
+OP_ULAW2LIN = 0x39
 
 
 def request(body: bytes) -> bytes:
@@ -225,3 +229,19 @@ def parse_ratecv_response(payload: bytes, nchannels: int):
         cur = struct.unpack(">q", rest[base + 8 : base + 16])[0]
         channels.append((prev, cur))
     return output, (d, tuple(channels))
+
+
+def lin2alaw_body(width: int, fragment: bytes) -> bytes:
+    return bytes([OP_LIN2ALAW, width]) + fragment
+
+
+def alaw2lin_body(width: int, fragment: bytes) -> bytes:
+    return bytes([OP_ALAW2LIN, width]) + fragment
+
+
+def lin2ulaw_body(width: int, fragment: bytes) -> bytes:
+    return bytes([OP_LIN2ULAW, width]) + fragment
+
+
+def ulaw2lin_body(width: int, fragment: bytes) -> bytes:
+    return bytes([OP_ULAW2LIN, width]) + fragment

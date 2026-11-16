@@ -50,6 +50,14 @@ Operations (framed, see ``mojo_audioop/protocol.mojo``):
   output bytes | int64_be d | nchannels x (int64_be prev | int64_be
   cur)`` so the state can be fed into the next request. The channel
   count is 8 bytes so argument-conversion errors are reachable.
+* ``0x36`` lin2alaw -> ``uint8 width | fragment``; replies with one
+  A-law byte per sample.
+* ``0x37`` alaw2lin -> ``uint8 width | codeword bytes``; replies with
+  ``width`` bytes per input byte (alignment is not required).
+* ``0x38`` lin2ulaw -> same payload as lin2alaw; replies with one
+  mu-law byte per sample.
+* ``0x39`` ulaw2lin -> same payload as alaw2lin; replies with
+  ``width`` bytes per input byte.
 
 
 Malformed requests produce ``STATUS_ERROR`` frames; framing errors
@@ -88,9 +96,13 @@ from mojo_audioop.protocol import (
     OP_MUL,
     OP_PING,
     OP_REVERSE,
+    OP_ALAW2LIN,
+    OP_LIN2ALAW,
+    OP_LIN2ULAW,
     OP_RATECV,
     OP_RMS,
     OP_TOMONO,
+    OP_ULAW2LIN,
     OP_TOSTEREO,
     STATUS_ERROR,
     STATUS_OK,
@@ -102,6 +114,7 @@ from mojo_audioop.protocol import (
 )
 from mojo_audioop.samples import decode_fragment, encode_fragment
 from mojo_audioop.channels import tomono, tostereo
+from mojo_audioop.g711 import alaw2lin, lin2alaw, lin2ulaw, ulaw2lin
 from mojo_audioop.peak_analysis import avgpp, findfactor, findfit, findmax, maxpp
 from mojo_audioop.ratecv import RatecvState, ratecv, ratecv_continue
 from mojo_audioop.statistics import avg, cross, getsample, max, minmax, rms
@@ -476,6 +489,30 @@ def _ratecv_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
     return out^
 
 
+def _lin2alaw_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 1:
+        raise Error("lin2alaw request too short: need a width byte")
+    return lin2alaw(payload[1:], Int(payload[0]))
+
+
+def _alaw2lin_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 1:
+        raise Error("alaw2lin request too short: need a width byte")
+    return alaw2lin(payload[1:], Int(payload[0]))
+
+
+def _lin2ulaw_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 1:
+        raise Error("lin2ulaw request too short: need a width byte")
+    return lin2ulaw(payload[1:], Int(payload[0]))
+
+
+def _ulaw2lin_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 1:
+        raise Error("ulaw2lin request too short: need a width byte")
+    return ulaw2lin(payload[1:], Int(payload[0]))
+
+
 def main() raises:
     var stdin = RawFileDescriptor(0)
     var stdout = RawFileDescriptor(1)
@@ -631,6 +668,30 @@ def main() raises:
             try:
                 var ratecv_result = _ratecv_request(payload)
                 write_frame(stdout, STATUS_OK, Span(ratecv_result))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_LIN2ALAW:
+            try:
+                var alaw_bytes = _lin2alaw_request(payload)
+                write_frame(stdout, STATUS_OK, Span(alaw_bytes))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_ALAW2LIN:
+            try:
+                var alaw_linear = _alaw2lin_request(payload)
+                write_frame(stdout, STATUS_OK, Span(alaw_linear))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_LIN2ULAW:
+            try:
+                var ulaw_bytes = _lin2ulaw_request(payload)
+                write_frame(stdout, STATUS_OK, Span(ulaw_bytes))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_ULAW2LIN:
+            try:
+                var ulaw_linear = _ulaw2lin_request(payload)
+                write_frame(stdout, STATUS_OK, Span(ulaw_linear))
             except error:
                 _reply_error(stdout, String(error))
         else:
