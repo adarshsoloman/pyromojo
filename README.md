@@ -11,7 +11,13 @@
   </p>
 </p>
 
-> **Status:** Three native ports are complete and tagged — **MessagePack `v0.1.0`**, **Levenshtein `v0.1.0`** (tagged `levenshtein-v0.1.0`), and **Bitarray `v0.1.0`** (tagged `bitarray-v0.1.0`). CI runs lint, formatting, and the Python test suite on every push.
+> **Status:** Three native ports are complete and tagged — **MessagePack `v0.1.0`**, **Levenshtein `v0.1.0`** (tagged `levenshtein-v0.1.0`), and **Bitarray `v0.1.0`** (tagged `bitarray-v0.1.0`). **Audioop `v0.1.0`** is implemented, benchmarked, and pending release review (26/26 operations). CI runs lint, formatting, and the Python test suite on every push.
+
+<p align="center">
+  <a href="libraries/audioop/">Audioop v0.1.0 — 26/26 ops</a> ·
+  <a href="CONTRIBUTING.md">Contribute</a> ·
+  <a href="LICENSE">License</a>
+</p>
 
 ## Project overview
 
@@ -37,7 +43,7 @@ A port is considered complete when it reproduces the documented compatibility su
 | [Audioop](libraries/audioop/) | 26/26 ops implemented (benchmarked) | — | Digital audio processing |
 | [Resampy](libraries/resampy/) | Planned | — | Audio resampling |
 
-MessagePack was the first finished port and remains the reference project for the full workflow. Levenshtein is the second finished port. Bitarray is the third finished port. Resampy remains a scoped directory — no implementation work has begun on it; audioop's 26-operation port plus three-way benchmarks are complete (pending release review).
+MessagePack was the first finished port and remains the reference project for the full workflow. Levenshtein is the second finished port. Bitarray is the third finished port. Audioop is the fourth complete port (26/26 operations, benchmarked, pending release review) — see the [featured Audioop section](#featured-implementation-audioop-v010) below. Resampy remains a scoped directory — no implementation work has begun on it.
 
 ## MessagePack spotlight
 
@@ -114,6 +120,28 @@ How it is verified:
 - **Documented deviations**: `search()` returns a materialized `List[Int]` instead of a lazy iterator; Mojo uses its general `Error` type with reference message text; direct self-aliasing (`a &= a`) needs an explicit snapshot; there is no `del a[i]` syntax (`delete(i)` carries the semantics); the payload carries the logical length explicitly.
 
 Details: [library README](libraries/bitarray/README.md) · [phase 1E probes](libraries/bitarray/docs/phase1e-reference-probes.md) · [API scope](libraries/bitarray/docs/api-scope.md)
+
+## Featured implementation: Audioop v0.1.0
+
+Audioop is the fourth complete port and the first to ship integrated three-path benchmarks.
+
+**Coverage:** All 26 public operations — arithmetic (`add`, `bias`, `mul`, `reverse`, `byteswap`, `lin2lin`), statistics (`getsample`, `max`, `minmax`, `avg`, `rms`, `cross`), peak analysis (`avgpp`, `maxpp`, `findmax`, `findfactor`, `findfit`), channel conversion (`tomono`, `tostereo`), stateful sample-rate conversion (`ratecv`), G.711 A-law and μ-law (`lin2alaw`, `alaw2lin`, `lin2ulaw`, `ulaw2lin`), and Intel/DVI ADPCM (`lin2adpcm`, `adpcm2lin`) — plus stateful processing for `ratecv` and ADPCM.
+
+**Correctness:** Verified against the CPython 3.12.3 reference (isolated venv) through a framed binary CLI, a Python oracle, **1,277 golden vectors** (including all 256 A-law and μ-law decoder codewords and all 256 ADPCM byte values), 105 native Mojo tests and 136 Python compatibility tests, and explicit chunk/state semantics for stateful operations.
+
+**Benchmarks:** Three-way comparison (pure Python vs CPython C vs native Mojo, with CLI path measured separately). See [Benchmark transparency](#benchmark-transparency) below.
+
+Links: [Audioop README](libraries/audioop/README.md) · [Compatibility](libraries/audioop/docs/api-scope.md) · [Benchmark report](libraries/audioop/benchmarks/reports/BENCHMARK_REPORT.md) · [CLI opcode registry](libraries/audioop/docs/cli-opcode-registry.md) · [Release readiness](libraries/audioop/RELEASE_READINESS.md)
+
+## Benchmark transparency
+
+Audioop v0.1.0 was measured across 250 deterministic workloads (seed `20260610`). Every reported number passed a three-way exact-equality gate (pure Python == CPython C == Mojo, bytes and state, no tolerances).
+
+- **Mojo is ~40× faster than the pure-Python floor** (per-operation geometric means 15–110×) — a clean native-implementation win over naïve per-sample Python.
+- **Mojo is ~0.26× CPython C** (C is typically 2–20× faster; `getsample` is the single exception at ~2.7× Mojo-faster). This is an honest regression relative to the C reference, reported as such. The gap is dominated by per-call allocation and 64-bit scalar arithmetic where the C reference uses tight pointer loops; no SIMD or buffer-reuse work was done in this phase.
+- **The CLI costs ~16 ms per request** (pinned process spawn) and must not be read as kernel performance.
+
+All workloads exclude NaN-factor inputs per the frozen Phase 0 policy. See the full 250-row table, per-operation breakdowns, content sweep, size scaling, variance analysis, and methodology in the [benchmark report](libraries/audioop/benchmarks/reports/BENCHMARK_REPORT.md).
 
 ## Engineering methodology
 
