@@ -11,7 +11,7 @@
   </p>
 </p>
 
-> **Status:** Three native ports are complete and tagged — **MessagePack `v0.1.0`**, **Levenshtein `v0.1.0`** (tagged `levenshtein-v0.1.0`), and **Bitarray `v0.1.0`** (tagged `bitarray-v0.1.0`). **Audioop `v0.1.0`** is implemented, benchmarked, and pending release review (26/26 operations). CI runs lint, formatting, and the Python test suite on every push.
+> **Status:** Four native ports are complete and tagged — **MessagePack `v0.1.0`**, **Levenshtein `v0.1.0`** (tagged `levenshtein-v0.1.0`), **Bitarray `v0.1.0`** (tagged `bitarray-v0.1.0`), and **Audioop `v0.1.0`** (tagged [`audioop-v0.1.0`](https://github.com/adarshsoloman/pyromojo/releases/tag/audioop-v0.1.0)). CI runs lint, formatting, and the Python test suite on every push.
 
 <p align="center">
   <a href="libraries/audioop/">Audioop v0.1.0 — 26/26 ops</a> ·
@@ -40,10 +40,10 @@ A port is considered complete when it reproduces the documented compatibility su
 | [MessagePack](libraries/msgpack/) | Complete | `v0.1.0` | Native Mojo binary serialization codec |
 | [Levenshtein](libraries/levenshtein/) | Complete | `v0.1.0` | Native Mojo string distance and similarity algorithms |
 | [Bitarray](libraries/bitarray/) | Complete | `v0.1.0` | Native Mojo packed-bit arrays |
-| [Audioop](libraries/audioop/) | 26/26 ops implemented (benchmarked) | — | Digital audio processing |
+| [Audioop](libraries/audioop/) | Complete | `v0.1.0` | Native Mojo implementation of CPython 3.12's `audioop` — 26/26 public operations, verified and benchmarked |
 | [Resampy](libraries/resampy/) | Planned | — | Audio resampling |
 
-MessagePack was the first finished port and remains the reference project for the full workflow. Levenshtein is the second finished port. Bitarray is the third finished port. Audioop is the fourth complete port (26/26 operations, benchmarked, pending release review) — see the [featured Audioop section](#featured-implementation-audioop-v010) below. Resampy remains a scoped directory — no implementation work has begun on it.
+MessagePack was the first finished port and remains the reference project for the full workflow. Levenshtein is the second finished port. Bitarray is the third finished port. Audioop is the fourth complete port — [Library 04 — Audioop `v0.1.0`](https://github.com/adarshsoloman/pyromojo/releases/tag/audioop-v0.1.0) (tagged `audioop-v0.1.0`), native Mojo implementation of CPython 3.12's `audioop` (26/26 operations, 105 native tests, 136 compatibility tests, 1,277 golden vectors, 250 benchmarks) — see the [Audioop spotlight](#audioop-spotlight) below. Resampy remains a scoped directory — no implementation work has begun on it.
 
 ## MessagePack spotlight
 
@@ -121,17 +121,29 @@ How it is verified:
 
 Details: [library README](libraries/bitarray/README.md) · [phase 1E probes](libraries/bitarray/docs/phase1e-reference-probes.md) · [API scope](libraries/bitarray/docs/api-scope.md)
 
-## Featured implementation: Audioop v0.1.0
+## Audioop spotlight
 
-Audioop is the fourth complete port and the first to ship integrated three-path benchmarks.
+The fourth complete port: native Mojo implementation of CPython 3.12's `audioop`, [tagged `audioop-v0.1.0`](https://github.com/adarshsoloman/pyromojo/releases/tag/audioop-v0.1.0). The legacy audio-sample module was removed in Python 3.13 (PEP 594); this port reimplements its full public surface with exact sample semantics.
 
-**Coverage:** All 26 public operations — arithmetic (`add`, `bias`, `mul`, `reverse`, `byteswap`, `lin2lin`), statistics (`getsample`, `max`, `minmax`, `avg`, `rms`, `cross`), peak analysis (`avgpp`, `maxpp`, `findmax`, `findfactor`, `findfit`), channel conversion (`tomono`, `tostereo`), stateful sample-rate conversion (`ratecv`), G.711 A-law and μ-law (`lin2alaw`, `alaw2lin`, `lin2ulaw`, `ulaw2lin`), and Intel/DVI ADPCM (`lin2adpcm`, `adpcm2lin`) — plus stateful processing for `ratecv` and ADPCM.
+Public operations (26/26, bytes fragments, native byte order, widths 1–4):
 
-**Correctness:** Verified against the CPython 3.12.3 reference (isolated venv) through a framed binary CLI, a Python oracle, **1,277 golden vectors** (including all 256 A-law and μ-law decoder codewords and all 256 ADPCM byte values), 105 native Mojo tests and 136 Python compatibility tests, and explicit chunk/state semantics for stateful operations.
+- Arithmetic — `add` (saturating), `bias` (wrapping), `mul` (clamp-then-floor), `reverse`, `byteswap`, `lin2lin` (shift-based width conversion).
+- Statistics — `getsample`, `max` (unsigned absolute), `minmax` (signed sentinel pair), `avg` (`floor(sum/n)`), `rms` (truncated `sqrt(mean(square))`), `cross` (zero-crossing count).
+- Peak analysis — `avgpp`, `maxpp`, `findmax`, `findfactor`, `findfit` (fixed 16-bit search windows, exact floating-point ties).
+- Channel conversion — `tomono`, `tostereo`.
+- Stateful sample-rate conversion — `ratecv` (phase accumulator, per-channel filter history, GCD-reduced rates).
+- G.711 companding — `lin2alaw`, `alaw2lin`, `lin2ulaw`, `ulaw2lin` (SoX-derived tables, Sun notice retained).
+- Intel/DVI ADPCM — `lin2adpcm`, `adpcm2lin` (predictor/index state, packed 4-bit nibbles).
 
-**Benchmarks:** Three-way comparison (pure Python vs CPython C vs native Mojo, with CLI path measured separately). See [Benchmark transparency](#benchmark-transparency) below.
+How it is verified:
 
-Links: [Audioop README](libraries/audioop/README.md) · [Compatibility](libraries/audioop/docs/api-scope.md) · [Benchmark report](libraries/audioop/benchmarks/reports/BENCHMARK_REPORT.md) · [CLI opcode registry](libraries/audioop/docs/cli-opcode-registry.md) · [Release readiness](libraries/audioop/RELEASE_READINESS.md)
+- **1,277 golden vectors**, generated deterministically from CPython 3.12.3 and drift-checked on every run — including all 256 A-law and all 256 μ-law decoder codewords and all 256 ADPCM byte values.
+- **105 native Mojo tests and 136 Python compatibility tests**, covering every operation at all four widths, empty/misaligned inputs, boundary amplitudes, error messages, and explicit chunk/state continuity for `ratecv` and ADPCM.
+- **250 deterministic benchmarks** (seed `20260610`) with a three-way exact-equality gate (pure Python == CPython C == Mojo, bytes and state). CLI path measured separately (~16 ms floor, process spawn).
+
+Honest results, in brief: Mojo is ~40× the pure-Python floor (15–110× per-operation) and ~0.26× CPython C (C typically 2–20× faster; `getsample` excepted at ~2.7× Mojo-faster). No SIMD or buffer-reuse work was done. Full tables, methodology, and limitations: [Audioop benchmark report](libraries/audioop/benchmarks/reports/BENCHMARK_REPORT.md).
+
+Details: [library README](libraries/audioop/README.md) · [CHANGELOG](libraries/audioop/CHANGELOG.md) · [release `audioop-v0.1.0`](https://github.com/adarshsoloman/pyromojo/releases/tag/audioop-v0.1.0) · [compatibility](libraries/audioop/docs/api-scope.md) · [benchmark design](libraries/audioop/docs/benchmark-design.md) · [CLI opcode registry](libraries/audioop/docs/cli-opcode-registry.md)
 
 ## Benchmark transparency
 
@@ -214,8 +226,8 @@ pyromojo/
 │   │   ├── docs/             # reference audit, unicode, benchmark design
 │   │   ├── experiments/      # toolchain probes and raw outputs
 │   │   └── PHASE*.md         # per-phase reports
-│   ├── audioop/              # 26/26 ops implemented (Phases 0–10, pre-release)
-│   ├── bitarray/             # v0.1 implemented (Phases 1A–1E, untagged)
+│   ├── audioop/              # v0.1.0 — complete port (26/26 ops, 105+136 tests, 1277 vectors)
+│   ├── bitarray/             # v0.1.0 — complete port
 │   │   ├── mojo/             # native bitarray, batch CLI
 │   │   ├── python_reference/ # vector generator, pins
 │   │   ├── tests/            # mojo unit, python_compat, vectors
@@ -290,7 +302,7 @@ Run the Levenshtein benchmark suite:
 | 4. Expand toward 20 libraries | Broad, sustainable coverage | Planned |
 | 5. Performance analysis | Cross-library analysis and upstream contributions | Planned |
 
-Port sequence: **1. MessagePack — Complete (`v0.1.0`, tagged). 2. Levenshtein — Complete (`v0.1.0`, tagged as `levenshtein-v0.1.0`). 3. Bitarray — Complete (`v0.1.0`, tagged as `bitarray-v0.1.0`).** Audioop is implemented (26/26 ops, pre-release); resampy remains a planned scope stub.
+Port sequence: **1. MessagePack — Complete (`v0.1.0`, tagged). 2. Levenshtein — Complete (`v0.1.0`, tagged as `levenshtein-v0.1.0`). 3. Bitarray — Complete (`v0.1.0`, tagged as `bitarray-v0.1.0`). 4. Audioop — Complete (`v0.1.0`, tagged as `audioop-v0.1.0`).** Resampy remains a planned scope stub.
 
 Details, exit criteria, and deliberately omitted dates: [docs/roadmap.md](docs/roadmap.md).
 
