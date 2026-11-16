@@ -1,4 +1,4 @@
-"""Native Mojo audioop: sample, arithmetic, statistics, peak, channel, ratecv and G.711 layers."""
+"""Native Mojo audioop: the complete 26-operation audioop port."""
 
 from mojo_audioop.arithmetic import (
     add,
@@ -16,6 +16,7 @@ from mojo_audioop.peak_analysis import (
     maxpp,
 )
 from mojo_audioop.channels import tomono, tostereo
+from mojo_audioop.adpcm import AdpcmState, adpcm2lin, lin2adpcm
 from mojo_audioop.g711 import alaw2lin, lin2alaw, lin2ulaw, ulaw2lin
 from mojo_audioop.ratecv import RatecvResult, RatecvState, ratecv, ratecv_continue
 from mojo_audioop.statistics import (

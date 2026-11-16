@@ -92,6 +92,7 @@ MOJO_SUITES = [
             "test_channels",
             "test_ratecv",
             "test_g711",
+            "test_adpcm",
         ],
     },
 ]

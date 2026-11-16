@@ -30,7 +30,7 @@ def sample_cases(vectors_bundle: dict) -> list[dict]:
 
 def test_corpus_preserves_phase0_cases(vectors_bundle: dict) -> None:
     cases = vectors_bundle["cases"]
-    assert len(cases) == 952
+    assert len(cases) == 1277
     ids = [case["id"] for case in cases]
     assert len(set(ids)) == len(ids)
     sample = [case for case in cases if case["op"] in SAMPLE_OPS]
@@ -40,6 +40,7 @@ def test_corpus_preserves_phase0_cases(vectors_bundle: dict) -> None:
     phase5 = [case for case in cases if case["id"].startswith("p5-")]
     phase6 = [case for case in cases if case["id"].startswith("p6-")]
     phase7 = [case for case in cases if case["id"].startswith("p7-")]
+    phase8 = [case for case in cases if case["id"].startswith("p8-")]
     assert len(sample) == 24
     assert len(phase2) == 50
     assert len(phase3) == 69
@@ -55,6 +56,7 @@ def test_corpus_preserves_phase0_cases(vectors_bundle: dict) -> None:
         - len(phase5)
         - len(phase6)
         - len(phase7)
+        - len(phase8)
         == 42
     )
 

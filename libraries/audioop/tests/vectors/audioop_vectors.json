@@ -11422,6 +11422,5228 @@
         "result_hex": "dc0324fc7c7d848200000000f8ff"
       },
       "notes": "round trip through the reference encoder"
+    },
+    {
+      "id": "p8-lin2adpcm-w1",
+      "op": "lin2adpcm",
+      "width": 1,
+      "args": {
+        "fragment_hex": "7f8000ff01",
+        "width": 1
+      },
+      "expected": {
+        "result_hex": "7f2f",
+        "state": [
+          69,
+          31
+        ]
+      }
+    },
+    {
+      "id": "p8-lin2adpcm-w2",
+      "op": "lin2adpcm",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ff7f00800000ffff0100",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "7f28",
+        "state": [
+          2,
+          13
+        ]
+      }
+    },
+    {
+      "id": "p8-lin2adpcm-w3",
+      "op": "lin2adpcm",
+      "width": 3,
+      "args": {
+        "fragment_hex": "ffff7f000080000000ffffff010000",
+        "width": 3
+      },
+      "expected": {
+        "result_hex": "7f28",
+        "state": [
+          2,
+          13
+        ]
+      }
+    },
+    {
+      "id": "p8-lin2adpcm-w4",
+      "op": "lin2adpcm",
+      "width": 4,
+      "args": {
+        "fragment_hex": "ffffff7f0000008000000000ffffffff01000000",
+        "width": 4
+      },
+      "expected": {
+        "result_hex": "7f28",
+        "state": [
+          2,
+          13
+        ]
+      }
+    },
+    {
+      "id": "p8-lin2adpcm-empty",
+      "op": "lin2adpcm",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "",
+        "state": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-lin2adpcm-empty-state",
+      "op": "lin2adpcm",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "width": 2,
+        "state": [
+          100,
+          50
+        ]
+      },
+      "expected": {
+        "result_hex": "",
+        "state": [
+          100,
+          50
+        ]
+      },
+      "notes": "state is returned unchanged for empty input"
+    },
+    {
+      "id": "p8-lin2adpcm-one-sample",
+      "op": "lin2adpcm",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e803",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "",
+        "state": [
+          11,
+          8
+        ]
+      },
+      "notes": "odd sample count: nibble buffered and dropped"
+    },
+    {
+      "id": "p8-lin2adpcm-two-samples",
+      "op": "lin2adpcm",
+      "width": 2,
+      "args": {
+        "fragment_hex": "01000200",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "11",
+        "state": [
+          2,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-lin2adpcm-three-samples",
+      "op": "lin2adpcm",
+      "width": 2,
+      "args": {
+        "fragment_hex": "010002000300",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "11",
+        "state": [
+          3,
+          0
+        ]
+      },
+      "notes": "odd sample count drops the trailing nibble"
+    },
+    {
+      "id": "p8-lin2adpcm-alternating",
+      "op": "lin2adpcm",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0100ffff0100ffff0100ffff",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "191919",
+        "state": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-lin2adpcm-repeated",
+      "op": "lin2adpcm",
+      "width": 2,
+      "args": {
+        "fragment_hex": "f401f401f401f401",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "7777",
+        "state": [
+          240,
+          32
+        ]
+      }
+    },
+    {
+      "id": "p8-lin2adpcm-abrupt",
+      "op": "lin2adpcm",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0000ff7f000000800000ff7f",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "07af37",
+        "state": [
+          53,
+          22
+        ]
+      },
+      "notes": "abrupt signal changes exercise large steps"
+    },
+    {
+      "id": "p8-lin2adpcm-zeros",
+      "op": "lin2adpcm",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0000000000000000",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0000",
+        "state": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-lin2adpcm-small-diffs",
+      "op": "lin2adpcm",
+      "width": 2,
+      "args": {
+        "fragment_hex": "00000100020003000400050006000700",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "01111111",
+        "state": [
+          7,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-lin2adpcm-continued",
+      "op": "lin2adpcm",
+      "width": 2,
+      "args": {
+        "fragment_hex": "fafffbfffcfffdff",
+        "width": 2,
+        "state": [
+          -7,
+          3
+        ]
+      },
+      "expected": {
+        "result_hex": "0001",
+        "state": [
+          -3,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-lin2adpcm-width-zero",
+      "op": "lin2adpcm",
+      "width": 0,
+      "args": {
+        "fragment_hex": "",
+        "width": 0
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Size should be 1, 2, 3 or 4"
+      }
+    },
+    {
+      "id": "p8-lin2adpcm-misaligned",
+      "op": "lin2adpcm",
+      "width": 2,
+      "args": {
+        "fragment_hex": "01",
+        "width": 2
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "not a whole number of frames"
+      }
+    },
+    {
+      "id": "p8-lin2adpcm-bad-valpred",
+      "op": "lin2adpcm",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "width": 2,
+        "state": [
+          32768,
+          0
+        ]
+      },
+      "expected": {
+        "error_type": "ValueError",
+        "error_message": "bad state"
+      }
+    },
+    {
+      "id": "p8-lin2adpcm-bad-index-high",
+      "op": "lin2adpcm",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "width": 2,
+        "state": [
+          0,
+          89
+        ]
+      },
+      "expected": {
+        "error_type": "ValueError",
+        "error_message": "bad state"
+      }
+    },
+    {
+      "id": "p8-lin2adpcm-bad-index-negative",
+      "op": "lin2adpcm",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "width": 2,
+        "state": [
+          0,
+          -1
+        ]
+      },
+      "expected": {
+        "error_type": "ValueError",
+        "error_message": "bad state"
+      }
+    },
+    {
+      "id": "p8-lin2adpcm-state-extremes",
+      "op": "lin2adpcm",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "width": 2,
+        "state": [
+          -32768,
+          88
+        ]
+      },
+      "expected": {
+        "result_hex": "",
+        "state": [
+          -32768,
+          88
+        ]
+      },
+      "notes": "boundary state values are valid"
+    },
+    {
+      "id": "p8-adpcm2lin-byte-00",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "00",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "00000000",
+        "state": [
+          0,
+          0
+        ]
+      },
+      "notes": "exhaustive decoder verification"
+    },
+    {
+      "id": "p8-adpcm2lin-byte-01",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "01",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "00000100",
+        "state": [
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-02",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "02",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "00000300",
+        "state": [
+          3,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-03",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "03",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "00000400",
+        "state": [
+          4,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-04",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "04",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "00000700",
+        "state": [
+          7,
+          2
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-05",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "05",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "00000800",
+        "state": [
+          8,
+          4
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-06",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "06",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "00000a00",
+        "state": [
+          10,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-07",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "07",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "00000b00",
+        "state": [
+          11,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-08",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "08",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "00000000",
+        "state": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-09",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "09",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0000ffff",
+        "state": [
+          -1,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-0a",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0a",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0000fdff",
+        "state": [
+          -3,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-0b",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0b",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0000fcff",
+        "state": [
+          -4,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-0c",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0c",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0000f9ff",
+        "state": [
+          -7,
+          2
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-0d",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0d",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0000f8ff",
+        "state": [
+          -8,
+          4
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-0e",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0e",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0000f6ff",
+        "state": [
+          -10,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-0f",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0f",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0000f5ff",
+        "state": [
+          -11,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-10",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "10",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "01000100",
+        "state": [
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-11",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "11",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "01000200",
+        "state": [
+          2,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-12",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "12",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "01000400",
+        "state": [
+          4,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-13",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "13",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "01000500",
+        "state": [
+          5,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-14",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "14",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "01000800",
+        "state": [
+          8,
+          2
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-15",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "15",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "01000900",
+        "state": [
+          9,
+          4
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-16",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "16",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "01000b00",
+        "state": [
+          11,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-17",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "17",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "01000c00",
+        "state": [
+          12,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-18",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "18",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "01000100",
+        "state": [
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-19",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "19",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "01000000",
+        "state": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-1a",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "1a",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0100feff",
+        "state": [
+          -2,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-1b",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "1b",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0100fdff",
+        "state": [
+          -3,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-1c",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "1c",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0100faff",
+        "state": [
+          -6,
+          2
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-1d",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "1d",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0100f9ff",
+        "state": [
+          -7,
+          4
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-1e",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "1e",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0100f7ff",
+        "state": [
+          -9,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-1f",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "1f",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0100f6ff",
+        "state": [
+          -10,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-20",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "20",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "03000300",
+        "state": [
+          3,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-21",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "21",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "03000400",
+        "state": [
+          4,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-22",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "22",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "03000600",
+        "state": [
+          6,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-23",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "23",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "03000700",
+        "state": [
+          7,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-24",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "24",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "03000a00",
+        "state": [
+          10,
+          2
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-25",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "25",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "03000b00",
+        "state": [
+          11,
+          4
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-26",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "26",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "03000d00",
+        "state": [
+          13,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-27",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "27",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "03000e00",
+        "state": [
+          14,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-28",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "28",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "03000300",
+        "state": [
+          3,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-29",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "29",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "03000200",
+        "state": [
+          2,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-2a",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "2a",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "03000000",
+        "state": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-2b",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "2b",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0300ffff",
+        "state": [
+          -1,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-2c",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "2c",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0300fcff",
+        "state": [
+          -4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-2d",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "2d",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0300fbff",
+        "state": [
+          -5,
+          4
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-2e",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "2e",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0300f9ff",
+        "state": [
+          -7,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-2f",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "2f",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0300f8ff",
+        "state": [
+          -8,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-30",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "30",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "04000400",
+        "state": [
+          4,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-31",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "31",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "04000500",
+        "state": [
+          5,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-32",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "32",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "04000700",
+        "state": [
+          7,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-33",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "33",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "04000800",
+        "state": [
+          8,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-34",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "34",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "04000b00",
+        "state": [
+          11,
+          2
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-35",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "35",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "04000c00",
+        "state": [
+          12,
+          4
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-36",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "36",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "04000e00",
+        "state": [
+          14,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-37",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "37",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "04000f00",
+        "state": [
+          15,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-38",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "38",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "04000400",
+        "state": [
+          4,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-39",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "39",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "04000300",
+        "state": [
+          3,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-3a",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "3a",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "04000100",
+        "state": [
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-3b",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "3b",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "04000000",
+        "state": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-3c",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "3c",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0400fdff",
+        "state": [
+          -3,
+          2
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-3d",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "3d",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0400fcff",
+        "state": [
+          -4,
+          4
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-3e",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "3e",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0400faff",
+        "state": [
+          -6,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-3f",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "3f",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0400f9ff",
+        "state": [
+          -7,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-40",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "40",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "07000800",
+        "state": [
+          8,
+          1
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-41",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "41",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "07000a00",
+        "state": [
+          10,
+          1
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-42",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "42",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "07000c00",
+        "state": [
+          12,
+          1
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-43",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "43",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "07000e00",
+        "state": [
+          14,
+          1
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-44",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "44",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "07001100",
+        "state": [
+          17,
+          4
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-45",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "45",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "07001300",
+        "state": [
+          19,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-46",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "46",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "07001500",
+        "state": [
+          21,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-47",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "47",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "07001700",
+        "state": [
+          23,
+          10
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-48",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "48",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "07000600",
+        "state": [
+          6,
+          1
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-49",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "49",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "07000400",
+        "state": [
+          4,
+          1
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-4a",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "4a",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "07000200",
+        "state": [
+          2,
+          1
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-4b",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "4b",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "07000000",
+        "state": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-4c",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "4c",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0700fdff",
+        "state": [
+          -3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-4d",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "4d",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0700fbff",
+        "state": [
+          -5,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-4e",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "4e",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0700f9ff",
+        "state": [
+          -7,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-4f",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "4f",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0700f7ff",
+        "state": [
+          -9,
+          10
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-50",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "50",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "08000900",
+        "state": [
+          9,
+          3
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-51",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "51",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "08000b00",
+        "state": [
+          11,
+          3
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-52",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "52",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "08000e00",
+        "state": [
+          14,
+          3
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-53",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "53",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "08001000",
+        "state": [
+          16,
+          3
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-54",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "54",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "08001400",
+        "state": [
+          20,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-55",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "55",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "08001600",
+        "state": [
+          22,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-56",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "56",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "08001900",
+        "state": [
+          25,
+          10
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-57",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "57",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "08001b00",
+        "state": [
+          27,
+          12
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-58",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "58",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "08000700",
+        "state": [
+          7,
+          3
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-59",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "59",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "08000500",
+        "state": [
+          5,
+          3
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-5a",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "5a",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "08000200",
+        "state": [
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-5b",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "5b",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "08000000",
+        "state": [
+          0,
+          3
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-5c",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "5c",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0800fcff",
+        "state": [
+          -4,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-5d",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "5d",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0800faff",
+        "state": [
+          -6,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-5e",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "5e",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0800f7ff",
+        "state": [
+          -9,
+          10
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-5f",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "5f",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0800f5ff",
+        "state": [
+          -11,
+          12
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-60",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "60",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0a000b00",
+        "state": [
+          11,
+          5
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-61",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "61",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0a000e00",
+        "state": [
+          14,
+          5
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-62",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "62",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0a001100",
+        "state": [
+          17,
+          5
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-63",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "63",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0a001400",
+        "state": [
+          20,
+          5
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-64",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "64",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0a001800",
+        "state": [
+          24,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-65",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "65",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0a001b00",
+        "state": [
+          27,
+          10
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-66",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "66",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0a001e00",
+        "state": [
+          30,
+          12
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-67",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "67",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0a002100",
+        "state": [
+          33,
+          14
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-68",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "68",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0a000900",
+        "state": [
+          9,
+          5
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-69",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "69",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0a000600",
+        "state": [
+          6,
+          5
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-6a",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "6a",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0a000300",
+        "state": [
+          3,
+          5
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-6b",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "6b",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0a000000",
+        "state": [
+          0,
+          5
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-6c",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "6c",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0a00fcff",
+        "state": [
+          -4,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-6d",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "6d",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0a00f9ff",
+        "state": [
+          -7,
+          10
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-6e",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "6e",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0a00f6ff",
+        "state": [
+          -10,
+          12
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-6f",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "6f",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0a00f3ff",
+        "state": [
+          -13,
+          14
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-70",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "70",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0b000d00",
+        "state": [
+          13,
+          7
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-71",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "71",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0b001100",
+        "state": [
+          17,
+          7
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-72",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "72",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0b001500",
+        "state": [
+          21,
+          7
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-73",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "73",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0b001900",
+        "state": [
+          25,
+          7
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-74",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "74",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0b001d00",
+        "state": [
+          29,
+          10
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-75",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "75",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0b002100",
+        "state": [
+          33,
+          12
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-76",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "76",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0b002500",
+        "state": [
+          37,
+          14
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-77",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "77",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0b002900",
+        "state": [
+          41,
+          16
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-78",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "78",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0b000900",
+        "state": [
+          9,
+          7
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-79",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "79",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0b000500",
+        "state": [
+          5,
+          7
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-7a",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "7a",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0b000100",
+        "state": [
+          1,
+          7
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-7b",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "7b",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0b00fdff",
+        "state": [
+          -3,
+          7
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-7c",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "7c",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0b00f9ff",
+        "state": [
+          -7,
+          10
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-7d",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "7d",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0b00f5ff",
+        "state": [
+          -11,
+          12
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-7e",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "7e",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0b00f1ff",
+        "state": [
+          -15,
+          14
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-7f",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "7f",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0b00edff",
+        "state": [
+          -19,
+          16
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-80",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "80",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "00000000",
+        "state": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-81",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "81",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "00000100",
+        "state": [
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-82",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "82",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "00000300",
+        "state": [
+          3,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-83",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "83",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "00000400",
+        "state": [
+          4,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-84",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "84",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "00000700",
+        "state": [
+          7,
+          2
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-85",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "85",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "00000800",
+        "state": [
+          8,
+          4
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-86",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "86",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "00000a00",
+        "state": [
+          10,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-87",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "87",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "00000b00",
+        "state": [
+          11,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-88",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "88",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "00000000",
+        "state": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-89",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "89",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0000ffff",
+        "state": [
+          -1,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-8a",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "8a",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0000fdff",
+        "state": [
+          -3,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-8b",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "8b",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0000fcff",
+        "state": [
+          -4,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-8c",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "8c",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0000f9ff",
+        "state": [
+          -7,
+          2
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-8d",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "8d",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0000f8ff",
+        "state": [
+          -8,
+          4
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-8e",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "8e",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0000f6ff",
+        "state": [
+          -10,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-8f",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "8f",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0000f5ff",
+        "state": [
+          -11,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-90",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "90",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "ffffffff",
+        "state": [
+          -1,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-91",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "91",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "ffff0000",
+        "state": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-92",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "92",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "ffff0200",
+        "state": [
+          2,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-93",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "93",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "ffff0300",
+        "state": [
+          3,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-94",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "94",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "ffff0600",
+        "state": [
+          6,
+          2
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-95",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "95",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "ffff0700",
+        "state": [
+          7,
+          4
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-96",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "96",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "ffff0900",
+        "state": [
+          9,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-97",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "97",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "ffff0a00",
+        "state": [
+          10,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-98",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "98",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "ffffffff",
+        "state": [
+          -1,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-99",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "99",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fffffeff",
+        "state": [
+          -2,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-9a",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "9a",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fffffcff",
+        "state": [
+          -4,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-9b",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "9b",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fffffbff",
+        "state": [
+          -5,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-9c",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "9c",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fffff8ff",
+        "state": [
+          -8,
+          2
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-9d",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "9d",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fffff7ff",
+        "state": [
+          -9,
+          4
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-9e",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "9e",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fffff5ff",
+        "state": [
+          -11,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-9f",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "9f",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fffff4ff",
+        "state": [
+          -12,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-a0",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "a0",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fdfffdff",
+        "state": [
+          -3,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-a1",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "a1",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fdfffeff",
+        "state": [
+          -2,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-a2",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "a2",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fdff0000",
+        "state": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-a3",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "a3",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fdff0100",
+        "state": [
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-a4",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "a4",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fdff0400",
+        "state": [
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-a5",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "a5",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fdff0500",
+        "state": [
+          5,
+          4
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-a6",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "a6",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fdff0700",
+        "state": [
+          7,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-a7",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "a7",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fdff0800",
+        "state": [
+          8,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-a8",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "a8",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fdfffdff",
+        "state": [
+          -3,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-a9",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "a9",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fdfffcff",
+        "state": [
+          -4,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-aa",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "aa",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fdfffaff",
+        "state": [
+          -6,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-ab",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ab",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fdfff9ff",
+        "state": [
+          -7,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-ac",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ac",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fdfff6ff",
+        "state": [
+          -10,
+          2
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-ad",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ad",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fdfff5ff",
+        "state": [
+          -11,
+          4
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-ae",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ae",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fdfff3ff",
+        "state": [
+          -13,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-af",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "af",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fdfff2ff",
+        "state": [
+          -14,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-b0",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "b0",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fcfffcff",
+        "state": [
+          -4,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-b1",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "b1",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fcfffdff",
+        "state": [
+          -3,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-b2",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "b2",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fcffffff",
+        "state": [
+          -1,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-b3",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "b3",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fcff0000",
+        "state": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-b4",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "b4",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fcff0300",
+        "state": [
+          3,
+          2
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-b5",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "b5",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fcff0400",
+        "state": [
+          4,
+          4
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-b6",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "b6",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fcff0600",
+        "state": [
+          6,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-b7",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "b7",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fcff0700",
+        "state": [
+          7,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-b8",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "b8",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fcfffcff",
+        "state": [
+          -4,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-b9",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "b9",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fcfffbff",
+        "state": [
+          -5,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-ba",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ba",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fcfff9ff",
+        "state": [
+          -7,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-bb",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "bb",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fcfff8ff",
+        "state": [
+          -8,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-bc",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "bc",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fcfff5ff",
+        "state": [
+          -11,
+          2
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-bd",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "bd",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fcfff4ff",
+        "state": [
+          -12,
+          4
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-be",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "be",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fcfff2ff",
+        "state": [
+          -14,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-bf",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "bf",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fcfff1ff",
+        "state": [
+          -15,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-c0",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "c0",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f9fffaff",
+        "state": [
+          -6,
+          1
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-c1",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "c1",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f9fffcff",
+        "state": [
+          -4,
+          1
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-c2",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "c2",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f9fffeff",
+        "state": [
+          -2,
+          1
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-c3",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "c3",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f9ff0000",
+        "state": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-c4",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "c4",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f9ff0300",
+        "state": [
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-c5",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "c5",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f9ff0500",
+        "state": [
+          5,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-c6",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "c6",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f9ff0700",
+        "state": [
+          7,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-c7",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "c7",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f9ff0900",
+        "state": [
+          9,
+          10
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-c8",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "c8",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f9fff8ff",
+        "state": [
+          -8,
+          1
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-c9",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "c9",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f9fff6ff",
+        "state": [
+          -10,
+          1
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-ca",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ca",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f9fff4ff",
+        "state": [
+          -12,
+          1
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-cb",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "cb",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f9fff2ff",
+        "state": [
+          -14,
+          1
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-cc",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "cc",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f9ffefff",
+        "state": [
+          -17,
+          4
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-cd",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "cd",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f9ffedff",
+        "state": [
+          -19,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-ce",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ce",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f9ffebff",
+        "state": [
+          -21,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-cf",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "cf",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f9ffe9ff",
+        "state": [
+          -23,
+          10
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-d0",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "d0",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f8fff9ff",
+        "state": [
+          -7,
+          3
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-d1",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "d1",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f8fffbff",
+        "state": [
+          -5,
+          3
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-d2",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "d2",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f8fffeff",
+        "state": [
+          -2,
+          3
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-d3",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "d3",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f8ff0000",
+        "state": [
+          0,
+          3
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-d4",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "d4",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f8ff0400",
+        "state": [
+          4,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-d5",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "d5",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f8ff0600",
+        "state": [
+          6,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-d6",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "d6",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f8ff0900",
+        "state": [
+          9,
+          10
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-d7",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "d7",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f8ff0b00",
+        "state": [
+          11,
+          12
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-d8",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "d8",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f8fff7ff",
+        "state": [
+          -9,
+          3
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-d9",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "d9",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f8fff5ff",
+        "state": [
+          -11,
+          3
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-da",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "da",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f8fff2ff",
+        "state": [
+          -14,
+          3
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-db",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "db",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f8fff0ff",
+        "state": [
+          -16,
+          3
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-dc",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "dc",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f8ffecff",
+        "state": [
+          -20,
+          6
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-dd",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "dd",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f8ffeaff",
+        "state": [
+          -22,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-de",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "de",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f8ffe7ff",
+        "state": [
+          -25,
+          10
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-df",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "df",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f8ffe5ff",
+        "state": [
+          -27,
+          12
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-e0",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e0",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f6fff7ff",
+        "state": [
+          -9,
+          5
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-e1",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e1",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f6fffaff",
+        "state": [
+          -6,
+          5
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-e2",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e2",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f6fffdff",
+        "state": [
+          -3,
+          5
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-e3",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e3",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f6ff0000",
+        "state": [
+          0,
+          5
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-e4",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e4",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f6ff0400",
+        "state": [
+          4,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-e5",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e5",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f6ff0700",
+        "state": [
+          7,
+          10
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-e6",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e6",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f6ff0a00",
+        "state": [
+          10,
+          12
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-e7",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e7",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f6ff0d00",
+        "state": [
+          13,
+          14
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-e8",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e8",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f6fff5ff",
+        "state": [
+          -11,
+          5
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-e9",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e9",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f6fff2ff",
+        "state": [
+          -14,
+          5
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-ea",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ea",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f6ffefff",
+        "state": [
+          -17,
+          5
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-eb",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "eb",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f6ffecff",
+        "state": [
+          -20,
+          5
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-ec",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ec",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f6ffe8ff",
+        "state": [
+          -24,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-ed",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ed",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f6ffe5ff",
+        "state": [
+          -27,
+          10
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-ee",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ee",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f6ffe2ff",
+        "state": [
+          -30,
+          12
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-ef",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ef",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f6ffdfff",
+        "state": [
+          -33,
+          14
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-f0",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "f0",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f5fff7ff",
+        "state": [
+          -9,
+          7
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-f1",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "f1",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f5fffbff",
+        "state": [
+          -5,
+          7
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-f2",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "f2",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f5ffffff",
+        "state": [
+          -1,
+          7
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-f3",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "f3",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f5ff0300",
+        "state": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-f4",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "f4",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f5ff0700",
+        "state": [
+          7,
+          10
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-f5",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "f5",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f5ff0b00",
+        "state": [
+          11,
+          12
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-f6",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "f6",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f5ff0f00",
+        "state": [
+          15,
+          14
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-f7",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "f7",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f5ff1300",
+        "state": [
+          19,
+          16
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-f8",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "f8",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f5fff3ff",
+        "state": [
+          -13,
+          7
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-f9",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "f9",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f5ffefff",
+        "state": [
+          -17,
+          7
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-fa",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "fa",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f5ffebff",
+        "state": [
+          -21,
+          7
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-fb",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "fb",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f5ffe7ff",
+        "state": [
+          -25,
+          7
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-fc",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "fc",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f5ffe3ff",
+        "state": [
+          -29,
+          10
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-fd",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "fd",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f5ffdfff",
+        "state": [
+          -33,
+          12
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-fe",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "fe",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f5ffdbff",
+        "state": [
+          -37,
+          14
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-byte-ff",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "ff",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f5ffd7ff",
+        "state": [
+          -41,
+          16
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w1-byte-00",
+      "op": "adpcm2lin",
+      "width": 1,
+      "args": {
+        "fragment_hex": "00",
+        "width": 1
+      },
+      "expected": {
+        "result_hex": "0000",
+        "state": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w3-byte-00",
+      "op": "adpcm2lin",
+      "width": 3,
+      "args": {
+        "fragment_hex": "00",
+        "width": 3
+      },
+      "expected": {
+        "result_hex": "000000000000",
+        "state": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w4-byte-00",
+      "op": "adpcm2lin",
+      "width": 4,
+      "args": {
+        "fragment_hex": "00",
+        "width": 4
+      },
+      "expected": {
+        "result_hex": "0000000000000000",
+        "state": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w1-byte-7f",
+      "op": "adpcm2lin",
+      "width": 1,
+      "args": {
+        "fragment_hex": "7f",
+        "width": 1
+      },
+      "expected": {
+        "result_hex": "00ff",
+        "state": [
+          -19,
+          16
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w3-byte-7f",
+      "op": "adpcm2lin",
+      "width": 3,
+      "args": {
+        "fragment_hex": "7f",
+        "width": 3
+      },
+      "expected": {
+        "result_hex": "000b0000edff",
+        "state": [
+          -19,
+          16
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w4-byte-7f",
+      "op": "adpcm2lin",
+      "width": 4,
+      "args": {
+        "fragment_hex": "7f",
+        "width": 4
+      },
+      "expected": {
+        "result_hex": "00000b000000edff",
+        "state": [
+          -19,
+          16
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w1-byte-80",
+      "op": "adpcm2lin",
+      "width": 1,
+      "args": {
+        "fragment_hex": "80",
+        "width": 1
+      },
+      "expected": {
+        "result_hex": "0000",
+        "state": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w3-byte-80",
+      "op": "adpcm2lin",
+      "width": 3,
+      "args": {
+        "fragment_hex": "80",
+        "width": 3
+      },
+      "expected": {
+        "result_hex": "000000000000",
+        "state": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w4-byte-80",
+      "op": "adpcm2lin",
+      "width": 4,
+      "args": {
+        "fragment_hex": "80",
+        "width": 4
+      },
+      "expected": {
+        "result_hex": "0000000000000000",
+        "state": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w1-byte-ff",
+      "op": "adpcm2lin",
+      "width": 1,
+      "args": {
+        "fragment_hex": "ff",
+        "width": 1
+      },
+      "expected": {
+        "result_hex": "ffff",
+        "state": [
+          -41,
+          16
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w3-byte-ff",
+      "op": "adpcm2lin",
+      "width": 3,
+      "args": {
+        "fragment_hex": "ff",
+        "width": 3
+      },
+      "expected": {
+        "result_hex": "00f5ff00d7ff",
+        "state": [
+          -41,
+          16
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w4-byte-ff",
+      "op": "adpcm2lin",
+      "width": 4,
+      "args": {
+        "fragment_hex": "ff",
+        "width": 4
+      },
+      "expected": {
+        "result_hex": "0000f5ff0000d7ff",
+        "state": [
+          -41,
+          16
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w1-byte-55",
+      "op": "adpcm2lin",
+      "width": 1,
+      "args": {
+        "fragment_hex": "55",
+        "width": 1
+      },
+      "expected": {
+        "result_hex": "0000",
+        "state": [
+          22,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w3-byte-55",
+      "op": "adpcm2lin",
+      "width": 3,
+      "args": {
+        "fragment_hex": "55",
+        "width": 3
+      },
+      "expected": {
+        "result_hex": "000800001600",
+        "state": [
+          22,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w4-byte-55",
+      "op": "adpcm2lin",
+      "width": 4,
+      "args": {
+        "fragment_hex": "55",
+        "width": 4
+      },
+      "expected": {
+        "result_hex": "0000080000001600",
+        "state": [
+          22,
+          8
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w1-byte-aa",
+      "op": "adpcm2lin",
+      "width": 1,
+      "args": {
+        "fragment_hex": "aa",
+        "width": 1
+      },
+      "expected": {
+        "result_hex": "ffff",
+        "state": [
+          -6,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w3-byte-aa",
+      "op": "adpcm2lin",
+      "width": 3,
+      "args": {
+        "fragment_hex": "aa",
+        "width": 3
+      },
+      "expected": {
+        "result_hex": "00fdff00faff",
+        "state": [
+          -6,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w4-byte-aa",
+      "op": "adpcm2lin",
+      "width": 4,
+      "args": {
+        "fragment_hex": "aa",
+        "width": 4
+      },
+      "expected": {
+        "result_hex": "0000fdff0000faff",
+        "state": [
+          -6,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w1-byte-12",
+      "op": "adpcm2lin",
+      "width": 1,
+      "args": {
+        "fragment_hex": "12",
+        "width": 1
+      },
+      "expected": {
+        "result_hex": "0000",
+        "state": [
+          4,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w3-byte-12",
+      "op": "adpcm2lin",
+      "width": 3,
+      "args": {
+        "fragment_hex": "12",
+        "width": 3
+      },
+      "expected": {
+        "result_hex": "000100000400",
+        "state": [
+          4,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w4-byte-12",
+      "op": "adpcm2lin",
+      "width": 4,
+      "args": {
+        "fragment_hex": "12",
+        "width": 4
+      },
+      "expected": {
+        "result_hex": "0000010000000400",
+        "state": [
+          4,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w1-byte-ed",
+      "op": "adpcm2lin",
+      "width": 1,
+      "args": {
+        "fragment_hex": "ed",
+        "width": 1
+      },
+      "expected": {
+        "result_hex": "ffff",
+        "state": [
+          -27,
+          10
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w3-byte-ed",
+      "op": "adpcm2lin",
+      "width": 3,
+      "args": {
+        "fragment_hex": "ed",
+        "width": 3
+      },
+      "expected": {
+        "result_hex": "00f6ff00e5ff",
+        "state": [
+          -27,
+          10
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-w4-byte-ed",
+      "op": "adpcm2lin",
+      "width": 4,
+      "args": {
+        "fragment_hex": "ed",
+        "width": 4
+      },
+      "expected": {
+        "result_hex": "0000f6ff0000e5ff",
+        "state": [
+          -27,
+          10
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-nibble-0",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "00",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "00000000",
+        "state": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-nibble-1",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "10",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "01000100",
+        "state": [
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-nibble-2",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "20",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "03000300",
+        "state": [
+          3,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-nibble-3",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "30",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "04000400",
+        "state": [
+          4,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-nibble-4",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "40",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "07000800",
+        "state": [
+          8,
+          1
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-nibble-5",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "50",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "08000900",
+        "state": [
+          9,
+          3
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-nibble-6",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "60",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0a000b00",
+        "state": [
+          11,
+          5
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-nibble-7",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "70",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0b000d00",
+        "state": [
+          13,
+          7
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-nibble-8",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "80",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "00000000",
+        "state": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-nibble-9",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "90",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "ffffffff",
+        "state": [
+          -1,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-nibble-a",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "a0",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fdfffdff",
+        "state": [
+          -3,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-nibble-b",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "b0",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "fcfffcff",
+        "state": [
+          -4,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-nibble-c",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "c0",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f9fffaff",
+        "state": [
+          -6,
+          1
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-nibble-d",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "d0",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f8fff9ff",
+        "state": [
+          -7,
+          3
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-nibble-e",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "e0",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f6fff7ff",
+        "state": [
+          -9,
+          5
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-nibble-f",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "f0",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "f5fff7ff",
+        "state": [
+          -9,
+          7
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-empty",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "",
+        "state": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-odd-bytes",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "010203",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "000001000100040004000800",
+        "state": [
+          8,
+          0
+        ]
+      },
+      "notes": "decoder requires no alignment"
+    },
+    {
+      "id": "p8-adpcm2lin-repeated",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "7f7f7f7f7f7f",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0b00edff2c00a4ffc90052fe9f0341f89d1061dc5b4c0080",
+        "state": [
+          -32768,
+          88
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-alternating",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0ff00ff0",
+        "width": 2
+      },
+      "expected": {
+        "result_hex": "0000f5ffd7ffdbffdeffaaff3aff4aff",
+        "state": [
+          -182,
+          29
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-continued",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "3478",
+        "width": 2,
+        "state": [
+          15,
+          4
+        ]
+      },
+      "expected": {
+        "result_hex": "1700220038003500",
+        "state": [
+          53,
+          12
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-custom-state",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "0808",
+        "width": 2,
+        "state": [
+          0,
+          55
+        ]
+      },
+      "expected": {
+        "result_hex": "b0001000a1001d00",
+        "state": [
+          29,
+          51
+        ]
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-width-zero",
+      "op": "adpcm2lin",
+      "width": 0,
+      "args": {
+        "fragment_hex": "",
+        "width": 0
+      },
+      "expected": {
+        "error_type": "error",
+        "error_message": "Size should be 1, 2, 3 or 4"
+      }
+    },
+    {
+      "id": "p8-adpcm2lin-bad-state",
+      "op": "adpcm2lin",
+      "width": 2,
+      "args": {
+        "fragment_hex": "",
+        "width": 2,
+        "state": [
+          0,
+          100
+        ]
+      },
+      "expected": {
+        "error_type": "ValueError",
+        "error_message": "bad state"
+      }
     }
   ]
 }

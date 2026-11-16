@@ -58,6 +58,13 @@ Operations (framed, see ``mojo_audioop/protocol.mojo``):
   mu-law byte per sample.
 * ``0x39`` ulaw2lin -> same payload as alaw2lin; replies with
   ``width`` bytes per input byte.
+* ``0x3A`` lin2adpcm -> ``uint8 width | uint8 has_state |
+  [int64_be valpred | int64_be index] | fragment``; replies with
+  ``uint32_be out_len | packed bytes | int64_be valpred |
+  int64_be index``. An odd trailing sample updates the state but its
+  nibble is not emitted.
+* ``0x3B`` adpcm2lin -> same payload as lin2adpcm; replies with the
+  decoded fragment (two samples per input byte) and the state.
 
 
 Malformed requests produce ``STATUS_ERROR`` frames; framing errors
@@ -96,7 +103,9 @@ from mojo_audioop.protocol import (
     OP_MUL,
     OP_PING,
     OP_REVERSE,
+    OP_ADPCM2LIN,
     OP_ALAW2LIN,
+    OP_LIN2ADPCM,
     OP_LIN2ALAW,
     OP_LIN2ULAW,
     OP_RATECV,
@@ -113,6 +122,7 @@ from mojo_audioop.protocol import (
     write_frame,
 )
 from mojo_audioop.samples import decode_fragment, encode_fragment
+from mojo_audioop.adpcm import AdpcmState, adpcm2lin, lin2adpcm
 from mojo_audioop.channels import tomono, tostereo
 from mojo_audioop.g711 import alaw2lin, lin2alaw, lin2ulaw, ulaw2lin
 from mojo_audioop.peak_analysis import avgpp, findfactor, findfit, findmax, maxpp
@@ -513,6 +523,72 @@ def _ulaw2lin_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
     return ulaw2lin(payload[1:], Int(payload[0]))
 
 
+def _encode_adpcm_state(state: AdpcmState) -> List[UInt8]:
+    var out = _encode_i64_be(state.valpred)
+    var index_bytes = _encode_i64_be(state.index)
+    for byte in index_bytes:
+        out.append(byte)
+    return out^
+
+
+def _parse_adpcm_state(
+    payload: Span[UInt8, _], offset: Int
+) raises -> AdpcmState:
+    if len(payload) < offset + 1:
+        raise Error("adpcm request too short: need the state flag")
+    if payload[offset] == 0:
+        return AdpcmState(0, 0)
+    if len(payload) < offset + 17:
+        raise Error("adpcm request too short: need the full state")
+    var valpred = _decode_i64_be(payload[offset + 1 : offset + 9])
+    var index = _decode_i64_be(payload[offset + 9 : offset + 17])
+    return AdpcmState(valpred, index)
+
+
+def _lin2adpcm_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 1:
+        raise Error("lin2adpcm request too short: need a width byte")
+    var width = Int(payload[0])
+    var state = _parse_adpcm_state(payload, 1)
+    var continued = len(payload) > 1 and payload[1] != 0
+    var fragment_offset = 2 + (16 if continued else 0)
+    if len(payload) < fragment_offset:
+        raise Error("lin2adpcm request too short: fragment is missing")
+    var result = lin2adpcm(
+        payload[fragment_offset:], width, state^
+    )
+    var out = List[UInt8]()
+    append_u32_be(out, UInt32(len(result.output)))
+    for byte in result.output:
+        out.append(byte)
+    var state_bytes = _encode_adpcm_state(result.state)
+    for byte in state_bytes:
+        out.append(byte)
+    return out^
+
+
+def _adpcm2lin_request(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    if len(payload) < 1:
+        raise Error("adpcm2lin request too short: need a width byte")
+    var width = Int(payload[0])
+    var state = _parse_adpcm_state(payload, 1)
+    var continued = len(payload) > 1 and payload[1] != 0
+    var fragment_offset = 2 + (16 if continued else 0)
+    if len(payload) < fragment_offset:
+        raise Error("adpcm2lin request too short: fragment is missing")
+    var result = adpcm2lin(
+        payload[fragment_offset:], width, state^
+    )
+    var out = List[UInt8]()
+    append_u32_be(out, UInt32(len(result.output)))
+    for byte in result.output:
+        out.append(byte)
+    var state_bytes = _encode_adpcm_state(result.state)
+    for byte in state_bytes:
+        out.append(byte)
+    return out^
+
+
 def main() raises:
     var stdin = RawFileDescriptor(0)
     var stdout = RawFileDescriptor(1)
@@ -692,6 +768,18 @@ def main() raises:
             try:
                 var ulaw_linear = _ulaw2lin_request(payload)
                 write_frame(stdout, STATUS_OK, Span(ulaw_linear))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_LIN2ADPCM:
+            try:
+                var adpcm_encoded = _lin2adpcm_request(payload)
+                write_frame(stdout, STATUS_OK, Span(adpcm_encoded))
+            except error:
+                _reply_error(stdout, String(error))
+        elif opcode == OP_ADPCM2LIN:
+            try:
+                var adpcm_decoded = _adpcm2lin_request(payload)
+                write_frame(stdout, STATUS_OK, Span(adpcm_decoded))
             except error:
                 _reply_error(stdout, String(error))
         else:

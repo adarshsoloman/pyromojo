@@ -2007,6 +2007,135 @@ def build_phase7_cases(cases: list[dict[str, object]]) -> None:
     )
 
 
+def build_phase8_cases(cases: list[dict[str, object]]) -> None:
+    """Coverage for the two Phase 8 ADPCM operations."""
+
+    def adpcm_case(case_id, op, width, fragment, state=None, notes=None):
+        args = {"fragment_hex": hexed(fragment), "width": width}
+        if state is not None:
+            args["state"] = [state[0], state[1]]
+
+        def call():
+            state_arg = None if state is None else (state[0], state[1])
+            return getattr(audioop, op)(fragment, width, state_arg)
+
+        cases.append(
+            case(
+                case_id,
+                op,
+                width=width,
+                args=args,
+                call=call,
+                notes=notes,
+            )
+        )
+
+    # encoder: every width with boundaries
+    for width in range(1, 5):
+        lo = -(1 << (width * 8 - 1))
+        hi = (1 << (width * 8 - 1)) - 1
+        adpcm_case(
+            f"p8-lin2adpcm-w{width}",
+            "lin2adpcm",
+            width,
+            pcm_w(width, hi, lo, 0, -1, 1),
+        )
+    adpcm_case("p8-lin2adpcm-empty", "lin2adpcm", 2, b"")
+    adpcm_case(
+        "p8-lin2adpcm-empty-state",
+        "lin2adpcm",
+        2,
+        b"",
+        state=(100, 50),
+        notes="state is returned unchanged for empty input",
+    )
+    adpcm_case(
+        "p8-lin2adpcm-one-sample",
+        "lin2adpcm",
+        2,
+        pcm(1000),
+        notes="odd sample count: nibble buffered and dropped",
+    )
+    adpcm_case("p8-lin2adpcm-two-samples", "lin2adpcm", 2, pcm(1, 2))
+    adpcm_case(
+        "p8-lin2adpcm-three-samples",
+        "lin2adpcm",
+        2,
+        pcm(1, 2, 3),
+        notes="odd sample count drops the trailing nibble",
+    )
+    adpcm_case("p8-lin2adpcm-alternating", "lin2adpcm", 2, pcm(1, -1, 1, -1, 1, -1))
+    adpcm_case("p8-lin2adpcm-repeated", "lin2adpcm", 2, pcm(500, 500, 500, 500))
+    adpcm_case(
+        "p8-lin2adpcm-abrupt",
+        "lin2adpcm",
+        2,
+        pcm(0, 32767, 0, -32768, 0, 32767),
+        notes="abrupt signal changes exercise large steps",
+    )
+    adpcm_case("p8-lin2adpcm-zeros", "lin2adpcm", 2, bytes(8))
+    adpcm_case("p8-lin2adpcm-small-diffs", "lin2adpcm", 2, pcm(0, 1, 2, 3, 4, 5, 6, 7))
+    # continued state: derive deterministically from a prior reference call
+    _, seed_state = audioop.lin2adpcm(pcm(-10, -9, -8, -7), 2, None)
+    adpcm_case("p8-lin2adpcm-continued", "lin2adpcm", 2, pcm(-6, -5, -4, -3), state=seed_state)
+    # errors
+    adpcm_case("p8-lin2adpcm-width-zero", "lin2adpcm", 0, b"")
+    adpcm_case("p8-lin2adpcm-misaligned", "lin2adpcm", 2, b"\x01")
+    adpcm_case("p8-lin2adpcm-bad-valpred", "lin2adpcm", 2, b"", state=(32768, 0))
+    adpcm_case("p8-lin2adpcm-bad-index-high", "lin2adpcm", 2, b"", state=(0, 89))
+    adpcm_case("p8-lin2adpcm-bad-index-negative", "lin2adpcm", 2, b"", state=(0, -1))
+    adpcm_case(
+        "p8-lin2adpcm-state-extremes",
+        "lin2adpcm",
+        2,
+        b"",
+        state=(-32768, 88),
+        notes="boundary state values are valid",
+    )
+
+    # decoder: all 256 byte values at width 2
+    for byte in range(256):
+        adpcm_case(
+            f"p8-adpcm2lin-byte-{byte:02x}",
+            "adpcm2lin",
+            2,
+            bytes([byte]),
+            notes="exhaustive decoder verification" if byte == 0 else None,
+        )
+    # sampled decoder widths
+    for byte in (0x00, 0x7F, 0x80, 0xFF, 0x55, 0xAA, 0x12, 0xED):
+        for width in (1, 3, 4):
+            adpcm_case(
+                f"p8-adpcm2lin-w{width}-byte-{byte:02x}",
+                "adpcm2lin",
+                width,
+                bytes([byte]),
+            )
+    # all 16 high nibbles from a fresh state
+    for nibble in range(16):
+        adpcm_case(
+            f"p8-adpcm2lin-nibble-{nibble:01x}",
+            "adpcm2lin",
+            2,
+            bytes([nibble << 4]),
+        )
+    adpcm_case("p8-adpcm2lin-empty", "adpcm2lin", 2, b"")
+    adpcm_case(
+        "p8-adpcm2lin-odd-bytes",
+        "adpcm2lin",
+        2,
+        b"\x01\x02\x03",
+        notes="decoder requires no alignment",
+    )
+    adpcm_case("p8-adpcm2lin-repeated", "adpcm2lin", 2, bytes([0x7F] * 6))
+    adpcm_case("p8-adpcm2lin-alternating", "adpcm2lin", 2, bytes([0x0F, 0xF0, 0x0F, 0xF0]))
+    _, dec_seed = audioop.adpcm2lin(b"\x55\xaa\x12", 2, None)
+    adpcm_case("p8-adpcm2lin-continued", "adpcm2lin", 2, b"\x34\x78", state=dec_seed)
+    adpcm_case("p8-adpcm2lin-custom-state", "adpcm2lin", 2, b"\x08\x08", state=(0, 55))
+    adpcm_case("p8-adpcm2lin-width-zero", "adpcm2lin", 0, b"")
+    adpcm_case("p8-adpcm2lin-bad-state", "adpcm2lin", 2, b"", state=(0, 100))
+
+
 def main() -> int:
     check = "--check" in sys.argv[1:]
     cases = build_cases()
@@ -2017,6 +2146,7 @@ def main() -> int:
     build_phase5_cases(cases)
     build_phase6_cases(cases)
     build_phase7_cases(cases)
+    build_phase8_cases(cases)
     payload = {
         "schema_version": SCHEMA_VERSION,
         "generator": {"name": "audioop_vectors", "version": SCHEMA_VERSION},

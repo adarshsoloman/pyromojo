@@ -48,6 +48,8 @@ comptime OP_LIN2ALAW: UInt8 = 0x36
 comptime OP_ALAW2LIN: UInt8 = 0x37
 comptime OP_LIN2ULAW: UInt8 = 0x38
 comptime OP_ULAW2LIN: UInt8 = 0x39
+comptime OP_LIN2ADPCM: UInt8 = 0x3A
+comptime OP_ADPCM2LIN: UInt8 = 0x3B
 
 comptime STATUS_OK: UInt8 = 0
 comptime STATUS_ERROR: UInt8 = 1

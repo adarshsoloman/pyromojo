@@ -36,6 +36,8 @@ OP_LIN2ALAW = 0x36
 OP_ALAW2LIN = 0x37
 OP_LIN2ULAW = 0x38
 OP_ULAW2LIN = 0x39
+OP_LIN2ADPCM = 0x3A
+OP_ADPCM2LIN = 0x3B
 
 
 def request(body: bytes) -> bytes:
@@ -245,3 +247,34 @@ def lin2ulaw_body(width: int, fragment: bytes) -> bytes:
 
 def ulaw2lin_body(width: int, fragment: bytes) -> bytes:
     return bytes([OP_ULAW2LIN, width]) + fragment
+
+
+def adpcm_body(
+    opcode: int,
+    width: int,
+    state: tuple[int, int] | None,
+    fragment: bytes,
+) -> bytes:
+    body = bytes([opcode, width])
+    if state is None:
+        body += b"\x00"
+    else:
+        body += b"\x01" + struct.pack(">q", state[0]) + struct.pack(">q", state[1])
+    return body + fragment
+
+
+def lin2adpcm_body(width: int, state: tuple[int, int] | None, fragment: bytes) -> bytes:
+    return adpcm_body(OP_LIN2ADPCM, width, state, fragment)
+
+
+def adpcm2lin_body(width: int, state: tuple[int, int] | None, fragment: bytes) -> bytes:
+    return adpcm_body(OP_ADPCM2LIN, width, state, fragment)
+
+
+def parse_adpcm_response(payload: bytes):
+    out_len = struct.unpack(">I", payload[:4])[0]
+    output = payload[4 : 4 + out_len]
+    rest = payload[4 + out_len :]
+    valpred = struct.unpack(">q", rest[:8])[0]
+    index = struct.unpack(">q", rest[8:16])[0]
+    return output, (valpred, index)

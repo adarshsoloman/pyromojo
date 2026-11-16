@@ -308,6 +308,34 @@ def _ulaw2lin_one(item: dict) -> dict:
     )
 
 
+def _lin2adpcm_one(item: dict) -> dict:
+    state = item.get("state")
+    state_arg = None if state is None else (int(state[0]), int(state[1]))
+    try:
+        out, returned = audioop.lin2adpcm(
+            bytes.fromhex(item["fragment_hex"]),
+            int(item["width"]),
+            state_arg,
+        )
+    except Exception as exc:  # the reference defines these messages
+        return {"error_type": type(exc).__name__, "error_message": str(exc)}
+    return {"result_hex": out.hex(), "state": [returned[0], returned[1]]}
+
+
+def _adpcm2lin_one(item: dict) -> dict:
+    state = item.get("state")
+    state_arg = None if state is None else (int(state[0]), int(state[1]))
+    try:
+        out, returned = audioop.adpcm2lin(
+            bytes.fromhex(item["fragment_hex"]),
+            int(item["width"]),
+            state_arg,
+        )
+    except Exception as exc:  # the reference defines these messages
+        return {"error_type": type(exc).__name__, "error_message": str(exc)}
+    return {"result_hex": out.hex(), "state": [returned[0], returned[1]]}
+
+
 def main() -> int:
     request = json.load(sys.stdin)
     response = {
@@ -337,6 +365,8 @@ def main() -> int:
         "alaw2lin": [_alaw2lin_one(item) for item in request.get("alaw2lin", [])],
         "lin2ulaw": [_lin2ulaw_one(item) for item in request.get("lin2ulaw", [])],
         "ulaw2lin": [_ulaw2lin_one(item) for item in request.get("ulaw2lin", [])],
+        "lin2adpcm": [_lin2adpcm_one(item) for item in request.get("lin2adpcm", [])],
+        "adpcm2lin": [_adpcm2lin_one(item) for item in request.get("adpcm2lin", [])],
     }
     json.dump(response, sys.stdout)
     return 0

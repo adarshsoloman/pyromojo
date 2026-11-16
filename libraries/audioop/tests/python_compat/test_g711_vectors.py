@@ -45,7 +45,7 @@ def test_phase7_case_counts(vectors_bundle: dict) -> None:
     cases = vectors_bundle["cases"]
     ids = [case["id"] for case in cases]
     assert len(ids) == len(set(ids))
-    assert len(cases) == 952
+    assert len(cases) == 1277
     sample = [case for case in cases if case["op"].startswith("sample_")]
     phase2 = [case for case in cases if case["id"].startswith("p2-")]
     phase3 = [case for case in cases if case["id"].startswith("p3-")]
@@ -53,6 +53,7 @@ def test_phase7_case_counts(vectors_bundle: dict) -> None:
     phase5 = [case for case in cases if case["id"].startswith("p5-")]
     phase6 = [case for case in cases if case["id"].startswith("p6-")]
     phase7 = [case for case in cases if case["id"].startswith("p7-")]
+    phase8 = [case for case in cases if case["id"].startswith("p8-")]
     remainder = (
         len(cases)
         - len(sample)
@@ -62,6 +63,7 @@ def test_phase7_case_counts(vectors_bundle: dict) -> None:
         - len(phase5)
         - len(phase6)
         - len(phase7)
+        - len(phase8)
     )
     assert len(sample) == 24
     assert len(phase2) == 50
@@ -70,6 +72,7 @@ def test_phase7_case_counts(vectors_bundle: dict) -> None:
     assert len(phase5) == 33
     assert len(phase6) == 31
     assert len(phase7) == 645
+    assert len(phase8) == 325
     # the original 42 Phase 0 operation cases are untouched
     assert remainder == 42
 
