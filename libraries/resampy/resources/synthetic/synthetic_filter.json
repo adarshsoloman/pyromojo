@@ -1,0 +1,11 @@
+{
+  "byte_order": "little",
+  "coefficient_count": 8,
+  "dtype": "float64",
+  "filter_id": "synthetic_tiny_v1",
+  "precision": 8,
+  "resource_bytes": 64,
+  "resource_sha256": "ea129349b224e27e681fe60953110ed888c359fcb10f6d44a6859cf378be952e",
+  "rolloff": 0.95,
+  "schema_version": 1
+}

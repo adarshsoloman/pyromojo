@@ -1,6 +1,18 @@
 # resampy (Mojo Port)
 
-## Status: NOT STARTED
+## Status: PHASE 3 COMPLETE — representation layer only (no resampling algorithm)
+
+Phase 3 provides the native Mojo Float64 representation and verification
+infrastructure: signal/output buffers, a synthetic coefficient resource loader
+with SHA-256 integrity, a strict minimal JSON/Base64 codec, a numerical
+comparator with an explicit non-finite policy, a versioned golden-vector
+protocol, and a minimal framed CLI. **There is no resampling implementation, no
+`resample`, and no upstream filter coefficient data** (licensing review pending).
+All tests are synthetic. See [representation design](docs/representation-design.md)
+and the Phase 1/2 audits in `docs/`.
+
+Build and test with `--fp-mode contract=off`; run
+`.venv/bin/python libraries/resampy/tests/run_phase3_tests.py` from the repo root.
 
 ## Library description
 
@@ -44,4 +56,5 @@ the reference will be defined explicitly rather than assumed to be exact.
 
 ## Current status
 
-NOT STARTED — placeholder only.
+PHASE 3 COMPLETE — representation layer only. Resampling, upstream filter
+integration, and compatibility-tolerance calibration are deferred to Phase 4+.
