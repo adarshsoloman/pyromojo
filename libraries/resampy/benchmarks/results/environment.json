@@ -1,0 +1,109 @@
+{
+  "timestamp": "2026-11-20T06:43:08",
+  "git": "dda2a4e",
+  "git_dirty": true,
+  "python": "3.13.14",
+  "python_build": [
+    "main",
+    "Jun 23 2026 15:18:27"
+  ],
+  "numpy": "2.5.5",
+  "resampy": "0.4.3",
+  "upstream_commit": "7c484f8eec54b87e8f566578dc3e48a2be81cc80",
+  "numba": "0.68.1",
+  "llvmlite": "0.50.0",
+  "mojo": "Mojo 1.2.0 (2016d0cd)",
+  "cpu": "AMD Ryzen 7 6800H with Radeon Graphics",
+  "cores": 16,
+  "affinity_cpu": 0,
+  "memory": "15528948 kB",
+  "os": "Linux-7.0.0-28-generic-x86_64-with-glibc2.39",
+  "timer": "time.perf_counter_ns (Python) / std.time.perf_counter_ns (Mojo)",
+  "fp_mode": "contract=off",
+  "pin_method": "os.sched_setaffinity (single inherited CPU; no taskset wrapper)",
+  "interop_path": "unavailable in v0.1.0; reported as a gap, not measured",
+  "pure_python_floor": "not measured (optional for v0.1.0)",
+  "parallel_upstream": "not measured (sequential parallel=False only)",
+  "build_note": "output binary removed before each build; compiler cache state is toolchain-provided",
+  "peak_rss_self_kb": 178908,
+  "peak_rss_children_kb": 185280,
+  "config": {
+    "seed": 20260610,
+    "warmup": 5,
+    "samples": 25,
+    "cli_samples": 25,
+    "runs": 2,
+    "lengths": [
+      2,
+      16,
+      64,
+      256,
+      1024,
+      4096,
+      16384,
+      65536
+    ],
+    "signal_types": [
+      "silence",
+      "impulse",
+      "sine",
+      "sweep",
+      "noise"
+    ],
+    "rate_pairs": [
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        44100,
+        16000
+      ],
+      [
+        16000,
+        44100
+      ],
+      [
+        48000,
+        44100
+      ],
+      [
+        12499,
+        15001
+      ]
+    ],
+    "filter": "kaiser_fast",
+    "fp_mode": "contract=off"
+  },
+  "builds": {
+    "bench": {
+      "source": "/media/sunny/New Volume1/ADARSH/7_Programming Files/4. my_projects/1_pyromojo/libraries/resampy/benchmarks/bench.mojo",
+      "binary": "/media/sunny/New Volume1/ADARSH/7_Programming Files/4. my_projects/1_pyromojo/build/bench_resampy",
+      "build_ns": 1776334000
+    },
+    "cli": {
+      "source": "/media/sunny/New Volume1/ADARSH/7_Programming Files/4. my_projects/1_pyromojo/libraries/resampy/mojo/cli.mojo",
+      "binary": "/media/sunny/New Volume1/ADARSH/7_Programming Files/4. my_projects/1_pyromojo/build/resampy_cli",
+      "build_ns": 1965524238
+    }
+  },
+  "filter": {
+    "schema_version": 1,
+    "filter_id": "kaiser_fast_upstream_0_4_3",
+    "coefficient_count": 12289,
+    "precision": 512,
+    "rolloff": 0.8682120388377784,
+    "dtype": "float64",
+    "byte_order": "little",
+    "resource_bytes": 98312,
+    "resource_sha256": "4c96a90d1b0b93cf0a9620c5f66216416a6b19752bf18a208c837b55b719434b"
+  }
+}
