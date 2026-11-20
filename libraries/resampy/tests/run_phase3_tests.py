@@ -5,8 +5,10 @@ Builds every native Mojo test and the CLI with ``--fp-mode contract=off``
 (Phase 2 requirement: default ``contract=fast`` can shift Float64 results by
 1 ULP). Then runs each native suite and the Python compatibility pytest suite.
 
-This runner is local to ``libraries/resampy``; it does NOT modify the global
-``scripts/run_all_tests.py``. Run from the repository root::
+This runner is local to ``libraries/resampy`` and does not modify the global
+``scripts/run_all_tests.py``. The global runner independently includes the
+Resampy vector drift check, CLI build, and native/Python suites. Run from the
+repository root::
 
     .venv/bin/python libraries/resampy/tests/run_phase3_tests.py
 """
@@ -22,6 +24,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 MOJO = ROOT / ".venv" / "bin" / "mojo"
 BUILD = ROOT / "build" / "resampy_phase3"
+RESAMPY_TMP = Path("/tmp/pyromojo_resampy_phase3")
 MOJO_INCLUDE = ROOT / "libraries" / "resampy" / "mojo"
 TESTS_INCLUDE = ROOT / "libraries" / "resampy" / "tests" / "mojo"
 TESTS_DIR = TESTS_INCLUDE
@@ -37,6 +40,7 @@ NATIVE_TESTS = [
     "test_numerical_compare",
     "test_golden_vector",
     "test_cli",
+    "test_resample",
 ]
 
 FP_FLAGS = ["--fp-mode", "contract=off"]
@@ -60,6 +64,7 @@ def main() -> int:
     if not MOJO.exists():
         raise SystemExit(f"mojo not found at {MOJO}")
     BUILD.mkdir(parents=True, exist_ok=True)
+    RESAMPY_TMP.mkdir(parents=True, exist_ok=True)
 
     cli_binary = BUILD / "resampy_cli"
     run(

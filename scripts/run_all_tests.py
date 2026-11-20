@@ -5,16 +5,18 @@ From the repository root::
     uv sync --extra dev
     .venv/bin/python scripts/run_all_tests.py
 
-Steps, in order: ruff lint, ruff format check, golden-vector drift check,
+Steps, in order: ruff lint, ruff format check, golden-vector drift checks,
 the full pytest suite, then each native Mojo test executable (built once
-into ``build/`` and run). The first failing step stops the run with exit 1
-and prints the failing command plus its output tail; nothing is skipped
-silently. The Mojo compiler must report version 1.2.x; anything else fails
-instead of falling back to a system toolchain.
+into ``build/`` and run). The Resampy native suite and vector drift check
+are included. The first failing step stops the run with exit 1 and prints
+the failing command plus its output tail; nothing is skipped silently. The
+Mojo compiler must report version 1.2.x; anything else fails instead of
+falling back to a system toolchain.
 """
 
 from __future__ import annotations
 
+import os
 import shutil
 import subprocess
 import sys
@@ -22,6 +24,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 BUILD_DIR = ROOT / "build"
+RESAMPY_TMP = Path("/tmp/pyromojo_resampy_phase3")
 # Native test suites. Each suite builds its tests only against its own
 # trees; MessagePack entries come first and are untouched by later ones.
 MOJO_SUITES = [
@@ -95,6 +98,26 @@ MOJO_SUITES = [
             "test_adpcm",
         ],
     },
+    {
+        "tests_dir": "libraries/resampy/tests/mojo",
+        "includes": [
+            "libraries/resampy/mojo",
+            "libraries/resampy/tests/mojo",
+        ],
+        "prefix": "resampy_",
+        "build_flags": ["--fp-mode", "contract=off"],
+        "tests": [
+            "test_signal",
+            "test_output",
+            "test_float_codec",
+            "test_json_codec",
+            "test_coefficients",
+            "test_numerical_compare",
+            "test_golden_vector",
+            "test_cli",
+            "test_resample",
+        ],
+    },
 ]
 
 
@@ -129,9 +152,9 @@ def _check_mojo(mojo: list[str]) -> None:
         )
 
 
-def _run(label: str, command: list[str]) -> None:
+def _run(label: str, command: list[str], env: dict[str, str] | None = None) -> None:
     print(f"--- {label}: {' '.join(command)}")
-    result = subprocess.run(command, capture_output=True, text=True, cwd=ROOT)
+    result = subprocess.run(command, capture_output=True, text=True, cwd=ROOT, env=env)
     output = (result.stdout + result.stderr).strip()
     if result.returncode != 0:
         print(output[-4000:])
@@ -169,9 +192,30 @@ def main() -> int:
             "--check",
         ],
     )
+    _run(
+        "resampy vector drift check",
+        [*python, "libraries/resampy/tests/vectors/generate_resample_vectors.py", "--check"],
+    )
     _run("pytest", [*pytest, "-q"])
 
     BUILD_DIR.mkdir(exist_ok=True)
+    RESAMPY_TMP.mkdir(parents=True, exist_ok=True)
+    resampy_cli = str(BUILD_DIR / "resampy_cli")
+    _run(
+        "build resampy CLI",
+        [
+            *mojo,
+            "build",
+            "libraries/resampy/mojo/cli.mojo",
+            "-I",
+            "libraries/resampy/mojo",
+            "--fp-mode",
+            "contract=off",
+            "-o",
+            resampy_cli,
+        ],
+    )
+    test_env = {**os.environ, "RESAMPY_CLI": resampy_cli}
     for suite in MOJO_SUITES:
         for name in suite["tests"]:
             binary = str(BUILD_DIR / f"{suite['prefix']}{name}")
@@ -179,9 +223,10 @@ def main() -> int:
             command = [*mojo, "build", source]
             for include in suite["includes"]:
                 command += ["-I", include]
+            command += suite.get("build_flags", [])
             command += ["-o", binary]
             _run(f"build {name}", command)
-            _run(f"run {name}", [binary])
+            _run(f"run {name}", [binary], env=test_env)
 
     print("run_all_tests: all suites passed")
     return 0

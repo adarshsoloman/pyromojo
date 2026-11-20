@@ -638,10 +638,11 @@ transcribe the production `kaiser_fast.npz` before the Phase 1 legal questions
 
 ## 14. Known limitations `[U]` / `[I]`
 
-1. `[U]` **No native Resampy implementation exists**, so the Phase 1 tolerance
-   `max_abs ≤ 1e-9` is **NOT validated**. §9 establishes only upstream output
-   magnitudes/conditioning and repeatability (§10); port-vs-reference error is
-   unmeasurable until Phase 3. Keep the three concepts separate: (a) upstream
+1. `[U]` At Phase 2, **no native Resampy implementation existed**, so the
+   Phase 1 future-upstream tolerance proposal (`max_abs ≤ 1e-9`) was **NOT
+   validated**. §9 establishes only upstream output magnitudes/conditioning and
+   repeatability (§10); port-vs-reference error is unmeasurable until Phase 3.
+   Keep the three concepts separate: (a) upstream
    accuracy vs ideal signal (Phase 1 `test_quality.py` thresholds), (b)
    upstream repeatability (§10, bit-identical), (c) future port-vs-reference
    error (unknown).
@@ -678,8 +679,9 @@ transcribe the production `kaiser_fast.npz` before the Phase 1 legal questions
 **Do not begin implementation until Phase 2 is approved.** Recommended order:
 
 1. **Decide the open questions first:** (a) confirm v0.1 scope unchanged or
-   promote `sinc_window` given §4 contradiction; (b) resolve the 2-D
-   multi-channel conflict (`api-scope.md` §8 Q4 vs `libraries/resampy/README.md:28`);
+   promote `sinc_window` given §4 contradiction; (b) note that 2-D
+   multi-channel is deferred for v0.1.0 (`api-scope.md` §8 Q4;
+   `libraries/resampy/README.md:46` limits compatibility to supported 1-D/mono);
    (c) legal review of `kaiser_fast` coefficient transcription
    (`licensing-audit.md` §6); (d) choose coefficient resource format (§11/§13).
 2. **Fix the build contract:** pin `--fp-mode contract=off` (or explicitly
@@ -746,9 +748,9 @@ float method variants), documented in §4. No runtime failures.
 **Overall feasibility `[I]`:** **PASS — Mojo 1.2.0 can support the proposed
 Resampy v0.1.0 scope** (1-D Float64, `kaiser_fast`, native numerical execution,
 deterministic output, golden-vector testing), provided the build's floating-
-point contract is fixed and the tolerance is calibrated in Phase 3. The two
-material caveats are FMA contraction (§8) and the absence of a validated
-port-vs-reference tolerance (§14).
+point contract is fixed and the upstream tolerance is calibrated before parity
+claims. The two material caveats are FMA contraction (§8) and the absence of a
+validated port-vs-reference tolerance (§14).
 
 ---
 

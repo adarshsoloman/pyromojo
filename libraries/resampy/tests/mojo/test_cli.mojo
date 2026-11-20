@@ -1,4 +1,4 @@
-"""Phase 3 native tests: framed CLI operations (no resampling opcode).
+"""Phase 3 native tests: framed CLI operations.
 
 All requests are sent in ONE batched subprocess call: on this host, a
 Mojo-compiled binary launched from a Mojo parent via ``std.subprocess.run``

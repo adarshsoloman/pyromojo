@@ -1,4 +1,5 @@
-"""Phase 3 / Component F: framed binary protocol constants and helpers.
+"""Framed binary protocol constants and helpers for the representation layer
+and the Phase 4 resampling kernel.
 
 Wire format, identical to the four shipped ports (verified against
 ``libraries/audioop/mojo/mojo_audioop/protocol.mojo``):
@@ -29,7 +30,7 @@ comptime STATUS_ERROR: UInt8 = 1
 comptime OP_PING: UInt8 = 0x01
 comptime OP_ECHO: UInt8 = 0x02
 
-# Phase 3 representation-layer opcodes (no resampling opcode).
+# Phase 3 representation-layer opcodes.
 comptime OP_SIGNAL_INFO: UInt8 = 0x20
 comptime OP_OUTPUT_ALLOC: UInt8 = 0x21
 comptime OP_OUTPUT_SET: UInt8 = 0x22
@@ -40,6 +41,8 @@ comptime OP_COMPARE: UInt8 = 0x26
 comptime OP_GOLDEN_PARSE: UInt8 = 0x27
 comptime OP_GOLDEN_SERIALIZE: UInt8 = 0x28
 comptime OP_FILTER_LOAD: UInt8 = 0x29
+# Phase 4 kernel opcode.
+comptime OP_RESAMPLE: UInt8 = 0x2A
 
 
 def read_exact(mut fd: RawFileDescriptor, mut buffer: List[UInt8]) raises -> Int:

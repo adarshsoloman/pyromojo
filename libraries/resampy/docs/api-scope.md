@@ -2,10 +2,15 @@
 
 **Phase 1 deliverable — public API inventory and compatibility scope.**
 **Reference:** `resampy` 0.4.3, commit `7c484f8eec54b87e8f566578dc3e48a2be81cc80`
-(see `reference-audit.md`). **Status:** specification only; no implementation.
+(see `reference-audit.md`). **Status:** Phase 1 scope specification, reconciled
+with Phases 4–5. Current implementation status is tracked in
+[`resampling-design.md`](resampling-design.md) and the library
+[README](../README.md); the matrix below records v0.1.0 scope status.
+Phase 1 tolerance proposals in §6 and the open questions below are historical
+planning inputs, not the Phase 4 local gate.
 
 **Labels:** `[V]` verified from upstream source · `[I]` PyroMojo engineering
-decision/recommendation · `[U]` unresolved, requires Phase 2 evidence.
+decision/recommendation · `[U]` unresolved / requires further evidence.
 
 **Related Phase 1 documents:** [reference-audit.md](reference-audit.md) · [licensing-audit.md](licensing-audit.md) · [benchmark-design.md](benchmark-design.md) · [library README](../README.md).
 
@@ -134,42 +139,78 @@ Numba gufuncs, not documented API. `[V]`
 
 ---
 
-## 4. Proposed v0.1.0 scope `[I]`
+## 4. v0.1.0 scope `[I]`
 
 **Guiding principle:** a defensible first release reproduces `resample` for the
-most common, testable case with documented numerical tolerance — **not** full
-NumPy/Resampy API coverage. Phase 0 established that PyroMojo has no general
-multidimensional-array abstraction, no tolerance-comparison utility, and 1-D
-`List`/`Span` only.
+most common, testable case with documented numerical tolerance for a future
+upstream comparison — **not** full NumPy/Resampy API coverage. Phase 4 local
+reference agreement is exact; see §6. Phase 0 established that PyroMojo has no
+general multidimensional-array abstraction, no tolerance-comparison utility, and
+1-D `List`/`Span` only.
 
 **IN SCOPE (required):**
 
 | ID | Behaviour | Rationale |
 |---|---|---|
-| S1 | `resample(x, sr_orig, sr_new)` for **1-D float64** signal, `axis` fixed to last/only | Matches the dominant use case and the repository's 1-D data model. |
-| S2 | Output length = `int(L * float(sr_new)/float(sr_orig))`; exact `sr_orig == sr_new` copy; `sr_orig <= 0` / `sr_new <= 0` / `shape[axis] < 1` → `ValueError` with upstream message text | Cheap, deterministic, directly testable (`test_bad_sr`, `test_short_signal`, `test_resample_length_rounding`). |
-| S3 | Bundled **`kaiser_fast`** filter, coefficients transcribed bit-exactly (12,289 float64) | Small (~98 KB); avoids the 3.2 MB `kaiser_best` table in the first release. |
+| S1 | `resample(x, sr_orig, sr_new)` for **1-D float64** signal, `axis` fixed to last/only, **integer sampling rates** | Matches the dominant use case and the repository's 1-D data model. Non-integer rates are out of scope; see §4.1. |
+| S2 | Output length = `int(L * float(sr_new)/float(sr_orig))`; exact `sr_orig == sr_new` copy; `sr_orig <= 0` / `sr_new <= 0` / `shape[axis] < 1` → `ValueError` with upstream message text (upstream Python contract; Phase 4 Mojo behaviour differs, see §4.1) | Cheap, deterministic, directly testable (`test_bad_sr`, `test_short_signal`, `test_resample_length_rounding`). |
+| S3 | Bundled **`kaiser_fast`** filter (12,289 float64) — **Phase 5 status: NUMERICALLY VERIFIED**; synthetic resource committed, upstream table used only from the installed package in tests | Small (~98 KB); avoids the 3.2 MB `kaiser_best` table. Redistribution still requires licensing clearance. |
 | S4 | The exact interpolation loop: `n=int(τ)`, `frac`, `offset`, `eta`, `index_step`, `interp_delta`, left/right wings, `scale = min(1, ratio)`, downsampling gain compensation, zero-extension boundaries | This is the numerical contract; see `reference-audit.md` §3. |
-| S5 | Upsampling and downsampling with integer and non-integer `sr_new/sr_orig` ratios | Covers both `scale=1` and `scale<1` branches. |
-| S6 | Deterministic golden vectors + drift check; native Mojo tests; Python compatibility tests against pinned 0.4.3 with explicit tolerance | Repository convention (`docs/architecture.md`, four shipped ports). |
-| S7 | Framed binary CLI following the audioop convention (`uint32_be length | uint8 opcode | payload` → `uint8 status | payload`) | Only interop surface that is verified to work in this repo. |
-| S8 | Documented numerical tolerance policy (not exact equality) | `libraries/resampy/README.md:21-22` already requires it; §6 below. |
+| S5 | Upsampling and downsampling with integer rates and integer or non-integer `sr_new/sr_orig` ratios | Covers both `scale=1` and `scale<1` branches. Non-integer **rates** are not required. |
+| S6 | Deterministic golden vectors + drift check; native Mojo tests; Python compatibility tests against an independent reference; pinned-0.4.3 parity tests | Repository convention (`docs/architecture.md`, four shipped ports). Upstream parity is covered by `test_upstream_parity.py`. |
+| S7 | Framed binary CLI following the audioop convention (`uint32_be length | uint8 opcode | payload` → `uint8 status | payload`), including `OP_RESAMPLE = 0x2A` | Only interop surface that is verified to work in this repo. |
+| S8 | Documented numerical tolerance policy for upstream comparison | Phase 5 measured exact finite agreement (`atol = rtol = 0`) for 1-D Float64 integer rates; §6 below. |
+
+> **Phase 5 status note:** S3 (`kaiser_fast`) numerical parity is verified
+> against an installed Resampy 0.4.3 runtime. The repository still commits only
+> the synthetic resource, and redistributing a standalone coefficient resource
+> remains conditional on licensing clearance. S6 includes both the independent
+> local reference and the upstream parity test.
+
+### 4.1 Phase 4 Mojo contract clarifications
+
+The Phase 4 Mojo implementation does not expose Python exception types or
+message text. The S2 `ValueError`/message behaviour describes upstream Python
+only; the Mojo API raises `Error` and the CLI returns a `STATUS_ERROR` frame.
+
+- Sampling rates are integers: `sr_orig`/`sr_new` are `Int` in the Mojo API
+  and `u32_be` on the CLI. Non-integer sampling rates are **out of scope** for
+  v0.1.0. Non-integer rate ratios derived from integer rates (for example
+  `44100 -> 48000`) remain in scope.
+- `sr_orig <= 0` and `sr_new <= 0` are rejected, but as Mojo `Error` with a
+  diagnostic message.
+- A zero-length result (including empty input or truncation) returns an empty
+  `OutputBuffer`, and the CLI returns a successful empty payload. Upstream
+  raises `ValueError` for a zero-length output. Callers that need the upstream
+  exception must derive it from the inputs and `output_length`.
+- A single-sample input that truncates to zero follows the same empty-result
+  rule.
+- Filter validation failures (for example a missing resource or an invalid
+  precision) are Mojo `Error`s, not `NotImplementedError` or `ValueError`.
+- Resources loaded through `load_filter` are fully validated by the loader.
+  Kernel-level filter-table checks (`precision > coefficient_count` for a
+  non-empty table and non-finite filter coefficients) occur when interpolation
+  is performed.
+- Equal-rate and zero-output paths return before kernel-level filter
+  inspection. A filter supplied on those paths is not evaluated; the result is
+  an exact copy or an empty output respectively.
 
 **DEFERRED (valuable, not first release):** `kaiser_best`; `resample_nu`;
 2-D multi-channel; arbitrary `axis`/N-D; float32; complex dtypes; integer input
 → float32; C/F contiguity preservation; `parallel`; `sinc_window`/callable
 filters; custom `**kwargs`; `get_filter`/`clear_cache`/`load_filter` as public
-API; NaN/Inf semantics; non-contiguous arrays.
+API; non-integer sampling rates; NaN/Inf parity with upstream beyond documented
+IEEE propagation; non-contiguous arrays.
 
 **OUT OF SCOPE (not planned for v0.1.0):** full NumPy ndarray compatibility;
 SciPy/Numba runtime parity; Python-extension/interop API; runtime filter
 regeneration from Kaiser/window parameters; `optuna`-based filter design;
 bit-exact equality with the Numba-compiled reference.
 
-**Proposed Mojo API shape `[I]`** (for later phases, not implemented here):
-a single `resample(fragment: Span[Float64, _], sr_orig: Int, sr_new: Int,
-filter: …) raises -> List[Float64]`, with validation helpers and a wire codec in
-`mojo_resampy/`. Names are **proposals**, not upstream names.
+**Phase 4 Mojo API shape `[I]`** — implemented as:
+`resample(fragment: Span[Float64, _], sr_orig: Int, sr_new: Int, filter: …)
+raises -> List[Float64]`, with validation helpers and a wire codec in
+`mojo_resampy/`. Names are local, not upstream names. Rates are integer-only.
 
 ---
 
@@ -191,7 +232,7 @@ filter: …) raises -> List[Float64]`, with validation helpers and a wire codec 
 
 ---
 
-## 6. Numerical compatibility specification `[I]` (proposal) + `[V]` (evidence)
+## 6. Numerical compatibility specification `[I]` (historical Phase 1 proposal) + `[V]` (evidence)
 
 **Evidence available `[V]`:**
 - Bundled filter tables are float64 (`reference-audit.md` §6).
@@ -205,6 +246,17 @@ filter: …) raises -> List[Float64]`, with validation helpers and a wire codec 
 - `test_resample_matched` uses `np.allclose(x, y)` (defaults `rtol=1e-5`).
 - All PyroMojo ports to date use **exact** equality (hex/bits); no tolerance
   helper exists (`reference-audit.md` Phase 0 findings).
+- Phase 5 executed Resampy 0.4.3 `kaiser_fast` against the native kernel:
+  15 finite committed cases plus a 1,684-case sweep were bit-identical;
+  non-finite cases matched position-wise. `atol = rtol = 0` is measured for
+  the supported 1-D Float64 integer-rate contract.
+
+> **Historical Phase 1 proposal — not the Phase 4 local contract.** Phase 4
+> Mojo/reference tests use exact equality (`atol = 0.0`, `rtol = 0.0`) against
+> the independent local reference, as documented in `resampling-design.md`. The
+> `atol = rtol = 1e-9` values below apply only to a future comparison against a
+> pinned upstream Resampy 0.4.3 runtime. They are not adopted, measured, or
+> frozen.
 
 **Policy proposal `[I]` — not an upstream requirement:**
 
@@ -212,9 +264,9 @@ filter: …) raises -> List[Float64]`, with validation helpers and a wire codec 
 |---|---|
 | Primary metric | **Maximum absolute error** over the whole output, `max_i |y_mojo[i] − y_ref[i]|`, plus **RMSE** as a secondary summary. Both are recorded per vector. |
 | Secondary metric | `np.testing.assert_allclose`-style combined `|a−b| <= atol + rtol·|b|`, reported but not the sole gate. |
-| Initial tolerance (float64, `kaiser_fast`) | **Proposed `atol = 1e-9`, `rtol = 1e-9`** with a hard `max_abs <= 1e-9`. `[I]` Rationale: the loop performs the same `Float64` operations in the same order on the same float64 coefficients, so divergence should be at the last-bit/accumulation level (~`1e-13` observed upstream); `1e-9` leaves ~4 orders of headroom for compiler/libm/association differences without masking a real bug. **These are engineering proposals, not measured values, and must be calibrated against real outputs in Phase 2 before being frozen.** |
-| Initial tolerance (float32, if later) | `[U]` — separate, looser regime (accumulation in float32); must be measured, not guessed. |
-| NaN / Inf | Match position-wise: NaN⇔NaN, Inf⇔Inf with sign. Excluded from equality where the reference is undefined; documented per case. `[U]` upstream semantics untested. |
+| Future upstream tolerance (float64, `kaiser_fast`) | **Proposed `atol = 1e-9`, `rtol = 1e-9`** with a hard `max_abs <= 1e-9`. `[I]` Rationale: the loop performs the same `Float64` operations in the same order on the same float64 coefficients, so divergence should be at the last-bit/accumulation level (~`1e-13` observed upstream); `1e-9` leaves ~4 orders of headroom for compiler/libm/association differences without masking a real bug. **These are engineering proposals, not measured values, and must be calibrated against real outputs in Phase 2 before being frozen.** |
+| Future upstream tolerance (float32, if later) | `[U]` — separate, looser regime (accumulation in float32); must be measured, not guessed. |
+| NaN / Inf | Match position-wise: NaN⇔NaN, Inf⇔Inf with sign. `[V]` Phase 5 upstream execution; semantic match. |
 | Determinism | Same input → bit-identical Mojo output across runs and process boundaries; reference generated once in the pinned venv and committed. |
 | Equal-rate path | Exact copy (bit-identical), no tolerance needed. |
 | Length | Exact integer equality, no tolerance. |
@@ -250,11 +302,12 @@ endianness as the comparison. Do **not** implement this layer in Phase 1.
 | Public API item / behaviour | Upstream | PyroMojo v0.1.0 |
 |---|---|---|
 | `resample` 1-D float64, integer rates | `[V]` supported | **IN SCOPE** |
-| `resample` non-integer rates | `[V]` supported | **IN SCOPE** |
+| `resample` non-integer rates | `[V]` supported | **OUT OF SCOPE** for v0.1.0; integer rates only |
+| `resample` non-integer ratios with integer rates | `[V]` supported | **IN SCOPE** |
 | `resample` up/down-sampling | `[V]` supported | **IN SCOPE** |
 | `sr_orig == sr_new` copy | `[V]` supported | **IN SCOPE** |
 | Validation (`<=0` rates, too-short signal) | `[V]` supported | **IN SCOPE** |
-| `kaiser_fast` filter | `[V]` bundled | **IN SCOPE** |
+| `kaiser_fast` filter | `[V]` bundled | **VERIFIED NUMERICALLY** — synthetic resource committed; upstream parity test passes; redistribution licensing unresolved |
 | `kaiser_best` filter | `[V]` bundled | DEFERRED |
 | `resample_nu` | `[V]` supported | DEFERRED |
 | 2-D / N-D / arbitrary `axis` | `[V]` supported | DEFERRED |
@@ -267,25 +320,26 @@ endianness as the comparison. Do **not** implement this layer in Phase 1.
 | callable filters / `**kwargs` | `[V]` supported | OUT OF SCOPE |
 | `get_filter`, `load_filter`, `clear_cache`, `FILTER_CACHE` | `[V]` public | OUT OF SCOPE |
 | `resampy.__version__`, `version.py` | `[V]` public | OUT OF SCOPE (Mojo port has its own version) |
-| NaN/Inf, extreme ratios, empty/single-sample | `[U]` | OUT OF SCOPE until probed |
+| NaN/Inf, extreme ratios, empty/single-sample | `[U]` | **PARTIAL** — empty/single-sample is a documented deviation; NaN/Inf propagation matches upstream in Phase 5 tests |
 | Python-to-Mojo interop API | n/a | OUT OF SCOPE |
-| Exact bit-equality with Numba output | `[U]` | OUT OF SCOPE (tolerance policy instead) |
+| Exact bit-equality with Numba output | `[U]` | **VERIFIED** for tested 1-D Float64 finite contract; deferred modes uncovered |
 
 ---
 
 ## 8. Open questions `[U]`
 
-1. Calibrate the proposed `atol/rtol` against real 0.4.3 outputs in a pinned
-   reference venv (Phase 2). Until then the numbers are proposals.
+1. Phase 5 measured exact finite upstream parity for the supported contract.
+   Re-calibrate only if the upstream version or Mojo/LLVM FP behaviour changes;
+   the historical `1e-9` proposal is not the adopted gate.
 2. Whether `kaiser_best` (3.2 MB) can be embedded without unacceptable compile
    time / binary size — decide with a Phase 2 toolchain probe.
 3. Whether `resample_nu` should be added in v0.1 if the wire/tolerance cost is
    lower than expected.
-4. Whether 2-D multi-channel should be promoted into v0.1 (the local
-   `libraries/resampy/README.md:28` lists "mono and multi-channel input" as a
-   compatibility objective — a conflict with this scope that must be resolved
-   by the maintainer).
-5. Exact upstream behaviour for empty/single-sample/extreme-ratio/NaN cases.
+4. Whether 2-D multi-channel should be promoted after v0.1.0. It is deferred
+   for v0.1.0, and the README compatibility objective is limited to supported
+   1-D/mono input (`README.md:46`).
+5. Empty/single-sample remains a documented deviation. NaN/Inf propagation
+   matched upstream in Phase 5; extreme ratios remain partially unprobed.
 6. Whether Mojo 1.2.0 can store/iterate a 12,289-element float64 `StaticTuple`
    or needs a runtime `List[Float64]` (Phase 2 probe; Phase 0 verified
    `StaticTuple` only for small tables).

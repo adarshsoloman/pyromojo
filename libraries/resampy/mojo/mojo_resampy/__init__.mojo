@@ -1,7 +1,7 @@
-"""Phase 3 Resampy representation layer (no resampling algorithm).
+"""Resampy representation layer and Phase 4 resampling kernel.
 
-Only representation, comparison, codec and verification utilities are
-exported. The interpolation kernel belongs to a later phase.
+Representation, comparison, codec and verification utilities are exported
+alongside ``resample`` and ``output_length``.
 """
 
 from mojo_resampy.signal import Signal
@@ -43,6 +43,7 @@ from mojo_resampy.golden_vector import (
     parse_golden_vector,
     serialize_golden_vector,
 )
+from mojo_resampy.resample import resample, output_length
 from mojo_resampy.protocol import (
     MAX_FRAME_BYTES,
     OP_COMPARE,
@@ -55,6 +56,7 @@ from mojo_resampy.protocol import (
     OP_OUTPUT_ALLOC,
     OP_OUTPUT_SET,
     OP_PING,
+    OP_RESAMPLE,
     OP_SHA256,
     OP_SIGNAL_INFO,
     STATUS_ERROR,

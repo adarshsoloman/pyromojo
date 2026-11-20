@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import json
 import math
 import struct
 import subprocess
@@ -27,6 +28,7 @@ OP_COMPARE = 0x26
 OP_GOLDEN_PARSE = 0x27
 OP_GOLDEN_SERIALIZE = 0x28
 OP_FILTER_LOAD = 0x29
+OP_RESAMPLE = 0x2A
 
 
 def f64le(values: list[float]) -> bytes:
@@ -134,6 +136,29 @@ def filter_load_body(meta: bytes, resource: bytes) -> bytes:
         + meta
         + struct.pack(">I", len(resource))
         + resource
+    )
+
+
+def resample_body(
+    signal: list[float],
+    sr_orig: int,
+    sr_new: int,
+    meta: bytes,
+    resource: bytes,
+    filter_id: str | None = None,
+) -> bytes:
+    fid = (filter_id if filter_id is not None else json.loads(meta)["filter_id"]).encode("utf-8")
+    return (
+        bytes([OP_RESAMPLE])
+        + struct.pack(">II", sr_orig, sr_new)
+        + struct.pack(">I", len(fid))
+        + fid
+        + struct.pack(">I", len(meta))
+        + meta
+        + struct.pack(">I", len(resource))
+        + resource
+        + struct.pack(">I", len(signal))
+        + f64le(signal)
     )
 
 

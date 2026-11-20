@@ -5,7 +5,7 @@ test's working directory; the library-local runner sets ``RESAMPY_ROOT``.
 """
 
 from std.collections import List
-from std.testing import TestSuite, assert_equal, assert_raises
+from std.testing import TestSuite, assert_equal, assert_raises, assert_true
 
 from mojo_resampy.coefficients import (
     load_filter,
@@ -90,7 +90,7 @@ def test_reject_wrong_dtype() raises:
 
 
 def test_reject_count_bytes_mismatch() raises:
-    var bad = String(from_utf8=Span(_bytes("{\"schema_version\":1,\"filter_id\":\"x\",\"coefficient_count\":4,\"precision\":8,\"rolloff\":0.9,\"dtype\":\"float64\",\"byte_order\":\"little\",\"resource_bytes\":64,\"resource_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"}")))
+    var bad = String(from_utf8=Span(_bytes("{\"schema_version\":1,\"filter_id\":\"x\",\"coefficient_count\":4,\"precision\":4,\"rolloff\":0.9,\"dtype\":\"float64\",\"byte_order\":\"little\",\"resource_bytes\":64,\"resource_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"}")))
     with assert_raises():
         _ = parse_filter_metadata(bad)
 
@@ -164,6 +164,15 @@ def test_ordinary_count_metadata_accepted() raises:
     var meta = parse_filter_metadata(_meta_with_count(8))
     assert_equal(meta.coefficient_count, 8)
     assert_equal(meta.resource_bytes, 64)
+
+
+def test_reject_precision_above_nonempty_count() raises:
+    var message = String("")
+    try:
+        _ = parse_filter_metadata(_meta_with_count(2))
+    except e:
+        message = String(e)
+    assert_true("exceeds non-empty coefficient_count" in message)
 
 
 def test_maximum_count_metadata_accepted() raises:

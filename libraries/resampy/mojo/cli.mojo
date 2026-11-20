@@ -1,9 +1,9 @@
-"""Phase 3 / Component F: minimal framed CLI for the representation layer.
+"""Minimal framed CLI for the representation layer and the Phase 4 kernel.
 
-There is NO resampling opcode. Every operation exercises one Phase 3
-component only. Malformed requests produce one STATUS_ERROR frame and the
-session continues (no unexpected process crash). Framing errors follow the
-established audioop convention (error frame + diagnostic + non-zero exit).
+Each operation exercises one representation component or the resampling
+kernel. Malformed requests produce one STATUS_ERROR frame and the session
+continues (no unexpected process crash). Framing errors follow the established
+audioop convention (error frame + diagnostic + non-zero exit).
 
 Build (see ``docs/representation-design.md`` §10)::
 
@@ -21,6 +21,9 @@ Payload layouts (all integers big-endian, Float64 little-endian):
   OP_GOLDEN_PARSE      : <JSON text>            -> summary record
   OP_GOLDEN_SERIALIZE  : <JSON text>            -> canonical JSON text
   OP_FILTER_LOAD       : <u32 meta_len> <meta JSON> <u32 bin_len> <bin> -> filter summary
+  OP_RESAMPLE          : <u32 sr_orig> <u32 sr_new> <u32 id_len> <filter_id>
+                         <u32 meta_len> <meta JSON> <u32 bin_len> <bin>
+                         <u32 input_count> <f64 input> -> <f64 output>
 """
 
 from std.collections import List
@@ -39,6 +42,7 @@ from mojo_resampy.protocol import (
     OP_OUTPUT_ALLOC,
     OP_OUTPUT_SET,
     OP_PING,
+    OP_RESAMPLE,
     OP_SHA256,
     OP_SIGNAL_INFO,
     STATUS_ERROR,
@@ -62,6 +66,7 @@ from mojo_resampy.output import OutputBuffer
 from mojo_resampy.numerical_compare import compare_arrays
 from mojo_resampy.golden_vector import parse_golden_vector, serialize_golden_vector
 from mojo_resampy.coefficients import validate_filter_resource, describe_filter
+from mojo_resampy.resample import resample
 
 
 def _reply_error(mut stdout: RawFileDescriptor, message: String) raises:
@@ -195,6 +200,46 @@ def _filter_load(payload: Span[UInt8, _]) raises -> List[UInt8]:
     return ascii_bytes(describe_filter(resource))
 
 
+def _resample(payload: Span[UInt8, _]) raises -> List[UInt8]:
+    var offset = 0
+    var sr_orig = _u32(payload, offset, "resample sr_orig")
+    offset += 4
+    var sr_new = _u32(payload, offset, "resample sr_new")
+    offset += 4
+    var id_len = _u32(payload, offset, "resample filter_id_len")
+    offset += 4
+    _need(payload, offset, id_len, "resample filter_id")
+    var filter_id = _text(payload[offset : offset + id_len])
+    offset += id_len
+    var meta_len = _u32(payload, offset, "resample meta_len")
+    offset += 4
+    _need(payload, offset, meta_len, "resample metadata")
+    var meta_text = _text(payload[offset : offset + meta_len])
+    offset += meta_len
+    var bin_len = _u32(payload, offset, "resample bin_len")
+    offset += 4
+    _need(payload, offset, bin_len, "resample resource")
+    var resource_bytes = payload[offset : offset + bin_len]
+    offset += bin_len
+    var input_count = _u32(payload, offset, "resample input_count")
+    offset += 4
+    _need(payload, offset, input_count * 8, "resample input")
+    if len(payload) != offset + input_count * 8:
+        raise Error("resample: trailing bytes after input")
+
+    var resource = validate_filter_resource(meta_text, resource_bytes)
+    if resource.metadata.filter_id != filter_id:
+        raise Error(
+            "resample: filter_id '" + filter_id + "' does not match resource '"
+            + resource.metadata.filter_id + "'"
+        )
+
+    var values = decode_f64le(payload[offset : offset + input_count * 8])
+    var signal = Signal(values^)
+    var out = resample(signal, sr_orig, sr_new, resource)
+    return encode_f64le(out.view())
+
+
 def main() raises:
     var stdin = RawFileDescriptor(0)
     var stdout = RawFileDescriptor(1)
@@ -246,6 +291,9 @@ def main() raises:
                 write_frame(stdout, STATUS_OK, Span(out))
             elif opcode == OP_FILTER_LOAD:
                 var out = _filter_load(payload)
+                write_frame(stdout, STATUS_OK, Span(out))
+            elif opcode == OP_RESAMPLE:
+                var out = _resample(payload)
                 write_frame(stdout, STATUS_OK, Span(out))
             else:
                 _reply_error(stdout, "unknown opcode " + String(Int(opcode)))

@@ -17,6 +17,7 @@ whose ``byte_order`` is not ``"little"``; no host-endian inference is used.
 
 from std.collections import List
 from std.io import FileHandle
+from std.math import isinf, isnan
 
 from mojo_resampy.float_codec import decode_f64le, bytes_to_hex
 from mojo_resampy.json_codec import parse_json_object
@@ -149,6 +150,11 @@ def parse_filter_metadata(text: String) raises -> FilterMetadata:
     var precision = obj.get_int("precision")
     if precision <= 0:
         raise Error("coefficient precision must be positive, got " + String(precision))
+    if count > 0 and precision > count:
+        raise Error(
+            "coefficient precision " + String(precision)
+            + " exceeds non-empty coefficient_count " + String(count)
+        )
     var rolloff = obj.get_float("rolloff")
     if rolloff <= 0.0 or rolloff > 1.0:
         raise Error("coefficient rolloff must be in (0, 1], got " + String(rolloff))
@@ -236,6 +242,9 @@ def validate_filter_resource(
             "decoded coefficient count " + String(len(values))
             + " does not match metadata " + String(metadata.coefficient_count)
         )
+    for i in range(len(values)):
+        if isnan(values[i]) or isinf(values[i]):
+            raise Error("coefficient " + String(i) + " is not finite")
     return FilterCoefficients(metadata, values^)
 
 

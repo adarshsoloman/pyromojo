@@ -14,6 +14,9 @@ ROOT = Path(__file__).resolve().parents[4]
 CLI_SOURCE = ROOT / "libraries" / "resampy" / "mojo" / "cli.mojo"
 MOJO_INCLUDE = ROOT / "libraries" / "resampy" / "mojo"
 VECTORS = ROOT / "libraries" / "resampy" / "tests" / "vectors" / "representation_vectors.json"
+RESAMPLING_VECTORS = (
+    ROOT / "libraries" / "resampy" / "tests" / "vectors" / "resampling_vectors.json"
+)
 FILTER_META = ROOT / "libraries" / "resampy" / "resources" / "synthetic" / "synthetic_filter.json"
 FILTER_BIN = ROOT / "libraries" / "resampy" / "resources" / "synthetic" / "synthetic_filter.bin"
 
@@ -62,3 +65,8 @@ def vectors_bundle() -> dict:
 @pytest.fixture(scope="session")
 def filter_resource() -> tuple[bytes, bytes]:
     return FILTER_META.read_bytes(), FILTER_BIN.read_bytes()
+
+
+@pytest.fixture(scope="session")
+def resampling_vectors_bundle() -> dict:
+    return json.loads(RESAMPLING_VECTORS.read_text(encoding="utf-8"))

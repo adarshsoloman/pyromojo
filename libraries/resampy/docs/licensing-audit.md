@@ -236,6 +236,14 @@ must be confirmed and recorded rather than assumed from "latest" metadata.
 was installed or pinned, no `pyproject.toml`/`uv.lock` change, no coefficient
 transcription, no clean-room or derivative-work claim.
 
+**Phase 5 execution note:** with explicit user authorization, the repository
+`.venv` was populated test-only with `resampy==0.4.3`, `numpy==2.5.5`,
+`numba==0.68.1`, and `llvmlite==0.50.0` via `uv pip install`; `pyproject.toml`
+and `uv.lock` were not changed. The parity test reads the installed upstream
+`kaiser_fast` table into a temporary directory and does not commit or
+redistribute it. Q1/Q6 remain unresolved for committing a standalone
+coefficient resource. No legal conclusion is made.
+
 ---
 
 ## 7. Summary `[I]`

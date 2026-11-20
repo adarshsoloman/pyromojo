@@ -1,8 +1,15 @@
 # Representation Layer Design: PyroMojo Resampy Phase 3
 
-**Status:** Phase 3 complete — representation/verification infrastructure only.
-**No resampling algorithm, no `resample`, no `resample_nu`, no interpolation loop,
-no filter generation, no upstream coefficient data.**
+> **Historical document — superseded by Phase 4.** This records the original
+> Phase 3 representation-only design. Phase 4 subsequently introduced the
+> `resample`/`output_length` kernel and the `OP_RESAMPLE` CLI opcode. Current
+> implementation status is documented in
+> [`resampling-design.md`](resampling-design.md). Phase 3 statements below must
+> not be interpreted as the current implementation status.
+
+**Status at Phase 3 completion:** representation/verification infrastructure
+only. **No resampling algorithm, no `resample`, no `resample_nu`, no
+interpolation loop, no filter generation, no upstream coefficient data.**
 
 **Reference:** `resampy` 0.4.3, commit `7c484f8eec54b87e8f566578dc3e48a2be81cc80`
 (Phase 1). Approved scope: 1-D Float64 signals, last-axis semantics,
