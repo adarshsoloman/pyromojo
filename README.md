@@ -53,15 +53,25 @@ A Mojo port is **not assumed to be faster** than an optimized native implementat
 
 ## Libraries
 
-| | Library | Version | What it is | Verification |
-|:-:|---|:-:|---|---|
-| 01 | [MessagePack](libraries/msgpack/) | `v0.1.0` | Binary serialization codec | 162 vectors · 79 native + 129 Python tests |
-| 02 | [Levenshtein](libraries/levenshtein/) | `v0.1.0` | String distance and similarity | 434 vectors · 40 native + 25 Python tests |
-| 03 | [Bitarray](libraries/bitarray/) | `v0.1.0` | Packed-bit arrays | 266 vectors · 74 native + 391 Python tests |
-| 04 | [Audioop](libraries/audioop/) | `v0.1.0` | CPython 3.12 `audioop`, 26/26 operations | 1,277 vectors · 105 native + 136 Python tests |
-| 05 | [Resampy](libraries/resampy/) | `v0.1.0` (unreleased) | Audio resampling | 29 vectors · 144 native + 90 Python tests · 275/275 benchmark gates; release blocked on coefficient licensing |
+| | Library | Version | Status | What it is | Verification |
+|:-:|---|:-:|---|---|---|
+| 01 | [MessagePack](libraries/msgpack/) | `v0.1.0` | Released | Binary serialization codec | 162 vectors · 79 native + 129 Python tests |
+| 02 | [Levenshtein](libraries/levenshtein/) | `v0.1.0` | Released | String distance and similarity | 434 vectors · 40 native + 25 Python tests |
+| 03 | [Bitarray](libraries/bitarray/) | `v0.1.0` | Released | Packed-bit arrays | 266 vectors · 74 native + 391 Python tests |
+| 04 | [Audioop](libraries/audioop/) | `v0.1.0` | Released | CPython 3.12 `audioop`, 26/26 operations | 1,277 vectors · 105 native + 136 Python tests |
+| 05 | [Resampy](libraries/resampy/) | `v0.1.0` target | Technically complete — licensing blocked | Native 1-D Float64 audio resampling | 29 vectors · 144 native + 90 Python tests · 275/275 benchmark gates |
 
-<sub>01–04 are released at `v0.1.0`. Resampy (05) is implemented and benchmarked, but its public release is blocked pending written clearance to redistribute the production coefficient table; see [release readiness](libraries/resampy/RELEASE_READINESS.md).</sub>
+<sub>01–04 are released at `v0.1.0`. Resampy (05) is technically complete and benchmarked, but its public release is blocked pending written clearance to redistribute the production coefficient table; see [release readiness](libraries/resampy/RELEASE_READINESS.md).</sub>
+
+### Resampy (05) — technically complete, not released
+
+**Resampy has not been publicly released. Its production coefficient resource is not included in the repository.**
+
+- Native Mojo implementation of whole-buffer, one-dimensional Float64 resampling with integer sampling-rate inputs and a validated, externally supplied `kaiser_fast` filter path.
+- CLI opcode `0x2A`, upstream numerical parity verification, and completed benchmarks (275/275 exact gates).
+- Production coefficient redistribution licensing remains unresolved. Do not distribute the upstream `kaiser_fast` table.
+
+Documents: [library README](libraries/resampy/README.md) · [release readiness](libraries/resampy/RELEASE_READINESS.md) · [release handoff](libraries/resampy/RELEASE_HANDOFF.md).
 
 <br>
 
@@ -75,7 +85,7 @@ Three-way comparisons on identical inputs: a **pure-Python** implementation (sam
 | Bitarray | ~2–205× faster | matches or beats at 64-bit sizes; trails ~2–75× at 1 Mibit |
 | Levenshtein | up to ~45× faster than the untrimmed baseline (ratio) | slower, ~2–9× on distance |
 | MessagePack | n/a | up to ~4× faster on small-map encode; binary encode 7.4× slower |
-| Resampy | n/a (upstream is Numba-only) | ~0.13–0.25× vs upstream warm Numba; CLI 15–33× (1:1 ~4,300×) process/framing overhead |
+| Resampy (not released) | n/a (upstream is Numba-only) | ~0.13–0.25× vs upstream warm Numba; CLI 15–33× (1:1 ~4,300×) process/framing overhead |
 
 Neither side is universally faster, and Mojo is **not assumed to be faster** than an optimized native implementation. Where it trails, the gaps have identified causes (per-call allocation, byte-serial loops, scalar arithmetic) and are the subject of the next phase: **profile first, then optimize.**
 
@@ -139,7 +149,7 @@ uv sync --extra dev
 |---|---|---|
 | 1 | Repository foundation | ✅ Complete |
 | 2 | MessagePack, the first complete port | ✅ Complete |
-| 3 | First five verified ports | 🔶 4 released; 5th implemented, release blocked |
+| 3 | First five verified ports | 🔶 4 released; Resampy technically complete, licensing blocked |
 | 4 | Expand toward 20 libraries | ⬜ Planned |
 | 5 | Performance analysis and upstream contributions | ⬜ Planned |
 
@@ -158,7 +168,7 @@ Details and exit criteria: [docs/roadmap.md](docs/roadmap.md).
 pyromojo/
 ├── libraries/
 │   ├── msgpack/  levenshtein/  bitarray/  audioop/    # shipped, v0.1.0
-│   └── resampy/                                       # v0.1.0-rc, release blocked
+│   └── resampy/                                       # v0.1.0 target; licensing blocked
 │       └── (each) mojo/ · python_reference/ · tests/ · benchmarks/ · docs/
 ├── shared/
 │   ├── benchmark_utils/      # timing harness, statistics, environment capture

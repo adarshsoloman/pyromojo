@@ -4,7 +4,7 @@ All notable changes to the `resampy` native Mojo port will be documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and
 [Semantic Versioning](https://semver.org/).
 
-## [resampy-v0.1.0] — unreleased (blocked on coefficient licensing)
+## resampy-v0.1.0 — unreleased (BLOCKED — LICENSING)
 
 Initial native Mojo implementation of the supported `resampy` 0.4.3
 `resample` contract for 1-D Float64 signals with integer sampling rates.
@@ -89,8 +89,7 @@ only a synthetic coefficient resource.
 
 - `kaiser_fast` coefficient redistribution has not been cleared. The
   unresolved requirement is recorded in
-  [`docs/licensing-audit.md`](docs/licensing-audit.md) §6 and
-  [`RELEASE_READINESS.md`](RELEASE_READINESS.md) §8. No legal conclusion is
-  made by this project.
-
-[resampy-v0.1.0]: https://github.com/adarshsoloman/pyromojo/releases/tag/resampy-v0.1.0
+  [`docs/licensing-audit.md`](docs/licensing-audit.md) §6,
+  [`RELEASE_READINESS.md`](RELEASE_READINESS.md) §8, and
+  [`RELEASE_HANDOFF.md`](RELEASE_HANDOFF.md) §5. No legal conclusion is made
+  by this project.

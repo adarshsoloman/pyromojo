@@ -1,6 +1,6 @@
 # Resampy v0.1.0 — release notes draft
 
-> **Release status: BLOCKED — not approved for publication.** The native
+> **Release status: BLOCKED — LICENSING.** The native
 > implementation, numerical verification, and benchmarks are complete, but
 > written clearance to redistribute the production `kaiser_fast` coefficient
 > table has not been obtained. See [Release readiness](RELEASE_READINESS.md)
@@ -11,7 +11,7 @@ Native Mojo port of the supported `resampy` 0.4.3 `resample` contract:
 1-D Float64, integer sampling rates, and a validated external `kaiser_fast`
 filter resource.
 
-## What is included
+## What the implementation includes
 
 - **`resample` and `output_length`** for whole-buffer 1-D Float64 signals.
 - **Integer sampling rates** with integer or non-integer rate ratios
@@ -111,7 +111,8 @@ uv sync --extra dev
 - [Resampling design](docs/resampling-design.md) · [Reference audit](docs/reference-audit.md)
 - [Licensing audit](docs/licensing-audit.md) · [Benchmark design](docs/benchmark-design.md)
 - [Benchmark report](benchmarks/reports/BENCHMARK_REPORT.md)
-- [Release readiness](RELEASE_READINESS.md) · [Changelog](CHANGELOG.md)
+- [Release readiness](RELEASE_READINESS.md) · [Release handoff](RELEASE_HANDOFF.md)
+- [Changelog](CHANGELOG.md)
 
 ## Attribution and licensing
 

@@ -1,11 +1,12 @@
 # resampy v0.1.0 — Release Readiness
 
 Assessment of the native Mojo port of the supported `resampy` 0.4.3
-`resample` contract for a first public release. This document records evidence
-and open items; it does not itself create a tag or release.
+`resample` contract for a possible future public release. This document records
+evidence and open items; it does not itself create a tag or release.
 
-**Base:** branch `main`, HEAD `7e7784a`
-(`feat(resampy): add reproducible performance benchmarks`).
+**Base:** branch `main`; benchmark evidence at `7e7784a`
+(`feat(resampy): add reproducible performance benchmarks`); release
+documentation at `5c20c8a` (`docs(resampy): prepare v0.1.0 release readiness`).
 
 ## 1. Decision summary
 
@@ -17,7 +18,7 @@ and open items; it does not itself create a tag or release.
 | Test suite | Complete; 144 native + 90 Python tests |
 | Documentation | Release documents and status updates complete |
 | Production coefficient redistribution | **Unresolved** |
-| **Verdict** | **BLOCKED** |
+| **Verdict** | **BLOCKED — LICENSING** |
 
 A release must not be published while a mandatory production resource remains
 unlicensed for redistribution. The repository does not include or regenerate
@@ -166,8 +167,8 @@ do not describe the release as ready or published.
 
 ## 9. Documentation and repository integration
 
-- Library README updated from the stale Phase 5 status to v0.1.0 release
-  candidate status, benchmark evidence, and the licensing blocker.
+- Library README updated from the stale Phase 5 status to the v0.1.0
+  release-blocked status, benchmark evidence, and the licensing blocker.
 - New `CHANGELOG.md`, `RELEASE_NOTES_v0.1.0.md`, and this readiness report.
 - Root README, roadmap, and third-party notices updated to reflect Resampy's
   implementation/benchmark status and the unresolved coefficient-data issue.
@@ -179,9 +180,9 @@ do not describe the release as ready or published.
 
 ## 10. Recommended version
 
-**v0.1.0** — first public implementation of the restricted `resample`
-contract. It is not a drop-in replacement for the full Resampy Python API, and
-it is not yet publishable.
+**v0.1.0** — first implementation of the restricted `resample` contract. It is
+not a drop-in replacement for the full Resampy Python API, and it is not yet
+publishable.
 
 ## 11. Release blockers
 
@@ -196,12 +197,13 @@ quiet host before publishing tighter performance claims.
 
 ## 12. Verdict
 
-**BLOCKED**
+**BLOCKED — LICENSING**
 
 The implementation, parity evidence, tests, and benchmarks meet the v0.1.0
 technical bar. Release is blocked solely because the mandatory production
 `kaiser_fast` coefficient resource has not been cleared for redistribution.
 The exact outstanding requirement is stated in §8.
 
-No commit, push, tag, GitHub release, package publication, or coefficient
-redistribution was performed as part of this assessment.
+No release tag, GitHub release, package publication, or coefficient
+redistribution was performed as part of this assessment. The final handoff is
+recorded in [`RELEASE_HANDOFF.md`](RELEASE_HANDOFF.md).

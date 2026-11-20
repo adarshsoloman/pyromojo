@@ -1,6 +1,6 @@
 # resampy (Mojo Port)
 
-## Status: v0.1.0 release candidate — BLOCKED on coefficient licensing
+## Status: BLOCKED — LICENSING (v0.1.0 target)
 
 The native implementation, upstream parity, and benchmarks are complete for
 the supported contract: **1-D Float64, integer sampling rates, `kaiser_fast`
@@ -124,4 +124,5 @@ All numerical builds must use `--fp-mode contract=off`; the default
 - [Reference audit](docs/reference-audit.md) · [Licensing audit](docs/licensing-audit.md)
 - [Representation design](docs/representation-design.md) · [Toolchain feasibility](docs/toolchain-feasibility.md)
 - [Benchmark design](docs/benchmark-design.md) · [Benchmark report](benchmarks/reports/BENCHMARK_REPORT.md)
-- [Release readiness](RELEASE_READINESS.md) · [Changelog](CHANGELOG.md) · [Release notes draft](RELEASE_NOTES_v0.1.0.md)
+- [Release readiness](RELEASE_READINESS.md) · [Release handoff](RELEASE_HANDOFF.md)
+- [Changelog](CHANGELOG.md) · [Release notes draft](RELEASE_NOTES_v0.1.0.md)

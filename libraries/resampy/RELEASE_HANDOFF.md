@@ -4,15 +4,17 @@
 
 - Handoff date: 2026-11-20
 - Repository: PyroMojo
-- Current revision: `main` at `5c20c8a` (`docs(resampy): prepare v0.1.0 release readiness`)
-- Working tree: clean; no tracked release artifact or uncommitted change
+- Handoff base: `5c20c8a` (`docs(resampy): prepare v0.1.0 release readiness`)
+- Handoff first committed: `fc765e6` (`chore(resampy): finalize Phase 8 release handoff`)
+- Working tree at handoff: clean; no tracked release artifact or uncommitted change
 - Release performed: **No**
 - Tag created: **No** (`resampy-v0.1.0` does not exist)
 - Package published: **No**
 - GitHub release created: **No**
 
 This handoff records the state of the v0.1.0 work for a future maintainer. It
-does not approve or perform a release.
+was integrated during repository finalization and does not approve or perform a
+release.
 
 ## 1. Final technical status
 
@@ -24,7 +26,7 @@ v0.1.0 technical bar for the restricted contract:
 - Externally supplied, validated `kaiser_fast`-format filter resource.
 - Sequential Float64 execution built with `--fp-mode contract=off`.
 
-Verification at the current revision:
+Verification at the handoff base:
 
 | Check | Result |
 |---|---|
