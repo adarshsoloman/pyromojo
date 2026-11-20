@@ -1,85 +1,127 @@
 # resampy (Mojo Port)
 
-## Status: PHASE 5 COMPLETE — production `kaiser_fast` parity verified
+## Status: v0.1.0 release candidate — BLOCKED on coefficient licensing
 
-Phase 4 adds a whole-buffer, 1-D Float64 windowed-sinc `resample` kernel and
-`output_length` (native Mojo and CLI opcode `0x2A`). Phase 3's representation,
-loader, comparator, and golden-vector foundations are reused; Phase 4 extends
-the framed CLI with opcode `0x2A` and filter-resource validation. Phase 4
-accepts **integer sampling rates only**; non-integer rate ratios from integer
-rates (for example `44100 -> 48000`) are supported.
+The native implementation, upstream parity, and benchmarks are complete for
+the supported contract: **1-D Float64, integer sampling rates, `kaiser_fast`
+supplied as a validated external resource, sequential execution**. The
+repository ships only a synthetic coefficient resource. Public release is
+blocked because written clearance to redistribute the production
+`kaiser_fast` table has not been obtained. See
+[Release readiness](RELEASE_READINESS.md) §8 and
+[licensing audit](docs/licensing-audit.md) §6.
 
-Phase 5 installed Resampy 0.4.3 with NumPy and Numba in the test environment
-and verified the native kernel against upstream `kaiser_fast` output. Finite
-outputs were **bit-identical** across the committed 19-case upstream parity
-test and a 1,684-case finite rate/signal sweep. The test builds its coefficient
-resource at runtime from the installed upstream package; no upstream
-coefficient table is copied into this repository. Redistributing a standalone
-production coefficient resource still requires the licensing clearance tracked
-in [licensing-audit.md](docs/licensing-audit.md) §6. See
-[resampling design](docs/resampling-design.md) and the audits in `docs/`.
+## What is implemented
 
-Build and test with `--fp-mode contract=off`; run
-`.venv/bin/python libraries/resampy/tests/run_phase3_tests.py` from the repo root.
-The repo-wide `scripts/run_all_tests.py` independently includes the Resampy
-vector drift check, contract-off CLI build, and native/Python suites.
+- `resample` and `output_length` in `mojo/mojo_resampy/resample.mojo`.
+- Windowed-sinc interpolation with upstream length truncation,
+  `scale = min(1, ratio)`, first-order half-window interpolation, a
+  forward-difference table, zero-extension boundaries, downsampling gain
+  compensation, and equal-rate exact copy.
+- Integer rates with integer or non-integer rate ratios (for example
+  `44100 -> 48000`). Non-integer sampling rates are out of scope.
+- A strict two-file filter loader (JSON metadata + little-endian Float64
+  payload, SHA-256 checked, bounded reads). Any licensed production resource
+  can be supplied without changing the kernel.
+- A framed CLI with representation/verification opcodes `0x20`–`0x29` and
+  `OP_RESAMPLE = 0x2A`.
+- 17 resampling golden vectors from the independent stdlib reference and 12
+  representation vectors, plus a `--check` drift gate.
+- 144 native Mojo test functions and 90 Python compatibility tests.
 
-## Library description
+## Reference compatibility
 
-High-quality audio resampling: band-limited interpolation for changing the
-sample rate of a signal, with selectable filter characteristics.
+Reference: **resampy 0.4.3**, commit
+`7c484f8eec54b87e8f566578dc3e48a2be81cc80`, ISC. Test runtime: NumPy 2.5.5,
+Numba 0.68.1, llvmlite 0.50.0.
 
-## Original Python package
+- 19 committed upstream parity tests pass (15 finite signal/rate cases plus
+  4 non-finite/subnormal cases).
+- Finite outputs are **bit-identical** (`atol = rtol = 0`) across the parity
+  tests and a 1,684-case finite sweep.
+- Non-finite outputs match position-wise (NaN and infinity sign).
+- Upstream source is not vendored. The parity test reads the installed
+  package's coefficient table into a temporary directory and deletes it.
 
-- Package: `resampy`
-- Reference target: 0.4.3, ISC. The test environment uses `resampy==0.4.3`,
-  `numpy==2.5.5`, `numba==0.68.1`, and `llvmlite==0.50.0`, installed explicitly
-  for Phase 5; see
-  [licensing-audit.md](docs/licensing-audit.md) for differential licensing and
-  unresolved coefficient-provenance questions.
-- Upstream source is not vendored; the parity test uses the installed package
-  and writes its filter table to a temporary directory only.
+Local tests use exact equality against the independent stdlib reference. The
+historical `atol = rtol = 1e-9` proposal in `docs/api-scope.md` §6 is not the
+adopted gate.
 
-## Mojo implementation
+## Documented deviations
 
-Phase 4 provides native band-limited resampling over sample buffers, with
-documented filter design, phase handling, and edge/padding treatment. Phase 4
-local Mojo/reference tests use exact equality (`atol = 0.0`, `rtol = 0.0`).
-The `atol = rtol = 1e-9` policy in `api-scope.md` §6 is a historical Phase 1
-proposal, not the gate used in Phase 4 or Phase 5. Phase 5 measured
-bit-identical finite output against upstream Resampy 0.4.3 `kaiser_fast`.
+| Behaviour | Upstream 0.4.3 | This port |
+|---|---|---|
+| Empty / truncating-to-zero output | `ValueError` | Empty buffer; CLI success with empty payload |
+| Non-integer sampling rates | Supported | Out of scope; integer rates only |
+| Output length cap | No explicit cap observed | Rejected above 1,000,000 samples |
+| Filter validation | Not matched | Precision, count, and finite-coefficient checks |
+| Error type | Python exceptions | Mojo `Error`; CLI `STATUS_ERROR` |
+| N-D / axis / float32 / complex / parallel | Supported | Deferred or out of scope |
 
-## Compatibility objectives
+Other deferred features: `kaiser_best`, `resample_nu`, integer-to-float
+conversion, `sinc_window`, callable filters, and Python-to-Mojo interop.
 
-- Match upstream Resampy 0.4.3 `kaiser_fast` output for supported rates.
-- Match output length and boundary handling for whole-buffer resampling.
-- Match behaviour for supported 1-D/mono input; multi-channel remains deferred.
-- Document any excluded filter modes or parameters.
+## Benchmarks
 
-## Testing requirements
+Four paths: upstream warm, upstream cold (fresh-process JIT), native
+in-process, and native CLI. 275 measured cells, 5 documented exclusions,
+2 independent runs, 5 warmups, 25 samples per path, median-of-medians, seed
+`20260610`.
 
-- Mojo unit tests for rate ratios, signal lengths, and boundary handling.
-- Python compatibility tests against the independent local reference with
-  exact equality (`atol = rtol = 0`).
-- Pinned-upstream parity tests using the installed Resampy 0.4.3 package;
-  finite outputs use exact equality, non-finite outputs use semantic equality.
-- Golden vectors for representative rates and signals, including silence and
-  impulses.
+- Correctness gate: **275/275 PASS** by exact SHA-256 of the little-endian
+  Float64 output; output lengths match exactly.
+- Native in-process vs upstream warm: `0.13x–0.25x` across rate-pair
+  aggregates. Upstream warm is faster on this host; 1:1 is native
+  allocation-floor dominated.
+- CLI overhead: `15x–33x` native in-process; 1:1 is dominated by the
+  `~16.7 ms` process floor.
+- Cold costs: upstream first call `~455 ms`; native bench build `~1.63 s`;
+  native CLI build `~1.98 s`.
+- Python-to-Mojo interop is unavailable and reported as a gap.
 
-## Benchmarking requirements
+No optimization work was performed and no universal-speedup claim is made.
+Full tables and raw data:
+[`benchmarks/reports/BENCHMARK_REPORT.md`](benchmarks/reports/BENCHMARK_REPORT.md).
 
-- Short and long signals, upsampling and downsampling, and mono input;
-  multi-channel when support lands.
-- Three-way comparison: Python reference, native Mojo, Mojo via Python interop.
-- Cold compilation and warm execution reported separately.
+## Build and test
 
-## Current status
+Run from the repository root:
 
-PHASE 5 COMPLETE — the Phase 4 kernel remains 1-D Float64 whole-buffer
-resampling with integer sampling rates. Non-integer rates are out of scope;
-non-integer ratios from integer rates are supported. Production
-`kaiser_fast` parity is verified against Resampy 0.4.3. The committed synthetic
-resource remains the only coefficient data in the repository; the upstream
-resource is generated in a temporary directory during the upstream parity test.
-Shipping a standalone production coefficient resource remains conditional on
-the licensing review. Multi-channel/N-D support and benchmarks remain pending.
+```bash
+uv sync --extra dev
+.venv/bin/mojo build libraries/resampy/mojo/cli.mojo \
+  -I libraries/resampy/mojo --fp-mode contract=off -o build/resampy_cli
+.venv/bin/python libraries/resampy/tests/run_phase3_tests.py
+.venv/bin/python scripts/run_all_tests.py
+.venv/bin/python libraries/resampy/tests/vectors/generate_resample_vectors.py --check
+```
+
+Benchmarks:
+
+```bash
+.venv/bin/python libraries/resampy/benchmarks/run_benchmarks.py
+```
+
+All numerical builds must use `--fp-mode contract=off`; the default
+`contract=fast` can change Float64 results.
+
+## Licensing and release
+
+- Repository license: Apache-2.0.
+- Upstream license: ISC; the notice is retained in
+  [`THIRD_PARTY_NOTICES.md`](../../THIRD_PARTY_NOTICES.md).
+- The only committed coefficient data is the synthetic 8-coefficient resource.
+- Production coefficient redistribution is unresolved. This project makes no
+  legal conclusion and does not assume the ISC license settles the data-file
+  question.
+- **Do not publish a release or distribute the production table until written
+  clearance is recorded.** Exact requirement:
+  [`RELEASE_READINESS.md`](RELEASE_READINESS.md) §8.
+
+## Documents
+
+- [API scope](docs/api-scope.md) · [Resampling design](docs/resampling-design.md)
+- [Reference audit](docs/reference-audit.md) · [Licensing audit](docs/licensing-audit.md)
+- [Representation design](docs/representation-design.md) · [Toolchain feasibility](docs/toolchain-feasibility.md)
+- [Benchmark design](docs/benchmark-design.md) · [Benchmark report](benchmarks/reports/BENCHMARK_REPORT.md)
+- [Release readiness](RELEASE_READINESS.md) · [Changelog](CHANGELOG.md) · [Release notes draft](RELEASE_NOTES_v0.1.0.md)

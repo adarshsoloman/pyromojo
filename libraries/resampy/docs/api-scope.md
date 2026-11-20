@@ -3,7 +3,7 @@
 **Phase 1 deliverable — public API inventory and compatibility scope.**
 **Reference:** `resampy` 0.4.3, commit `7c484f8eec54b87e8f566578dc3e48a2be81cc80`
 (see `reference-audit.md`). **Status:** Phase 1 scope specification, reconciled
-with Phases 4–5. Current implementation status is tracked in
+with Phases 4–6. Current implementation status is tracked in
 [`resampling-design.md`](resampling-design.md) and the library
 [README](../README.md); the matrix below records v0.1.0 scope status.
 Phase 1 tolerance proposals in §6 and the open questions below are historical
@@ -142,11 +142,11 @@ Numba gufuncs, not documented API. `[V]`
 ## 4. v0.1.0 scope `[I]`
 
 **Guiding principle:** a defensible first release reproduces `resample` for the
-most common, testable case with documented numerical tolerance for a future
-upstream comparison — **not** full NumPy/Resampy API coverage. Phase 4 local
-reference agreement is exact; see §6. Phase 0 established that PyroMojo has no
-general multidimensional-array abstraction, no tolerance-comparison utility, and
-1-D `List`/`Span` only.
+most common, testable case with measured exact agreement against the pinned
+upstream reference — **not** full NumPy/Resampy API coverage. Phase 4 local
+reference agreement is exact, and Phase 5 upstream parity is bit-identical;
+see §6. Phase 0 established that PyroMojo has no general
+multidimensional-array abstraction and only 1-D `List`/`Span`.
 
 **IN SCOPE (required):**
 
@@ -254,9 +254,8 @@ raises -> List[Float64]`, with validation helpers and a wire codec in
 > **Historical Phase 1 proposal — not the Phase 4 local contract.** Phase 4
 > Mojo/reference tests use exact equality (`atol = 0.0`, `rtol = 0.0`) against
 > the independent local reference, as documented in `resampling-design.md`. The
-> `atol = rtol = 1e-9` values below apply only to a future comparison against a
-> pinned upstream Resampy 0.4.3 runtime. They are not adopted, measured, or
-> frozen.
+> `atol = rtol = 1e-9` values below were not adopted. Phase 5 instead measured
+> bit-identical finite output against the pinned Resampy 0.4.3 runtime.
 
 **Policy proposal `[I]` — not an upstream requirement:**
 
@@ -264,7 +263,7 @@ raises -> List[Float64]`, with validation helpers and a wire codec in
 |---|---|
 | Primary metric | **Maximum absolute error** over the whole output, `max_i |y_mojo[i] − y_ref[i]|`, plus **RMSE** as a secondary summary. Both are recorded per vector. |
 | Secondary metric | `np.testing.assert_allclose`-style combined `|a−b| <= atol + rtol·|b|`, reported but not the sole gate. |
-| Future upstream tolerance (float64, `kaiser_fast`) | **Proposed `atol = 1e-9`, `rtol = 1e-9`** with a hard `max_abs <= 1e-9`. `[I]` Rationale: the loop performs the same `Float64` operations in the same order on the same float64 coefficients, so divergence should be at the last-bit/accumulation level (~`1e-13` observed upstream); `1e-9` leaves ~4 orders of headroom for compiler/libm/association differences without masking a real bug. **These are engineering proposals, not measured values, and must be calibrated against real outputs in Phase 2 before being frozen.** |
+| Upstream tolerance (float64, `kaiser_fast`) | **Superseded:** Phase 5 measured bit-identical finite output (and 275/275 exact benchmark gates), so the proposed `atol = rtol = 1e-9` gate was not adopted. |
 | Future upstream tolerance (float32, if later) | `[U]` — separate, looser regime (accumulation in float32); must be measured, not guessed. |
 | NaN / Inf | Match position-wise: NaN⇔NaN, Inf⇔Inf with sign. `[V]` Phase 5 upstream execution; semantic match. |
 | Determinism | Same input → bit-identical Mojo output across runs and process boundaries; reference generated once in the pinned venv and committed. |

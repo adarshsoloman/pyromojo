@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-11-20T06:43:08",
-  "git": "dda2a4e",
-  "git_dirty": true,
+  "timestamp": "2026-11-20T07:10:39",
+  "git": "7e7784a",
+  "git_dirty": false,
   "python": "3.13.14",
   "python_build": [
     "main",
@@ -25,8 +25,8 @@
   "pure_python_floor": "not measured (optional for v0.1.0)",
   "parallel_upstream": "not measured (sequential parallel=False only)",
   "build_note": "output binary removed before each build; compiler cache state is toolchain-provided",
-  "peak_rss_self_kb": 178908,
-  "peak_rss_children_kb": 185280,
+  "peak_rss_self_kb": 1611236,
+  "peak_rss_children_kb": 190996,
   "config": {
     "seed": 20260610,
     "warmup": 5,
@@ -87,12 +87,12 @@
     "bench": {
       "source": "/media/sunny/New Volume1/ADARSH/7_Programming Files/4. my_projects/1_pyromojo/libraries/resampy/benchmarks/bench.mojo",
       "binary": "/media/sunny/New Volume1/ADARSH/7_Programming Files/4. my_projects/1_pyromojo/build/bench_resampy",
-      "build_ns": 1776334000
+      "build_ns": 1634095598
     },
     "cli": {
       "source": "/media/sunny/New Volume1/ADARSH/7_Programming Files/4. my_projects/1_pyromojo/libraries/resampy/mojo/cli.mojo",
       "binary": "/media/sunny/New Volume1/ADARSH/7_Programming Files/4. my_projects/1_pyromojo/build/resampy_cli",
-      "build_ns": 1965524238
+      "build_ns": 1983624027
     }
   },
   "filter": {

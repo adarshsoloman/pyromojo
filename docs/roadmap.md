@@ -1,10 +1,10 @@
 # Roadmap
 
-Status: Msgpack v0.1 complete (full type set, CLI, test runners, and
-benchmarks with a curated release report). Levenshtein v0.1 complete
-(distance/ratio/hamming, CLI, test runners, and benchmarks with a
-curated release report). Dates are intentionally omitted;
-phases are completed when their exit criteria are met.
+Status: Msgpack, Levenshtein, Bitarray, and Audioop v0.1 are complete and
+released, with CLI/test runners and curated benchmark reports. Resampy's native
+implementation, parity evidence, and benchmarks are complete, but its release
+is blocked on production coefficient-table licensing clarity. Dates are
+intentionally omitted; phases are completed when their exit criteria are met.
 
 ## Phase 1: Repository foundation
 
@@ -52,13 +52,15 @@ reproducible from a clean checkout.
 
 Candidates: `levenshtein`, `audioop`, `bitarray`, `resampy`.
 
-- [ ] Establish a per-library checklist derived from the Msgpack work.
-- [ ] Port each library to the same verification standard.
-- [ ] Publish per-library compatibility and limitation notes.
-- [ ] Publish comparable benchmark reports using the shared methodology.
+- [x] Establish a per-library checklist derived from the Msgpack work.
+- [x] Port four libraries to the same verification standard.
+- [x] Publish per-library compatibility and limitation notes for released ports.
+- [x] Publish comparable benchmark reports using the shared methodology.
+- [ ] Clear production coefficient licensing and release Resampy.
 
 **Exit criteria:** Five ports with green test suites, shared vectors, and
-documented benchmarks.
+documented benchmarks. Resampy's implementation and evidence satisfy the
+technical bar; its release remains blocked pending licensing clearance.
 
 ## Phase 4: Expand toward 20 libraries
 

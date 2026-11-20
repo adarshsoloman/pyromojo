@@ -2,7 +2,12 @@
 
 **Phase 1 deliverable — benchmark methodology specification.**
 **Reference:** `resampy` 0.4.3, commit `7c484f8eec54b87e8f566578dc3e48a2be81cc80`.
-**Status:** specification only. **No benchmarks were run in Phase 1.**
+**Status:** Phase 1 methodology specification. **No benchmarks were run in
+Phase 1.** Phase 6 later executed the suite; the measured methodology and exact
+gate are recorded in
+[`benchmarks/reports/BENCHMARK_REPORT.md`](../benchmarks/reports/BENCHMARK_REPORT.md).
+Where this planning document differs from the executed suite, the report is
+authoritative.
 
 **Labels:** `[V]` verified from source · `[I]` engineering decision/recommendation ·
 `[U]` unresolved/unverified.
@@ -66,9 +71,9 @@ silently (`docs/benchmarks/README.md:24-25`).
 - Identical logical inputs (bit-identical input signal, identical `sr_orig`,
   `sr_new`, `filter`) for every path.
 - Identical validation and identical correctness gate for all paths before any
-  timing is recorded (§5). For a future upstream comparison the gate is
-  **tolerance-based**, not exact — see `api-scope.md` §6. Phase 4
-  local-reference tests are exact.
+  timing is recorded (§5). Phase 6 used the stronger **exact** gate: output
+  SHA-256 equality and identical output length against the pinned reference.
+  The Phase 1 tolerance proposal was not adopted.
 - No pre-computation unless every path gets the same pre-computation. Filter
   loading/caching must be identical in status across paths; report whether
   each path starts with a cold or warm filter cache.
@@ -145,26 +150,23 @@ output checksum. `[I]`
 
 ## 5. Correctness gate before timing `[I]` (mandatory)
 
-No timing is recorded until the gate passes. Proposed gate (calibrate in Phase
-2 — see `api-scope.md` §6 `[U]`):
+No timing is recorded until the gate passes. Actual Phase 6 gate, which
+supersedes the Phase 1 tolerance proposal:
 
 1. **Length:** all paths produce exactly `int(L*float(sr_new)/float(sr_orig))`
    samples. Exact integer equality.
-2. **Values:** for a future upstream comparison, compare Mojo output to the
-   pinned 0.4.3 reference using the documented tolerance — Phase 1 proposal
-   `max_abs <= 1e-9`, `atol=rtol=1e-9` for float64/`kaiser_fast`; **record**
-   `max abs error`, `RMSE`, and the number of elements exceeding the tolerance.
-   These are **proposals, not measured values**, and must be frozen only after
-   real upstream outputs are compared. Phase 4 local-reference tests are exact.
+2. **Values:** require **bit-identical** Float64 output against the pinned
+   0.4.3 reference, checked by SHA-256 of the little-endian payload. Also
+   record `max abs error` and `RMSE`; all 275 cells passed with both `0.0`.
 3. **NaN/Inf:** position-wise match where defined; documented exclusions.
 4. **Equal-rate path:** bit-identical copy.
 5. **Determinism:** same input → identical Mojo output across repeated runs.
 6. Record the gate result per cell (`PASS`/`FAIL`) in the raw results; a FAIL
    aborts that cell and is reported, never silently dropped.
 
-This replaces the exact-equality gate used by the four shipped ports, because
-Resampy's output is floating-point and a native port cannot be assumed
-bit-identical to a Numba/LLVM-compiled reference. `[I]`
+Exact equality was not assumed; it was measured. The native build uses
+`--fp-mode contract=off`, and the tested finite outputs were bit-identical to
+the pinned Numba/LLVM-compiled reference. `[V]`
 
 ---
 
@@ -208,8 +210,9 @@ Cold compilation, JIT compilation, process spawn and warm kernel time are
 ## 8. Known limitations `[U]` / `[I]`
 
 - `[U]` Interop path (§3) — unverified; excluded for v0.1.0.
-- `[U]` Exact future-upstream tolerance values must be calibrated against real
-  0.4.3 outputs in a pinned reference venv; nothing was measured in Phase 1.
+- `[V]` Phase 6 measured exact equality against real pinned 0.4.3 outputs:
+  275/275 cells passed SHA-256 and length gates. The Phase 1 tolerance
+  proposal was not adopted.
 - `[U]` Reference interpreter/dependency versions (NumPy/Numba on Python 3.12
   vs 3.13) not yet selected; Numba JIT behaviour varies by version and can
   change both warm timings and last-bit results. `setup.cfg` minimum
@@ -236,3 +239,7 @@ No benchmarks executed, no benchmark scripts modified, no workloads/generators
 created, no `bench.mojo` written, no dependencies installed, no CI changes, no
 `docs/benchmarks/README.md` edit (the §1 deviation is recorded here for
 maintainer decision). **Do not run performance benchmarks until Phase 2+.**
+
+**Post-Phase 1 update:** Phase 6 implemented the driver and ran the suite. See
+[`BENCHMARK_REPORT.md`](../benchmarks/reports/BENCHMARK_REPORT.md) for the
+executed workloads, exact gate, cold/warm results, and limitations.

@@ -244,6 +244,14 @@ and `uv.lock` were not changed. The parity test reads the installed upstream
 redistribute it. Q1/Q6 remain unresolved for committing a standalone
 coefficient resource. No legal conclusion is made.
 
+**Phase 7 release gate:** the unresolved coefficient-data question is a release
+blocker. The repository contains only the synthetic resource. A v0.1.0 release
+must not commit, embed, package, or distribute the production `kaiser_fast`
+table until written clearance permits redistribution, or an alternative
+production filter resource with explicitly documented compatible terms is
+provided. The exact requirement and current verdict are recorded in
+[`../RELEASE_READINESS.md`](../RELEASE_READINESS.md) §8.
+
 ---
 
 ## 7. Summary `[I]`
@@ -252,9 +260,11 @@ coefficient resource. No legal conclusion is made.
   primary sources. `[V]`
 - Runtime deps: `numpy`, `numba`, conditional `importlib_resources`; **no SciPy
   runtime dependency** at 0.4.3. `[V]`
-- Native Mojo implementation: **zero runtime dependencies**; bundled filter
-  data only. `[I]`
-- Two bundled float64 filter tables are upstream data files whose transcription
-  is the main provenance question. `[V]` facts / `[U]` legal review.
+- Native Mojo implementation: **zero runtime dependencies**; a validated
+  external filter resource is supplied by the caller. The repository commits
+  only a synthetic resource. `[I]`
+- The two upstream float64 filter tables are data files whose redistribution
+  is the main provenance question. `[V]` facts / `[U]` legal review. Neither
+  production table is included in this repository.
 - All licence-specific conclusions are deferred; six questions listed for
   review. No legal determination, no clean-room claim, no dependency changes.

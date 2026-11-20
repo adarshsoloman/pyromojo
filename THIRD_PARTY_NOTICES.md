@@ -76,3 +76,40 @@ entry to this file.
 - The Mojo implementation itself is independent; numerical test vectors in
   `libraries/audioop/tests/vectors/` are derived data recorded from observed
   reference behaviour.
+
+## resampy (native Mojo port)
+
+- Reference: `resampy` 0.4.3, commit
+  `7c484f8eec54b87e8f566578dc3e48a2be81cc80` (ISC). The package is installed
+  as a pinned, test/benchmark-only external reference. Upstream source is not
+  vendored.
+- The reference's required notice is retained verbatim:
+
+  > ISC License
+  >
+  > Copyright (c) 2016, Brian McFee
+  >
+  > Permission to use, copy, modify, and/or distribute this software for any
+  > purpose with or without fee is hereby granted, provided that the above
+  > copyright notice and this permission notice appear in all copies.
+  >
+  > THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+  > WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+  > MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+  > ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+  > WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+  > ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+  > OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+- The native Mojo implementation is independent. The repository commits only a
+  synthetic 8-coefficient test resource
+  (`libraries/resampy/resources/synthetic/`). The production `kaiser_fast` and
+  `kaiser_best` coefficient tables are **not** included. Parity tests and
+  benchmarks extract the installed upstream `kaiser_fast` table into a
+  temporary directory and delete it.
+- Whether redistribution of the production coefficient tables requires
+  additional permission is unresolved. This notice makes no legal conclusion.
+  See `libraries/resampy/docs/licensing-audit.md` §6 and
+  `libraries/resampy/RELEASE_READINESS.md` §8.
+- Resampy golden vectors are generated from the independent local reference
+  with synthetic coefficients, not from upstream output.

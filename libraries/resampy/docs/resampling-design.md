@@ -1,4 +1,4 @@
-# Phases 4–5 — Windowed-Sinc Resampling Kernel and Upstream Parity
+# Phases 4–6 — Windowed-Sinc Kernel, Upstream Parity, and Benchmarks
 
 ## Scope
 
@@ -60,7 +60,7 @@ metadata for the upstream `kaiser_fast` table:
 filter: kaiser_fast_upstream_0_4_3
 coefficient_count: 12289
 precision: 512
-rolloff: 0.8682120372386292
+rolloff: 0.8682120388377784
 sha256(float64 LE payload): 4c96a90d1b0b93cf0a9620c5f66216416a6b19752bf18a208c837b55b719434b
 ```
 
@@ -242,4 +242,26 @@ metadata's `filter_id`; trailing payload bytes are rejected. The existing
   deferred dtypes, N-D/axes, and parallel modes are not covered.
 - CLI metadata-size and compute-cost limits are accepted/deferred as documented
   in the protocol section.
-- No performance claims; benchmarking is deferred (`benchmark-design.md`).
+- Benchmark results are host- and toolchain-specific; no universal-speedup
+  claim is made. See §Performance.
+
+## Performance (Phase 6)
+
+Measured, not optimized. Four paths — upstream warm, upstream cold
+(fresh-process JIT), native in-process, and native CLI — over 275 cells
+(5 documented exclusions), 2 runs, 5 warmups, 25 samples per path.
+
+- Correctness gate: **275/275 PASS** by exact SHA-256 of the little-endian
+  Float64 output; output lengths match.
+- Native in-process vs upstream warm: **0.13x–0.25x** across rate-pair
+  aggregates. Upstream warm is faster on this host; 1:1 is native
+  allocation-floor dominated.
+- Native CLI overhead: **15x–33x** native in-process; 1:1 is dominated by the
+  `~16.7 ms` process floor.
+- Cold costs: upstream first call `~455 ms`; native bench build `~1.63 s`;
+  native CLI build `~1.98 s`.
+- Python-to-Mojo interop is unavailable and reported as a gap.
+
+Residual overhead is per-call filter-table preparation and output allocation.
+No SIMD or reuse optimization was attempted. Full evidence:
+[`benchmarks/reports/BENCHMARK_REPORT.md`](../benchmarks/reports/BENCHMARK_REPORT.md).
