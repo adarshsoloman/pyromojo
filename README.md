@@ -149,7 +149,7 @@ uv sync --extra dev
 |---|---|---|
 | 1 | Repository foundation | ✅ Complete |
 | 2 | MessagePack, the first complete port | ✅ Complete |
-| 3 | First five verified ports | 🔶 4 released; Resampy technically complete, licensing blocked |
+| 3 | First five verified ports | ✅ Complete |
 | 4 | Expand toward 20 libraries | ⬜ Planned |
 | 5 | Performance analysis and upstream contributions | ⬜ Planned |
 
